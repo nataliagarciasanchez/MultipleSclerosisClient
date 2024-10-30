@@ -4,7 +4,6 @@
  */
 package POJOs;
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,19 +11,11 @@ import java.util.Objects;
  *
  * @author nataliagarciasanchez
  */
-@Entity
-@Table (name= "roles")
+
 public class Role implements Serializable{
     private static final long serialVersionUID = 1L;
-
-    @Id 
-    @GeneratedValue(generator = "roles")
-    @TableGenerator(name = "roles", table = "sqlite_sequence", pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "roles")
     private Integer id;
-
     private String name;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "role") 
     private List<User> users;
 
     public Role() {

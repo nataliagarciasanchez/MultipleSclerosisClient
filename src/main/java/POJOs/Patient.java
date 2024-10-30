@@ -8,35 +8,22 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.*;
 
 /**
  *
  * @author laura
  */
-@Entity
-@Table (name= "patients")
+
 public class Patient implements Serializable{
     
     private static final long serialVersionUID = 1L;
-    
-    @Id
-    @GeneratedValue (generator = "patients")
-    @TableGenerator(name = "patients", table = "sqlite_sequence",  pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "patients")
     private Integer id;
-    
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
     private User user;
     private String name;
     private Date dob;
     private Gender gender;
     private Integer phone;
-    @ManyToOne
-    @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
-    
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<Report> reports;
    
     
