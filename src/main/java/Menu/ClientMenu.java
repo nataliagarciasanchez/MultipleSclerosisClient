@@ -2,12 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package multiplesclerosisclient;
+package Menu;
 
 /**
  *
- * @author nataliagarciasanchez
+ * @author maipa
  */
-public class Client {
-    //test Client
+public class ClientMenu {
+    
 }
