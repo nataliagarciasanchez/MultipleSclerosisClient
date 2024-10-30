@@ -6,7 +6,7 @@ package ClientInterfaces;
 
 
 import POJOs.Patient;
-import POJOs.User;
+//import POJOs.User;
 import java.util.List;
 
 /**
@@ -18,7 +18,7 @@ public interface PatientManager {
     public Patient viewMyInfo(Integer id);
     public List<Patient> getListOfPatients();
     public void removePatientById(Integer id);
-    public void modifyPatientInfo(Integer id, String name, String specialty, User user);
+    //public void modifyPatientInfo(Integer id, String name, String specialty, User user);
     public Patient searchPatientById(Integer id);
     public List<Patient> searchPatientByName(String name);
     public List<Patient> searchPatientByDoctor(Integer doctorId);
