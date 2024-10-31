@@ -18,13 +18,14 @@ import javax.management.relation.Role;
 public class ClientMenu {
     
     private static PatientManager patientMan;
+    private static User user;
     
     public static void main(String[] args) {
 
         ConnectionManager conMan = new ConnectionManager();
 
         patientMan = new JDBCPatientManager(conMan.getConnection());
-        userMan = new JPAUserManager();
+        
 
         int choice = -1;
         do {
@@ -47,7 +48,7 @@ public class ClientMenu {
                     case 0: {
                         conMan.closeConnection();
                         System.out.println("Thank you for using the database! Goodbye.");
-                        userMan.disconnect();
+                        user.disconnect();
                         return;
                     }
                     default:
@@ -100,11 +101,11 @@ public class ClientMenu {
         System.out.println("Password: ");
         String password = Utilities.readString();
         
-        Role role = userMan.getRole("patient");
-        userMan.assignRole(user, role);
+        String role = user.getRole();
+        
 
         System.out.println("You have registered as a patient!\n");
-        patientMenu(user.getEmail());
+        patientMenu();
 
     }
 
@@ -121,12 +122,16 @@ public class ClientMenu {
             }
             System.out.println("Password: ");
             String password = Utilities.readString();
-            User user = userMan.login(username, password);
+            user.login(username, password);
             if (user != null) {
-                patientMenu(user.getEmail()); 
+                patientMenu(); 
             } else {
                 System.out.println("Wrong username/password combination");
             }
         } while (username.equals(""));
+    }
+    
+    public static void patientMenu(){
+        
     }
 }
