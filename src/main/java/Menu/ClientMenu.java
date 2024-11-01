@@ -65,7 +65,7 @@ public class ClientMenu {
         try {
             Patient patient=registerPatientInfo();//only the info from the POJO not the IO info
             
-            User user=registerUserInfo();
+            User user=getUserInfo();
             
             PatientServerCommunication psCommunication=new PatientServerCommunication();
             psCommunication.register(user.getEmail(),user.getPassword());
@@ -172,6 +172,7 @@ public class ClientMenu {
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(ClientMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
+            //comunicarme con el server para obtener el patient        
             patientMenu(patient, user, psCommunication);
         } else {
             System.out.println("Wrong username/password combination");
