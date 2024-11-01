@@ -17,12 +17,16 @@ import java.util.Objects;
 public class Patient implements Serializable{
     
     private static final long serialVersionUID = 1L;
-    private Integer id;
+    
     private User user;
+    
+    private Integer id;
     private String name;
+    private String surname;
+    private String NIF;
     private Date dob;
     private Gender gender;
-    private Integer phone;
+    private String phone;
     private Doctor doctor;
     private List<Report> reports;
    
@@ -31,14 +35,15 @@ public class Patient implements Serializable{
         super();
     }
 
-    public Patient(Integer id, String name, Date dob, Gender gender, Integer phone, Doctor doctor, List<Report> reports) {
-        this.id = id;
+    public Patient(String name, String surname, String NIF, Date dob, Gender gender, String phone) {
+        
         this.name = name;
+        this.surname=surname;
+        this.NIF=NIF;
         this.dob = dob;
         this.gender = gender;
         this.phone = phone;
-        this.doctor = doctor;
-        this.reports = reports;
+        
     }
 
     public static long getSerialVersionUID() {
@@ -61,7 +66,7 @@ public class Patient implements Serializable{
         return gender;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
@@ -81,6 +86,15 @@ public class Patient implements Serializable{
         this.name = name;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+    
+
     public void setDob(Date dob) {
         this.dob = dob;
     }
@@ -89,7 +103,7 @@ public class Patient implements Serializable{
         this.gender = gender;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -103,8 +117,17 @@ public class Patient implements Serializable{
 
     @Override
     public String toString() {
-        return "Patient{" + "id=" + id + ", name=" + name + ", dob=" + dob + ", gender=" + gender + ", phone=" + phone + ", doctor=" + doctor + ", reports=" + reports + '}';
+        return "User: " + user + "\n"
+                + "ID: " + id + "\n"
+                + "Name: " + name + "\n"
+                + "Surname: " + surname + "\n"
+                + "NIF: " + NIF + "\n"
+                + "Date of Birth: " + dob + "\n"
+                + "Gender: " + gender + "\n"
+                + "Phone: " + phone;
     }
+
+
 
     @Override
     public int hashCode() {

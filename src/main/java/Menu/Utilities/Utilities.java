@@ -122,4 +122,24 @@ public class Utilities {
 
         return ok;
     }
+    
+    public static boolean isValidPassword(String password){
+        
+        //At least 8 characters long
+        if (password.length() < 8) {
+            return false;
+        }
+
+        // At least 1 capital letter
+        if (!password.matches(".*[A-Z].*")) {
+            return false;
+        }
+
+        // At least one number must be present
+        if (!password.matches(".*[0-9].*")) {
+            return false;
+        }
+        return true;
+    }
+    
 }
