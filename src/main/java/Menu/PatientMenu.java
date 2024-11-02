@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  *
  * @author maipa
  */
-public class ClientMenu {
+public class PatientMenu {
     
     
     private static User user;
@@ -56,7 +56,7 @@ public class ClientMenu {
                 System.out.println("You didn't type a valid option! Try an integer number between 0 and 2");
                 choice = -1;
             } catch (IOException ex) {
-                Logger.getLogger(ClientMenu.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);
             } 
         } while (!Utilities.validMenu(2, choice) || choice != 0);
     }
@@ -74,7 +74,7 @@ public class ClientMenu {
             patientMenu(patient, user, psCommunication);
             
         } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(ClientMenu.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -175,7 +175,7 @@ public class ClientMenu {
                 Patient patient = psCommunication.getPatient();
                 patientMenu(patient, user, psCommunication);
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(ClientMenu.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         } else {
@@ -265,7 +265,7 @@ public class ClientMenu {
                 System.out.println("You didn't type a valid option! Try an integer number between 0 and 2");
                 choice = -1;
             } catch (IOException | ClassNotFoundException ex) {
-                Logger.getLogger(ClientMenu.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);
             } 
         }while(!Utilities.validMenu(2, choice) || choice != 0);
     }
