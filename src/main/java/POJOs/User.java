@@ -3,65 +3,98 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package POJOs;
-import java.io.Serializable;
-import java.util.Arrays;
 
+import java.io.Serializable;
+import java.util.Objects;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  *
- * @author nataliagarciasanchez
+ * @author maipa
  */
 
+@Table(name = "Users")
 public class User implements Serializable{
     
-    private static final long serialVersionUID = 1L;
-    private Integer id;
-    private String email;
-    private byte[] password;
-    private Role role;
-
+    private static final long serialVersionUID = -7022171013544748813L; 
+    
+    @Id
+    @GeneratedValue(generator = "Users")
+    @TableGenerator(name = "Users", table = "sqlite_sequence",
+    pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "Users")
+    
+    private Integer id; 
+    @Column(unique = true)
+      private String email;//the email is the username 
+      private String password;
+      
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "roleId")
+    private final String role="Patient";
+     
+      
     public User() {
-	super();
+    	super();
     }
-	
-    public User(String email, byte[] password, Role role) {
+      
+    public User(String email, String password) {
 	super();
 	this.email = email;
 	this.password = password;
-	this.role = role;
     }
-
+    
     public Integer getId() {
 	return id;
     }
+    
     public void setId(Integer id) {
-	this.id = id;
+        this.id = id;
     }
-    public String getEmail() {
-	return email;
+
+    public String getPassword() {
+        return password;
     }
-    public void setEmail(String email) {
-	this.email = email;
-    }
-    public byte[] getPassword() {
-	return password;
-    }
-    public void setPassword(byte[] password) {
+
+    public void setPassword(String password) {
         this.password = password;
     }
 
-
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
-	this.role = role;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
-    public String toString() {
-        return "User [id=" + id + ", email=" + email + ", password=" + Arrays.toString(password) + ", role=" + role
-		+ "]";
+    public int hashCode() {
+        return Objects.hash(id);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        User other = (User) obj;
+        return Objects.equals(id, other.id);
+    }
+    
+    @Override
+    public String toString() {
+	return "User [id=" + id + ", email=" + email +", password=" + password + ", role="+ role + "]";
+    } 
 }

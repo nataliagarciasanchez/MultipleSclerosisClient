@@ -4,6 +4,7 @@
  */
 package Menu;
 
+import POJOs.User;
 import POJOs.Patient;
 import java.io.IOException;
 import java.io.ObjectInputStream;
