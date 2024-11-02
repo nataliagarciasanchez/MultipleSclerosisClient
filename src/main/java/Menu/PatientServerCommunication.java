@@ -4,6 +4,7 @@
  */
 package Menu;
 
+import POJOs.Patient;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,8 +16,10 @@ import java.net.Socket;
  */
 public class PatientServerCommunication {
     
-    private String serverAddress = "localhost";
-    private int serverPort = 12345;
+    private String serverAddress = "localhost";//TODO aquí habrá que crear un constructor para cuando 
+    //preguntemos por el IP address del server
+    private int serverPort = 9000;//es 9000 porque es el puerto vacío por defecto
+    private Patient patient;
 
     public void register(String username, String password) throws IOException, ClassNotFoundException {
         
@@ -56,4 +59,39 @@ public class PatientServerCommunication {
             System.out.println(in.readObject());
         }
     }
+    
+    /**
+     * findPatient es un método utilizado para buscar un paciente en la base de datos usando usuario y contraseña
+     * Busca y almacena un objeto de tipo Patient
+     * @param username
+     * @param password
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
+    public void findPatient(String username, String password) throws IOException, ClassNotFoundException {
+        try (Socket socket = new Socket(serverAddress, serverPort);
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+            out.writeObject("findPatient"); // Acción para buscar al paciente
+            out.writeObject(username);
+            out.writeObject(password);
+
+            // Lee y muestra la respuesta del servidor
+            Object response = in.readObject();
+            if (response instanceof Patient) {
+                
+                patient = (Patient) response; // Guarda el objeto `Patient`
+                //System.out.println("Patient found and stored locally: " + patient);
+            } else {
+                System.out.println(response); // Imprimir mensaje de error si es un String
+            }
+        }
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+    
+    
 }

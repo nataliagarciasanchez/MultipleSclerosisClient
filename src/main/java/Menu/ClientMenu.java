@@ -169,11 +169,14 @@ public class ClientMenu {
         if (user != null) {
             try {
                 psCommunication.login(user.getEmail(), user.getPassword());
+                //comunicarme con el server para obtener el patient    
+                psCommunication.findPatient(user.getEmail(), user.getPassword());
+                Patient patient = psCommunication.getPatient();
+                patientMenu(patient, user, psCommunication);
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(ClientMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
-            //comunicarme con el server para obtener el patient        
-            patientMenu(patient, user, psCommunication);
+
         } else {
             System.out.println("Wrong username/password combination");
         }
