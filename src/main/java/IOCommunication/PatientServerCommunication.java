@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Menu;
+package IOCommunication;
 
 import POJOs.User;
 import POJOs.Patient;
@@ -88,6 +88,14 @@ public class PatientServerCommunication {
                 System.out.println(response); // Imprimir mensaje de error si es un String
             }
         }
+    }
+    
+    public void sendECGSignals(){
+        //TODO manda la señales al server
+    }
+    
+    public void sendEMGSignals(){
+        //TODO manda las señales al server
     }
 
     public Patient getPatient() {
