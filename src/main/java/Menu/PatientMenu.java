@@ -240,56 +240,57 @@ public class PatientMenu {
         
     }
     
-    public static void showSymptoms(){
+    public static void showSymptoms() {
         
-        System.out.println("SÍNTOMAS MUSCULARES: ");
-        System.out.println("1. Pérdida del equilibrio");
-        System.out.println("2. Espasmos musculares");
-        System.out.println("3. Entumecimiento o sensación anormal en cualquier zona");
-        System.out.println("4. Problemas para mover los brazos y las piernas");
-        System.out.println("5. Problemas para caminar");
-        System.out.println("6. Problemas con la coordinación y para hacer movimientos pequeños");
-        System.out.println("7. Temblor en uno o ambos brazos o piernas");
-        System.out.println("8. Debilidad en uno o ambos brazos o piernas");
-        
-        
-        System.out.println("SÍNTOMAS VESICALES E INTESTINALES: ");
-        System.out.println("1. Estreñimiento y escape de heces");
-        System.out.println("2. Dificultad para comenzar a orinar");
-        System.out.println("3. Necesidad frecuente de orinar");
-        System.out.println("4. Urgencia intensa de orinar");
-        System.out.println("5. Escape de orina (incontinencia)");
-        
-        System.out.println("SÍNTOMAS OCULARES: ");
-        System.out.println("1. Visión doble");
-        System.out.println("2. Molestia en los ojos");
-        System.out.println("3. Movimientos oculares incontrolables");
-        System.out.println("4. Pérdida de visión (usualmente afecta un ojo a la vez)");
+        System.out.println("MUSCLE SYMPTOMS: ");
+        System.out.println("1. Loss of balance");
+        System.out.println("2. Muscle spasms");
+        System.out.println("3. Numbness or abnormal sensation in any area");
+        System.out.println("4. Trouble moving arms and legs");
+        System.out.println("5. Difficulty walking");
+        System.out.println("6. Problems with coordination and making small movements");
+        System.out.println("7. Tremor in one or both arms or legs");
+        System.out.println("8. Weakness in one or both arms or legs");
         
         
-        System.out.println("ESTUMECIMIENTO, HORMIGUEO O DOLOR: ");
-        System.out.println("1. Dolor facial");
-        System.out.println("2. Espasmos musculares dolorosos");
-        System.out.println("3. Hormigueo, sensación de picazón o ardor en los brazos y las piernas");
+        System.out.println("BLADDER AND BOWEL SYMPTOMS: ");
+        System.out.println("1. Constipation and stool leakage");
+        System.out.println("2. Difficulty starting to urinate");
+        System.out.println("3. Frequent need to urinate");
+        System.out.println("4. Intense urgency to urinate");
+        System.out.println("5. Urine leakage (incontinence)");
+        
+        System.out.println("EYE SYMPTOMS: ");
+        System.out.println("1. Double vision");
+        System.out.println("2. Eye discomfort");
+        System.out.println("3. Uncontrolled eye movements");
+        System.out.println("4. Vision loss (usually affects one eye at a time)");
         
         
-        System.out.println("OTROS SÍNTOMAS CEREBRALES Y NEUROLÓGICOS: ");
-        System.out.println("1. Disminución del período de atención, de la capacidad de discernir y pérdida de la memoria");
-        System.out.println("2. Dificultad para razonar y resolver problemas");
-        System.out.println("3. Depresión o sentimientos de tristeza");
-        System.out.println("4. Mareos o pérdida del equilibrio");
-        System.out.println("5. Pérdida de la audición");
+        System.out.println("NUMBNESS, TINGLING, OR PAIN: ");
+        System.out.println("1. Facial pain");
+        System.out.println("2. Painful muscle spasms");
+        System.out.println("3. Tingling, itching, or burning sensation in arms and legs");
         
         
-        System.out.println("SÍNTOMAS SEXUALES: ");
-        System.out.println("1. Problemas de erección");
-        System.out.println("2. Problemas con la lubricación vaginal");
+        System.out.println("OTHER BRAIN AND NEUROLOGICAL SYMPTOMS: ");
+        System.out.println("1. Reduced attention span, ability to discern, and memory loss");
+        System.out.println("2. Difficulty with reasoning and problem-solving");
+        System.out.println("3. Depression or feelings of sadness");
+        System.out.println("4. Dizziness or loss of balance");
+        System.out.println("5. Hearing loss");
         
-        System.out.println("SÍNTOMAS DEL HABLA Y LA DEGLUCIÓN: ");
-        System.out.println("1. Lenguaje mal articulado o difícil de entender");
-        System.out.println("2. Problemas para masticar y tragar");
+        
+        System.out.println("SEXUAL SYMPTOMS: ");
+        System.out.println("1. Erectile problems");
+        System.out.println("2. Problems with vaginal lubrication");
+        
+        System.out.println("SPEECH AND SWALLOWING SYMPTOMS: ");
+        System.out.println("1. Poorly articulated or difficult-to-understand speech");
+        System.out.println("2. Trouble chewing and swallowing");
 
     }
+
     
     public static void recordECG(PatientServerCommunication psCommunication){
         
