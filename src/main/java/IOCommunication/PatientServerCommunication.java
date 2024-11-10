@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author maipa
+ * @author maite
  */
 public class PatientServerCommunication {
     
@@ -28,6 +28,7 @@ public class PatientServerCommunication {
     
     //la idea es que se cree un socket para cada paciente con el server y un thread para cada interacción entre ambos
     public PatientServerCommunication (String serverAddress,int serverPort){
+        
         this.serverAddress=serverAddress;
         this.serverPort=serverPort;//9000
         try {
@@ -137,5 +138,25 @@ public class PatientServerCommunication {
         return patient;
     }
     
+    class ReceiveFeedback implements Runnable{
+
+        @Override
+        public void run() {
+            try {
+            while (true) {
+                // Continuously listens for incoming messages from the server
+                Object feedback = in.readObject();
+                handleFeedbackFromServer(feedback);
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        }
+        
+        private void handleFeedbackFromServer(Object message) {
+        // Process messages received from the server
+        System.out.println("Received from server: " + message);
+    }
+    }
     
 }

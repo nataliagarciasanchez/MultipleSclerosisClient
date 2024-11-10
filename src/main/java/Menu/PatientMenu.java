@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author maipa
+ * @author maite
  */
 public class PatientMenu {
     
