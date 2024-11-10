@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,77 +19,110 @@ import java.net.Socket;
  */
 public class PatientServerCommunication {
     
-    private String serverAddress = "localhost";//TODO aquí habrá que crear un constructor para cuando 
-    //preguntemos por el IP address del server
-    private int serverPort = 9000;//es 9000 porque es el puerto vacío por defecto
+    private String serverAddress;
+    private int serverPort; 
+    private Socket socket;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
     private Patient patient;
-
-    public void register(String username, String password) throws IOException, ClassNotFoundException {
-        
-        //crea un nuevo socket 
-        try (Socket socket = new Socket(serverAddress, serverPort);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-            out.writeObject("register"); // Acción de registro
-            out.writeObject(new User(username, password));//envía los datos de registro al server
-            System.out.println(in.readObject());//
+    
+    //la idea es que se cree un socket para cada paciente con el server y un thread para cada interacción entre ambos
+    public PatientServerCommunication (String serverAddress,int serverPort){
+        this.serverAddress=serverAddress;
+        this.serverPort=serverPort;//9000
+        try {
+            this.socket=new Socket(serverAddress,serverPort);
+            in = new ObjectInputStream(socket.getInputStream());
+            out = new ObjectOutputStream(socket.getOutputStream());
+        } catch (IOException ex) {
+            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void login(String username, String password) throws IOException, ClassNotFoundException {
+    /**
+     * Calls the server so the patient registers in the app and, therefore, it is saved in the database
+     * @param username
+     * @param password 
+     */
+    public void register(String username, String password){
+        try {
+            out.writeObject("register"); // Acción de registro
+            out.writeObject(new User(username, password));//envía los datos de registro al server
+            System.out.println(in.readObject());//muestra la confirmación del server de quue se ha registrado
+        } catch (IOException ex) {
+            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        try (Socket socket = new Socket(serverAddress, serverPort);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+    }
+    
+    /**
+     * Logs in the app with the username and password and accesses the info of that patient
+     * @param username
+     * @param password 
+     */
 
+    public void login(String username, String password) {
+
+        try {
             out.writeObject("login"); // Acción de inicio de sesión
             out.writeObject(username);
             out.writeObject(password);
-            System.out.println(in.readObject());
+            System.out.println(in.readObject());//mensaje del server de que se ha recibido
+        } catch (IOException ex) {
+            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
+    
+    /**
+     * Changes the current password of the patient
+     * @param username
+     * @param oldPassword
+     * @param newPassword 
+     */
 
-    public void changePassword(String username, String oldPassword, String newPassword) throws IOException, ClassNotFoundException {
-        try (Socket socket = new Socket(serverAddress, serverPort);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+    public void changePassword(String username, String oldPassword, String newPassword) {
 
+        try {
             out.writeObject("changePassword"); // Acción de cambio de contraseña
             out.writeObject(username);
             out.writeObject(oldPassword);
             out.writeObject(newPassword);
             System.out.println(in.readObject());
+        } catch (IOException ex) {
+            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
     
     /**
-     * findPatient es un método utilizado para buscar un paciente en la base de datos usando usuario y contraseña
-     * Busca y almacena un objeto de tipo Patient
+     * Method used to find the patient corresponding to the username and password in the database 
      * @param username
      * @param password
      * @throws IOException
      * @throws ClassNotFoundException 
      */
     public void findPatient(String username, String password) throws IOException, ClassNotFoundException {
-        try (Socket socket = new Socket(serverAddress, serverPort);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-            out.writeObject("findPatient"); // Acción para buscar al paciente
-            out.writeObject(username);
-            out.writeObject(password);
+        out.writeObject("findPatient"); // Acción para buscar al paciente
+        out.writeObject(username);
+        out.writeObject(password);
 
-            // Lee y muestra la respuesta del servidor
-            Object response = in.readObject();
-            if (response instanceof Patient) {
-                
-                patient = (Patient) response; // Guarda el objeto `Patient`
-                //System.out.println("Patient found and stored locally: " + patient);
-            } else {
-                System.out.println(response); // Imprimir mensaje de error si es un String
-            }
+        // Lee y muestra la respuesta del servidor
+        Object response = in.readObject();
+        if (response instanceof Patient) {
+            patient = (Patient) response; // Guarda el objeto `Patient`
+            //System.out.println("Patient found and stored: " + patient);
+        } else {
+            System.out.println(response); // Imprimir mensaje de error si es un String
         }
+
     }
     
     public void sendECGSignals(){

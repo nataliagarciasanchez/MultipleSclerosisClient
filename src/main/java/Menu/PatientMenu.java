@@ -30,6 +30,8 @@ public class PatientMenu {
     
     
     private static User user;
+    private static PatientServerCommunication patientServerCom;
+
     
     public static void main(String[] args) {
         
@@ -37,6 +39,14 @@ public class PatientMenu {
         int choice = 0;
         do {
             try {
+                System.out.println("Introduce the IP Adress of the server you are trying to connect: ");
+                String serverAddress=Utilities.readString();
+                System.out.println("Introduce the port: ");
+                int port=Utilities.readInteger();
+                
+                patientServerCom=new PatientServerCommunication(serverAddress, port);
+                
+                System.out.println("");
                 System.out.println("\n Welcome to the MultipleSclerosis Patient app!");
                 
                 System.out.println("What do you want to do? :");
@@ -68,19 +78,10 @@ public class PatientMenu {
 
     public static void registerMenu() {
 
-        try {
-            Patient patient=registerPatientInfo();//only the info from the POJO not the IO info
-            
-            User user=getUserInfo();
-            
-            PatientServerCommunication psCommunication=new PatientServerCommunication();
-            psCommunication.register(user.getEmail(),user.getPassword());
-           
-            patientMenu(patient, user, psCommunication);
-            
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Patient patient=registerPatientInfo();//only the info from the POJO not the IO info
+        User user=getUserInfo();
+        patientServerCom.register(user.getEmail(),user.getPassword());
+        patientMenu(patient, user);
     }
     
     public static Patient registerPatientInfo(){
@@ -166,19 +167,17 @@ public class PatientMenu {
     
     public static void loginMenu() throws IOException {
 
-        PatientServerCommunication psCommunication = new PatientServerCommunication();
-
         System.out.println("\n Press '0' to go back to menu\n");
 
         User user = getUserInfo();
 
         if (user != null) {
             try {
-                psCommunication.login(user.getEmail(), user.getPassword());
+                patientServerCom.login(user.getEmail(), user.getPassword());
                 //comunicarme con el server para obtener el patient    
-                psCommunication.findPatient(user.getEmail(), user.getPassword());
-                Patient patient = psCommunication.getPatient();
-                patientMenu(patient, user, psCommunication);
+                patientServerCom.findPatient(user.getEmail(), user.getPassword());
+                Patient patient = patientServerCom.getPatient();
+                patientMenu(patient, user);
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -189,7 +188,7 @@ public class PatientMenu {
 
     }
     
-    public static void patientMenu(Patient patient, User user, PatientServerCommunication psCommunication){
+    public static void patientMenu(Patient patient, User user){
         
         int choice;
         do {
@@ -203,11 +202,11 @@ public class PatientMenu {
                 choice = Utilities.readInteger();
                 switch (choice) {
                     case 1: {
-                        servicesMenu(patient, psCommunication);
+                        servicesMenu(patient);
                         break;
                     }
                     case 2: {
-                        configurationMenu(patient, user, psCommunication);
+                        configurationMenu(patient, user);
                         break;
                     }
                     default:
@@ -220,7 +219,7 @@ public class PatientMenu {
         }while(!Utilities.validMenu(2, choice) || choice != 0);
     }    
     
-    public static void servicesMenu(Patient patient, PatientServerCommunication psCommunication){
+    public static void servicesMenu(Patient patient){
         //TODO here we should ask for symptoms, connect to the bitalino and so on
         
         System.out.println("Welcome to your remote Multiple Sclerosis clinic. We are now going to attend your needs.");
@@ -235,8 +234,8 @@ public class PatientMenu {
         //symptomsList.add(s1);
         
         System.out.println("We are sorry you are experiencing all those symptoms. Do not worry we will make sure you feel better!");
-        recordECG(psCommunication);
-        recordEMG(psCommunication);
+        recordECG();
+        recordEMG();
         
     }
     
@@ -292,7 +291,7 @@ public class PatientMenu {
     }
 
     
-    public static void recordECG(PatientServerCommunication psCommunication){
+    public static void recordECG(){
         
         SignalType signal=SignalType.ECG;
         
@@ -311,10 +310,10 @@ public class PatientMenu {
         
         System.out.println("Great!. Signals have been recorded correctly. ");
         
-        psCommunication.sendECGSignals();
+        patientServerCom.sendECGSignals();
     }
     
-    public static void recordEMG(PatientServerCommunication psCommunication){
+    public static void recordEMG(){
         
         SignalType signal=SignalType.EMG;
         System.out.println("Now we will perform an EMG. Please follow the instructions. ");
@@ -327,12 +326,12 @@ public class PatientMenu {
         //TODO the recording will finish after 1 minute
         System.out.println("Great! EMG performed correctly. ");
         
-        psCommunication.sendEMGSignals();
+        patientServerCom.sendEMGSignals();
     }
     
     
     
-    public static void configurationMenu(Patient patient, User user, PatientServerCommunication psCommunication){
+    public static void configurationMenu(Patient patient, User user){
         int choice = 0;
         do {
             try {
@@ -367,7 +366,7 @@ public class PatientMenu {
                                     System.out.println("Not valid password.");
                                 }
                             }
-                            psCommunication.changePassword(user.getEmail(), actual_password, new_password);
+                            patientServerCom.changePassword(user.getEmail(), actual_password, new_password);
                         }
                         break;
                     }
@@ -377,8 +376,6 @@ public class PatientMenu {
             } catch (NumberFormatException e) {
                 System.out.println("You didn't type a valid option! Try an integer number between 0 and 2");
                 choice = -1;
-            } catch (IOException | ClassNotFoundException ex) {
-                Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);
             } 
         }while(!Utilities.validMenu(2, choice) || choice != 0);
     }
