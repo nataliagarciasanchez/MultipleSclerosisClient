@@ -35,128 +35,171 @@ public class PatientServerCommunication {
             this.socket=new Socket(serverAddress,serverPort);
             in = new ObjectInputStream(socket.getInputStream());
             out = new ObjectOutputStream(socket.getOutputStream());
+            
+            //el patient debe poder recibir feedback del server mientras manda las solicitudes 
+            Thread receiveThread=new Thread(new Receive());
+            receiveThread.start();
+            
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /**
-     * Calls the server so the patient registers in the app and, therefore, it is saved in the database
-     * @param username
-     * @param password 
-     */
-    public void register(String username, String password){
-        try {
-            out.writeObject("register"); // Acción de registro
-            out.writeObject(new User(username, password));//envía los datos de registro al server
-            System.out.println(in.readObject());//muestra la confirmación del server de quue se ha registrado
-        } catch (IOException ex) {
-            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+    
+    class Send {
+
+        /**
+         * Calls the server so the patient registers in the app and, therefore,
+         * it is saved in the database
+         *
+         * @param username
+         * @param password
+         */
+        public void register(String username, String password) {
+            try {
+                out.writeObject("register"); // Acción de registro
+                out.writeObject(new User(username, password));//envía los datos de registro al server
+                System.out.println(in.readObject());//muestra la confirmación del server de quue se ha registrado
+            } catch (IOException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+
+        /**
+         * Logs in the app with the username and password and accesses the info
+         * of that patient
+         *
+         * @param username
+         * @param password
+         */
+        public void login(String username, String password) {
+
+            try {
+                out.writeObject("login"); // Acción de inicio de sesión
+                out.writeObject(username);
+                out.writeObject(password);
+                System.out.println(in.readObject());//mensaje del server de que se ha recibido
+            } catch (IOException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
         
-    }
-    
-    /**
-     * Logs in the app with the username and password and accesses the info of that patient
-     * @param username
-     * @param password 
-     */
+        /**
+         * Logs out of the app by closing all connections from that patient to the server
+         */
+        public void logout(){
+            try {
+                out.writeObject("logout");
+                System.out.println(in.readObject());
+                //ahora mismo lo hace el server cuando recive esta opcion
+                //releaseResources(in, out, socket);
+            } catch (IOException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
 
-    public void login(String username, String password) {
+        /**
+         * Changes the current password of the patient
+         *
+         * @param username
+         * @param oldPassword
+         * @param newPassword
+         */
+        public void changePassword(String username, String oldPassword, String newPassword) {
 
-        try {
-            out.writeObject("login"); // Acción de inicio de sesión
+            try {
+                out.writeObject("changePassword"); // Acción de cambio de contraseña
+                out.writeObject(username);
+                out.writeObject(oldPassword);
+                out.writeObject(newPassword);
+                System.out.println(in.readObject());
+            } catch (IOException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+
+        /**
+         * Method used to find the patient corresponding to the username and
+         * password in the database
+         *
+         * @param username
+         * @param password
+         * @throws IOException
+         * @throws ClassNotFoundException
+         */
+        public void findPatient(String username, String password) throws IOException, ClassNotFoundException {
+
+            out.writeObject("findPatient"); // Acción para buscar al paciente
             out.writeObject(username);
             out.writeObject(password);
-            System.out.println(in.readObject());//mensaje del server de que se ha recibido
-        } catch (IOException ex) {
-            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+
+            // Lee y muestra la respuesta del servidor
+            Object response = in.readObject();
+            if (response instanceof Patient) {
+                patient = (Patient) response; // Guarda el objeto `Patient`
+                //System.out.println("Patient found and stored: " + patient);
+            } else {
+                System.out.println(response); // Imprimir mensaje de error si es un String
+            }
+
         }
 
-    }
-    
-    /**
-     * Changes the current password of the patient
-     * @param username
-     * @param oldPassword
-     * @param newPassword 
-     */
+        public void sendECGSignals() {
+            //TODO manda la señales al server
+        }
 
-    public void changePassword(String username, String oldPassword, String newPassword) {
+        public void sendEMGSignals() {
+            //TODO manda las señales al server
+        }
 
+        public Patient getPatient() {
+            return patient;
+        }
+        
+        private static void releaseResources(ObjectInputStream in, ObjectOutputStream out, Socket socket){
         try {
-            out.writeObject("changePassword"); // Acción de cambio de contraseña
-            out.writeObject(username);
-            out.writeObject(oldPassword);
-            out.writeObject(newPassword);
-            System.out.println(in.readObject());
-        } catch (IOException ex) {
-            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            in.close();
+            out.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-    }
-    
-    /**
-     * Method used to find the patient corresponding to the username and password in the database 
-     * @param username
-     * @param password
-     * @throws IOException
-     * @throws ClassNotFoundException 
-     */
-    public void findPatient(String username, String password) throws IOException, ClassNotFoundException {
-
-        out.writeObject("findPatient"); // Acción para buscar al paciente
-        out.writeObject(username);
-        out.writeObject(password);
-
-        // Lee y muestra la respuesta del servidor
-        Object response = in.readObject();
-        if (response instanceof Patient) {
-            patient = (Patient) response; // Guarda el objeto `Patient`
-            //System.out.println("Patient found and stored: " + patient);
-        } else {
-            System.out.println(response); // Imprimir mensaje de error si es un String
-        }
-
-    }
-    
-    public void sendECGSignals(){
-        //TODO manda la señales al server
-    }
-    
-    public void sendEMGSignals(){
-        //TODO manda las señales al server
+    } 
+        
     }
 
-    public Patient getPatient() {
-        return patient;
-    }
-    
-    class ReceiveFeedback implements Runnable{
+    class Receive implements Runnable {
 
         @Override
         public void run() {
             try {
-            while (true) {
-                // Continuously listens for incoming messages from the server
-                Object feedback = in.readObject();
-                handleFeedbackFromServer(feedback);
+                while (true) {
+                    // Continuously listens for incoming messages from the server
+                    Object feedback = in.readObject();
+                    handleFeedbackFromServer(feedback);
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
             }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
-        }
-        
+
         private void handleFeedbackFromServer(Object message) {
-        // Process messages received from the server
-        System.out.println("Received from server: " + message);
-    }
+            // Process messages received from the server
+            System.out.println("Received from server: " + message);
+        }
     }
     
+    
+
 }
