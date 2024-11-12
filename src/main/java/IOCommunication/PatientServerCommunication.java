@@ -46,7 +46,7 @@ public class PatientServerCommunication {
     }
 
     
-    class Send {
+    public class Send {
 
         /**
          * Calls the server so the patient registers in the app and, therefore,

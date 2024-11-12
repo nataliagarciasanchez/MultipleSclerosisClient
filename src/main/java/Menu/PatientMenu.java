@@ -31,6 +31,7 @@ public class PatientMenu {
     
     private static User user;
     private static PatientServerCommunication patientServerCom;
+    private static PatientServerCommunication.Send send;
 
     
     public static void main(String[] args) {
@@ -45,6 +46,7 @@ public class PatientMenu {
                 int port=Utilities.readInteger();
                 
                 patientServerCom=new PatientServerCommunication(serverAddress, port);
+                send=patientServerCom.new Send();//llama a la clase anidada de send en PatientServerCommunication
                 
                 System.out.println("");
                 System.out.println("\n Welcome to the MultipleSclerosis Patient app!");
@@ -80,7 +82,7 @@ public class PatientMenu {
 
         Patient patient=registerPatientInfo();//only the info from the POJO not the IO info
         User user=getUserInfo();
-        patientServerCom.register(user.getEmail(),user.getPassword());
+        send.register(user.getEmail(),user.getPassword());
         patientMenu(patient, user);
     }
     
@@ -173,10 +175,10 @@ public class PatientMenu {
 
         if (user != null) {
             try {
-                patientServerCom.login(user.getEmail(), user.getPassword());
+                send.login(user.getEmail(), user.getPassword());
                 //comunicarme con el server para obtener el patient    
-                patientServerCom.findPatient(user.getEmail(), user.getPassword());
-                Patient patient = patientServerCom.getPatient();
+                send.findPatient(user.getEmail(), user.getPassword());
+                Patient patient = send.getPatient();
                 patientMenu(patient, user);
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);
@@ -237,6 +239,7 @@ public class PatientMenu {
         recordECG();
         recordEMG();
         
+        diagnosisFromDoctor();
     }
     
     public static void showSymptoms() {
@@ -305,12 +308,11 @@ public class PatientMenu {
         System.out.println("3. Third, place the BLACK electrode on a neutral location, ideally on the right side of the torso, near the lower right abdomen or hip.");
         
         System.out.println("\n Once everything is correctly placed hit play on the program that will appear on screen.");
-        //TODO aparece el programa de Shark en pantalla? o se debe abrir desde el programa
-        //TODO the recording will finish after 1 minute
+        
         
         System.out.println("Great!. Signals have been recorded correctly. ");
         
-        patientServerCom.sendECGSignals();
+        send.sendECGSignals();
     }
     
     public static void recordEMG(){
@@ -322,14 +324,17 @@ public class PatientMenu {
         System.out.println("3. Ground electrode (BLACK): On a bony area like the elbow or wrist. ");
         
         System.out.println("\n Once everything is correctly placed hit play on the program that will appear on screen.");
-        //TODO aparece el programa de Shark en pantalla? o se debe abrir desde el programa
-        //TODO the recording will finish after 1 minute
+        
         System.out.println("Great! EMG performed correctly. ");
         
-        patientServerCom.sendEMGSignals();
+        send.sendEMGSignals();
     }
     
-    
+    public static void diagnosisFromDoctor(){
+       /*TODO el feedback del doctor se va a mostrar automáticamente cuando el server 
+       se ponga en contacto con este, una vez las señales del patient han sido mandadas ya que el hilo de la 
+        clase Receive se crea al instanciar la communication. Es decir al conectarse un nuevo paciente*/
+    }
     
     public static void configurationMenu(Patient patient, User user){
         int choice = 0;
@@ -366,7 +371,7 @@ public class PatientMenu {
                                     System.out.println("Not valid password.");
                                 }
                             }
-                            patientServerCom.changePassword(user.getEmail(), actual_password, new_password);
+                            send.changePassword(user.getEmail(), actual_password, new_password);
                         }
                         break;
                     }
