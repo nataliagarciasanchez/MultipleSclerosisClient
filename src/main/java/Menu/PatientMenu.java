@@ -15,7 +15,6 @@ import POJOs.Symptom;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -49,7 +48,7 @@ public class PatientMenu {
                 send=patientServerCom.new Send();//llama a la clase anidada de send en PatientServerCommunication
                 
                 System.out.println("");
-                System.out.println("\n Welcome to the MultipleSclerosis Patient app!");
+                System.out.println("\nWelcome to the MultipleSclerosis Patient app!");
                 
                 System.out.println("What do you want to do? :");
                 System.out.println("1. Register");
@@ -102,16 +101,18 @@ public class PatientMenu {
             
         } while (!Utilities.validateID(NIF));
         
-        String date_str="";
-        Date dob=null;
+        String date_str;
+        Date sqlDob=null;
         boolean validDate=false;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        
         
         while(!validDate){
-            System.out.println("Date of birth (dd/MM/yyyy): ");
-            date_str=Utilities.readString();
+            
             try{
-               dob=(Date) dateFormat.parse(date_str);
+                System.out.println("Date of birth (dd/MM/yyyy): ");
+                date_str=Utilities.readString();
+                sqlDob=Utilities.convertString2SqlDate(date_str);
+                validDate=true;
             }catch(ParseException e){
                 System.out.println("Invalid date. Please introduce date in correct format (dd/MM/yyyy) ");
             }
@@ -137,7 +138,7 @@ public class PatientMenu {
             
         } while (!Utilities.isValidPhone(phone_number));
         
-        return new Patient(name,surname,NIF,dob,gender,phone_number);
+        return new Patient(name,surname,NIF,sqlDob,gender,phone_number);
     }
 
     public static User getUserInfo(){

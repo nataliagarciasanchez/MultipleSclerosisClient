@@ -6,33 +6,21 @@ package POJOs;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.*;
+
 
 /**
  *
  * @author maipa
  */
 
-@Table(name = "Users")
 public class User implements Serializable{
     
     private static final long serialVersionUID = -7022171013544748813L; 
     
-    @Id
-    @GeneratedValue(generator = "Users")
-    @TableGenerator(name = "Users", table = "sqlite_sequence",
-    pkColumnName = "name", valueColumnName = "seq", pkColumnValue = "Users")
-    
     private Integer id; 
-    @Column(unique = true)
-      private String email;//the email is the username 
-      private String password;
-      
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "roleId")
-    private final String role="Patient";
+    private String email;//the email is the username 
+    private String password;
+    private Role role;
      
       
     public User() {
@@ -43,6 +31,7 @@ public class User implements Serializable{
 	super();
 	this.email = email;
 	this.password = password;
+        this.role=new Role("patient");
     }
     
     public Integer getId() {
@@ -61,7 +50,7 @@ public class User implements Serializable{
         this.password = password;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 

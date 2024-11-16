@@ -33,8 +33,8 @@ public class PatientServerCommunication {
         this.serverPort=serverPort;//9000
         try {
             this.socket=new Socket(serverAddress,serverPort);
-            in = new ObjectInputStream(socket.getInputStream());
             out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
             
             //el patient debe poder recibir feedback del server mientras manda las solicitudes 
             Thread receiveThread=new Thread(new Receive());
