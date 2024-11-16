@@ -81,7 +81,7 @@ public class PatientMenu {
 
         Patient patient=registerPatientInfo();//only the info from the POJO not the IO info
         User user=getUserInfo();
-        send.register(user.getEmail(),user.getPassword());
+        send.register(user.getEmail(),user.getPassword());//TODO TIENE QUE MANDAR TMB EL PATIENT COMPELTO
         patientMenu(patient, user);
     }
     
@@ -152,8 +152,8 @@ public class PatientMenu {
 
         String password;
         while (true) {
-            System.out.println("Password: ");
-            System.out.println("Password must have at least:  \n 8 characters \n 1 capital letter \n 1 number");
+            
+            System.out.println("Password. NOTE: Password must have at least:  \n 8 characters \n 1 capital letter \n 1 number");
             password = Utilities.readString();
             
             if (Utilities.isValidPassword(password)) {

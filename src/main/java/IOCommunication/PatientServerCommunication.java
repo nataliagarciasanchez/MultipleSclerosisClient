@@ -6,6 +6,7 @@ package IOCommunication;
 
 import POJOs.User;
 import POJOs.Patient;
+import POJOs.Role;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

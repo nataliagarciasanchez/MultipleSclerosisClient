@@ -31,7 +31,7 @@ public class User implements Serializable{
 	super();
 	this.email = email;
 	this.password = password;
-        this.role=new Role("patient");
+        this.role=new Role(1,"patient");
     }
     
     public Integer getId() {
