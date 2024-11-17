@@ -35,7 +35,7 @@ public class Patient implements Serializable{
         super();
     }
 
-    public Patient(String name, String surname, String NIF, Date dob, Gender gender, String phone) {
+    public Patient(String name, String surname, String NIF, Date dob, Gender gender, String phone, Doctor doctor) {
         
         this.name = name;
         this.surname=surname;
@@ -43,6 +43,7 @@ public class Patient implements Serializable{
         this.dob = dob;
         this.gender = gender;
         this.phone = phone;
+        this.doctor=doctor;
         
     }
 

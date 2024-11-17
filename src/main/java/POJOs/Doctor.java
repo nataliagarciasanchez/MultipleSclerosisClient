@@ -16,7 +16,8 @@ import java.util.Objects;
 
 public class Doctor implements Serializable{
     
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID=1234567891011121314L;
+    
     private Integer id;
     private String name;
     private String specialty;
@@ -28,9 +29,9 @@ public class Doctor implements Serializable{
     super();
     }
 
-    public Doctor(String name, Integer id, String specialty, User user) {
+    public Doctor(String name, String specialty, User user) {
+        
         this.name = name;
-        this.id = id;
         this.specialty = specialty;
         this.user = user;
     }

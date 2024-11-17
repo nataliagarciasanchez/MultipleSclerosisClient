@@ -8,6 +8,7 @@ package Menu;
 import IOCommunication.PatientServerCommunication;
 import POJOs.User;
 import Menu.Utilities.Utilities;
+import POJOs.Doctor;
 import POJOs.Gender;
 import POJOs.Patient;
 import POJOs.SignalType;
@@ -81,7 +82,7 @@ public class PatientMenu {
 
         Patient patient=registerPatientInfo();//only the info from the POJO not the IO info
         User user=getUserInfo();
-        send.register(user.getEmail(),user.getPassword());//TODO TIENE QUE MANDAR TMB EL PATIENT COMPELTO
+        send.register(user.getEmail(),user.getPassword(), patient);
         patientMenu(patient, user);
     }
     
@@ -138,7 +139,9 @@ public class PatientMenu {
             
         } while (!Utilities.isValidPhone(phone_number));
         
-        return new Patient(name,surname,NIF,sqlDob,gender,phone_number);
+        Doctor doctor=new Doctor();//TODO crear un método que asigne al patient un doctor aleatoriamente 
+        
+        return new Patient(name,surname,NIF,sqlDob,gender,phone_number, doctor);
     }
 
     public static User getUserInfo(){

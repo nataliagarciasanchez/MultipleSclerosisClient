@@ -55,11 +55,13 @@ public class PatientServerCommunication {
          *
          * @param username
          * @param password
+         * @param patient
          */
-        public void register(String username, String password) {
+        public void register(String username, String password, Patient patient) {
             try {
                 out.writeObject("register"); // Acción de registro
                 out.writeObject(new User(username, password));//envía los datos de registro al server
+                out.writeObject(patient);
                 System.out.println(in.readObject());//muestra la confirmación del server de quue se ha registrado
             } catch (IOException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
