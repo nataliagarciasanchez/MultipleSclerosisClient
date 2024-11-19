@@ -34,6 +34,27 @@ public class Patient implements Serializable{
     public Patient() {
         super();
     }
+    
+    /**
+     * Constructor used to create the patient wo/ the doctor assigned
+     * It will later be assigned by the server
+     * @param name
+     * @param surname
+     * @param NIF
+     * @param dob
+     * @param gender
+     * @param phone 
+     */
+    public Patient(String name, String surname, String NIF, Date dob, Gender gender, String phone) {
+        
+        this.name = name;
+        this.surname=surname;
+        this.NIF=NIF;
+        this.dob = dob;
+        this.gender = gender;
+        this.phone = phone;
+        
+    }
 
     public Patient(String name, String surname, String NIF, Date dob, Gender gender, String phone, Doctor doctor) {
         

@@ -21,11 +21,11 @@ public class ComPatientTemporalMenu {
     
     public static void main(String[] args) {
         try {
-            PatientServerCommunication com=new PatientServerCommunication("localhost", 9000);
+            PatientServerCommunication com=new PatientServerCommunication("localhost", 1027);
             PatientServerCommunication.Send send=com.new Send();
             java.sql.Date dob=Utilities.convertString2SqlDate("14/10/2003");
-            Doctor doctor=new Doctor("Dr.Garcia", "NEUROLOGY", new User("doctor.garcia@multipleSclerosis.com","Password456"));
-            Patient maite=new Patient("maite", "gomez", "05459423M",dob,Gender.FEMALE, "609526931",doctor );
+            //Doctor doctor=new Doctor("Dr.Garcia", "NEUROLOGY", new User("doctor.garcia@multipleSclerosis.com","Password456"));
+            Patient maite=new Patient("maite", "gomez", "05459423M",dob,Gender.FEMALE, "609526931");
             send.register("maipat1310@gmail.com", "Password123", maite);
             System.out.println("Ha llegado al final del main del patient");
             //send.login("maipat1310@gmail.com", "Password123");
