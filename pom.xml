@@ -45,7 +45,6 @@
     <name>MultipleSclerosisClient</name>
     <build>
         <resources>
-            <!-- Include src/main/java as a resource directory -->
             <resource>
                 <directory>src/main/java</directory>
                 <includes>
@@ -59,6 +58,18 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.0</version>
             </plugin>
+             <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.2.2</version>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>Menu.MainPatientUI</mainClass> 
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
         </plugins>
     </build>
 </project>
