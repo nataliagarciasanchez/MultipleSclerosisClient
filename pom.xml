@@ -44,6 +44,15 @@
     </dependencies>
     <name>MultipleSclerosisClient</name>
     <build>
+        <resources>
+            <!-- Include src/main/java as a resource directory -->
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
