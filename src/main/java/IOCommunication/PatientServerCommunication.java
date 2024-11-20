@@ -26,7 +26,7 @@ public class PatientServerCommunication {
     private ObjectOutputStream out;
     private Patient patient;
     
-    //la idea es que se cree un socket para cada paciente con el server y un thread para cada interacción entre ambos
+  
     public PatientServerCommunication (String serverAddress,int serverPort){
         
         this.serverAddress=serverAddress;
@@ -38,8 +38,8 @@ public class PatientServerCommunication {
             in = new ObjectInputStream(socket.getInputStream());
             
             //el patient debe poder recibir feedback del server mientras manda las solicitudes 
-            Thread receiveThread=new Thread(new Receive());
-            receiveThread.start();
+            // Thread receiveThread=new Thread(new Receive());
+            //receiveThread.start();
             
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
@@ -181,11 +181,17 @@ public class PatientServerCommunication {
     }
 
     class Receive implements Runnable {
-
+        
+        private boolean running=true;
+        
+        public void stop() {
+        running = false;
+        }
+        
         @Override
         public void run() {
             try {
-                while (true) {
+                while (running) {
                     // Continuously listens for incoming messages from the server
                     Object feedback = in.readObject();
                     handleFeedbackFromServer(feedback);
