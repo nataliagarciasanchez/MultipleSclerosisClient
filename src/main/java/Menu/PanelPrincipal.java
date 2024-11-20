@@ -96,9 +96,9 @@ public class PanelPrincipal extends JPanel {
         topButtonPanel.add(logInButton);
 
         // Add components to the dynamic panel in the desired order
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 50))); // Spacer to lower everything
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 150))); // Spacer to lower everything
         dynamicPanel.add(questionLabel); // Add the question at the top
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spacer (20 pixels)
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 40))); // Spacer (20 pixels)
         dynamicPanel.add(topButtonPanel); // Add buttons directly below the question
 
         dynamicPanel.revalidate();
