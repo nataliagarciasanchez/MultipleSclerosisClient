@@ -6,7 +6,6 @@ package IOCommunication;
 
 import POJOs.User;
 import POJOs.Patient;
-import POJOs.Role;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -35,6 +34,7 @@ public class PatientServerCommunication {
         try {
             this.socket=new Socket(serverAddress,serverPort);
             out = new ObjectOutputStream(socket.getOutputStream());
+            this.out.flush();
             in = new ObjectInputStream(socket.getInputStream());
             
             //el patient debe poder recibir feedback del server mientras manda las solicitudes 
@@ -62,10 +62,14 @@ public class PatientServerCommunication {
                 out.writeObject("register"); // Acción de registro
                 out.writeObject(new User(username, password));//envía los datos de registro al server
                 out.writeObject(patient);
-                System.out.println(in.readObject());//muestra la confirmación del server de quue se ha registrado
-            } catch (IOException ex) {
-                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
+                
+                out.flush();
+                
+                System.out.println("Registering.....");
+                String confirmation=(String) in.readObject();
+                System.out.println(confirmation);//muestra la confirmación del server de que se ha registrado
+                
+            } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
 
@@ -85,9 +89,7 @@ public class PatientServerCommunication {
                 out.writeObject(username);
                 out.writeObject(password);
                 System.out.println(in.readObject());//mensaje del server de que se ha recibido
-            } catch (IOException ex) {
-                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
+            } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
 
@@ -102,9 +104,7 @@ public class PatientServerCommunication {
                 System.out.println(in.readObject());
                 //ahora mismo lo hace el server cuando recive esta opcion
                 //releaseResources(in, out, socket);
-            } catch (IOException ex) {
-                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
+            } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -124,9 +124,7 @@ public class PatientServerCommunication {
                 out.writeObject(oldPassword);
                 out.writeObject(newPassword);
                 System.out.println(in.readObject());
-            } catch (IOException ex) {
-                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
+            } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
 

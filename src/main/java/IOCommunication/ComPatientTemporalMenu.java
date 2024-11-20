@@ -5,10 +5,8 @@
 package IOCommunication;
 
 import Menu.Utilities.Utilities;
-import POJOs.Doctor;
 import POJOs.Gender;
 import POJOs.Patient;
-import POJOs.User;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +25,7 @@ public class ComPatientTemporalMenu {
             //Doctor doctor=new Doctor("Dr.Garcia", "NEUROLOGY", new User("doctor.garcia@multipleSclerosis.com","Password456"));
             Patient maite=new Patient("maite", "gomez", "05459423M",dob,Gender.FEMALE, "609526931");
             send.register("maipat1310@gmail.com", "Password123", maite);
-            System.out.println("Ha llegado al final del main del patient");
+            //System.out.println("Ha llegado al final del main del patient");
             //send.login("maipat1310@gmail.com", "Password123");
         } catch (ParseException ex) {
             Logger.getLogger(ComPatientTemporalMenu.class.getName()).log(Level.SEVERE, null, ex);
