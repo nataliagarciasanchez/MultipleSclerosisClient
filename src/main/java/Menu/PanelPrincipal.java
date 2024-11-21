@@ -173,6 +173,9 @@ public class PanelPrincipal extends JPanel {
             JOptionPane.showMessageDialog(this, "Please enter both username and password.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        
+        //HOLA
         /*
         try {
             
