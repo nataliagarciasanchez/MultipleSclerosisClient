@@ -19,7 +19,7 @@ public class FramePrincipal extends JFrame{
         setLocationRelativeTo(null); 
 
        
-        add(new PanelPrincipal(patientServerCom));
+        add(new PanelPrincipal());
     }
     
 }
