@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Menu;
-
+import IOCommunication.PatientServerCommunication;
 import javax.swing.*;
 
 /**
@@ -11,7 +11,7 @@ import javax.swing.*;
  * @author nataliagarciasanchez
  */
 public class FramePrincipal extends JFrame{
-    public FramePrincipal() {
+    public FramePrincipal(PatientServerCommunication patientServerCom) {
         
         setTitle("Multiple Sclerosis Monitoring");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -19,7 +19,7 @@ public class FramePrincipal extends JFrame{
         setLocationRelativeTo(null); 
 
        
-        add(new PanelPrincipal());
+        add(new PanelPrincipal(patientServerCom));
     }
     
 }
