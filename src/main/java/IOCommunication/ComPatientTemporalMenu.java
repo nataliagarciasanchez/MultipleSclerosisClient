@@ -18,17 +18,29 @@ import java.util.logging.Logger;
 public class ComPatientTemporalMenu {
     
     public static void main(String[] args) {
+        PatientServerCommunication com = new PatientServerCommunication("localhost", 1027);
+        PatientServerCommunication.Send send = com.new Send();
+        //register(send);
+        login(send);
+    }
+
+    public static void register(PatientServerCommunication.Send send) {
         try {
-            PatientServerCommunication com=new PatientServerCommunication("localhost", 1027);
-            PatientServerCommunication.Send send=com.new Send();
-            java.sql.Date dob=Utilities.convertString2SqlDate("14/10/2003");
+            java.sql.Date dob = Utilities.convertString2SqlDate("14/10/2003");
             //Doctor doctor=new Doctor("Dr.Garcia", "NEUROLOGY", new User("doctor.garcia@multipleSclerosis.com","Password456"));
-            Patient maite=new Patient("maite", "gomez", "05459423M",dob,Gender.FEMALE, "609526931");
+            Patient maite = new Patient("maite", "gomez", "05459423M", dob, Gender.FEMALE, "609526931");
             send.register("maipat1310@gmail.com", "Password123", maite);
-            //System.out.println("Ha llegado al final del main del patient");
-            //send.login("maipat1310@gmail.com", "Password123");
         } catch (ParseException ex) {
             Logger.getLogger(ComPatientTemporalMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static void login(PatientServerCommunication.Send send){
+       String message=send.login("maipat1310@gmail.com", "Password123");
+        System.out.println(message);
+    }
+    
+    public static void changePassword(PatientServerCommunication.Send send){
+        send.updateInformation("maipat1310@gmail.com", "Password123", "PasswordNew123");
     }
 }

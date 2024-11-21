@@ -178,15 +178,10 @@ public class PatientMenu {
         User user = getUserInfo();
 
         if (user != null) {
-            try {
-                send.login(user.getEmail(), user.getPassword());
-                //comunicarme con el server para obtener el patient    
-                send.findPatient(user.getEmail(), user.getPassword());
-                Patient patient = send.getPatient();
-                patientMenu(patient, user);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            send.login(user.getEmail(), user.getPassword());
+            //comunicarme con el server para obtener el patient
+            Patient patient = send.getPatient();
+            patientMenu(patient, user);
 
         } else {
             System.out.println("Wrong username/password combination");
@@ -375,7 +370,7 @@ public class PatientMenu {
                                     System.out.println("Not valid password.");
                                 }
                             }
-                            send.changePassword(user.getEmail(), actual_password, new_password);
+                            send.updateInformation(user.getEmail(), actual_password, new_password);
                         }
                         break;
                     }

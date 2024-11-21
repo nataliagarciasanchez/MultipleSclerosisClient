@@ -80,18 +80,21 @@ public class PatientServerCommunication {
          *
          * @param username
          * @param password
+         * @return message
          */
-        public void login(String username, String password) {
-
+        public String login(String username, String password) {
+            String confirmation_message = null;
             try {
                 out.writeObject("login"); // Acción de inicio de sesión
                 out.writeObject(username);
                 out.writeObject(password);
-                System.out.println(in.readObject());//mensaje del server de que se ha recibido
+                System.out.println("Logging in.....");
+                confirmation_message=(String) in.readObject();//mensaje del server de que se ha recibido
+  
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+            return confirmation_message;
         }
         
         /**
@@ -115,12 +118,11 @@ public class PatientServerCommunication {
          * @param oldPassword
          * @param newPassword
          */
-        public void changePassword(String username, String oldPassword, String newPassword) {
+        public void updateInformation(String username, String oldPassword, String newPassword) {
 
             try {
-                out.writeObject("changePassword"); // Acción de cambio de contraseña
+                out.writeObject("updateInformation"); // Acción de cambio de contraseña
                 out.writeObject(username);
-                out.writeObject(oldPassword);
                 out.writeObject(newPassword);
                 System.out.println(in.readObject());
             } catch (IOException | ClassNotFoundException ex) {
@@ -128,32 +130,7 @@ public class PatientServerCommunication {
             }
 
         }
-
-        /**
-         * Method used to find the patient corresponding to the username and
-         * password in the database
-         *
-         * @param username
-         * @param password
-         * @throws IOException
-         * @throws ClassNotFoundException
-         */
-        public void findPatient(String username, String password) throws IOException, ClassNotFoundException {
-
-            out.writeObject("findPatient"); // Acción para buscar al paciente
-            out.writeObject(username);
-            out.writeObject(password);
-
-            // Lee y muestra la respuesta del servidor
-            Object response = in.readObject();
-            if (response instanceof Patient) {
-                patient = (Patient) response; // Guarda el objeto `Patient`
-                //System.out.println("Patient found and stored: " + patient);
-            } else {
-                System.out.println(response); // Imprimir mensaje de error si es un String
-            }
-
-        }
+        
 
         public void sendECGSignals() {
             //TODO manda la señales al server
