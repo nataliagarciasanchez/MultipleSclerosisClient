@@ -64,7 +64,6 @@ public class PatientServerCommunication {
                 out.writeObject(patient);
                 
                 out.flush();
-                
                 System.out.println("Registering.....");
                 String confirmation=(String) in.readObject();
                 System.out.println(confirmation);//muestra la confirmación del server de que se ha registrado
