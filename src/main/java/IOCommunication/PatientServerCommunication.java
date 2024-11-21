@@ -57,10 +57,10 @@ public class PatientServerCommunication {
          * @param password
          * @param patient
          */
-        public void register(String username, String password, Patient patient) {
+        public void register(Patient patient) {
             try {
                 out.writeObject("register"); // Acción de registro
-                out.writeObject(new User(username, password));//envía los datos de registro al server
+                out.writeObject(patient.getUser());//envía los datos de registro al server
                 out.writeObject(patient);
                 
                 out.flush();
@@ -114,16 +114,14 @@ public class PatientServerCommunication {
         /**
          * Changes the current password of the patient
          *
-         * @param username
-         * @param oldPassword
-         * @param newPassword
+         * @param user
          */
-        public void updateInformation(String username, String oldPassword, String newPassword) {
+        public void updateInformation(User user) {
 
             try {
                 out.writeObject("updateInformation"); // Acción de cambio de contraseña
-                out.writeObject(username);
-                out.writeObject(newPassword);
+                out.writeObject(user.getEmail());
+                out.writeObject(user.getPassword());
                 System.out.println(in.readObject());
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
