@@ -22,7 +22,8 @@ public class ComPatientTemporalMenu {
         PatientServerCommunication com = new PatientServerCommunication("localhost", 1027);
         PatientServerCommunication.Send send = com.new Send();
         //register(send);
-        login(send);
+        //login(send);
+        updateInfo(send);
     }
 
     public static void register(PatientServerCommunication.Send send) {
@@ -40,10 +41,12 @@ public class ComPatientTemporalMenu {
     
     public static void login(PatientServerCommunication.Send send){
        Patient patient=send.login("maipat1310@gmail.com", "Password123");
-        System.out.println(patient);
+       System.out.println(patient);
     }
     
     public static void updateInfo(PatientServerCommunication.Send send){
+        Patient patient=send.login("maipat1310@gmail.com", "Password123");
+       System.out.println(patient);
         User user=new User("maipat1310@gmail.com", "Password123");
         send.updateInformation(user);
     }
