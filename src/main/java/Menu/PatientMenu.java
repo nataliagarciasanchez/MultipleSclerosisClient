@@ -142,7 +142,7 @@ public class PatientMenu {
         
         Doctor doctor=new Doctor();//TODO crear un método que asigne al patient un doctor aleatoriamente 
         
-        return new Patient(name,surname,NIF,sqlDob,gender,phone_number, doctor);
+        return new Patient(name,surname,NIF,sqlDob,gender,phone_number, doctor,user);
     }
 
     public static User getUserInfo(){

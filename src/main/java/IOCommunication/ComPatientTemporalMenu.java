@@ -46,8 +46,10 @@ public class ComPatientTemporalMenu {
     
     public static void updateInfo(PatientServerCommunication.Send send){
         Patient patient=send.login("maipat1310@gmail.com", "Password123");
-       System.out.println(patient);
-        User user=new User("maipat1310@gmail.com", "Password123");
+        System.out.println(patient);
+        User user=patient.getUser();
+        System.out.println("user\n" + user);
+        user.setPassword("NEW");
         send.updateInformation(user);
     }
 }

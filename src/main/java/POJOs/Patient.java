@@ -56,7 +56,7 @@ public class Patient implements Serializable{
         
     }
 
-    public Patient(String name, String surname, String NIF, Date dob, Gender gender, String phone, Doctor doctor) {
+    public Patient(String name, String surname, String NIF, Date dob, Gender gender, String phone, Doctor doctor, User user) {
         
         this.name = name;
         this.surname=surname;
@@ -65,6 +65,7 @@ public class Patient implements Serializable{
         this.gender = gender;
         this.phone = phone;
         this.doctor=doctor;
+        this.user=user;
         
     }
 
