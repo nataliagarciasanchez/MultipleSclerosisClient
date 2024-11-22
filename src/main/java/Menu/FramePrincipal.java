@@ -11,7 +11,7 @@ import javax.swing.*;
  * @author nataliagarciasanchez
  */
 public class FramePrincipal extends JFrame{
-    public FramePrincipal(PatientServerCommunication patientServerCom) {
+    public FramePrincipal(PatientServerCommunication.Send send) {
         
         setTitle("Multiple Sclerosis Monitoring");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -19,7 +19,7 @@ public class FramePrincipal extends JFrame{
         setLocationRelativeTo(null); 
 
        
-        add(new PanelPrincipal());
+        add(new PanelPrincipal(send));
     }
     
 }

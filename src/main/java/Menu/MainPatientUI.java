@@ -39,7 +39,7 @@ public class MainPatientUI {
 
             // Iniciar la interfaz gráfica
             SwingUtilities.invokeLater(() -> {
-                FramePrincipal mainFrame = new FramePrincipal(patientServerCom);
+                FramePrincipal mainFrame = new FramePrincipal(send);
                 mainFrame.setVisible(true);
             });
 

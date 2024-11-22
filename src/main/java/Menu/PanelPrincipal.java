@@ -7,279 +7,240 @@ package Menu;
 import javax.swing.*;
 import java.awt.*;
 
-//import IOCommunication.PatientServerCommunication;
-//import POJOs.Patient;
+import IOCommunication.PatientServerCommunication;
+import POJOs.Gender;
+import POJOs.Patient;
+import POJOs.User;
+import java.sql.Date;
 
 
 /**
  *
  * @author nataliagarciasanchez
  */
+
 public class PanelPrincipal extends JPanel {
     private JPanel dynamicPanel; // Panel for dynamic content
-    private JButton cancelButton;
-    private JButton okButton;
-    private JButton logInButton;
-    private JButton signUpButton;
+    private final Image backgroundImage; // Background image
+    private final PatientServerCommunication.Send send;
 
-    public PanelPrincipal() {
-        setBackground(new Color(153, 153, 153));
+    public PanelPrincipal(PatientServerCommunication.Send send) {
+        this.send = send;
+
+        // Load background image
+        backgroundImage = new ImageIcon(getClass().getResource("/images/Fondo.jpg")).getImage();
+
         setLayout(new BorderLayout());
 
-        // Left panel for the logo
-        JLabel logoLabel = new JLabel();
-        logoLabel.setIcon(new ImageIcon(getClass().getResource("/images/LogoNeuroTrack.png")));
-        logoLabel.setHorizontalAlignment(SwingConstants.LEFT);
-
-        JPanel leftPanel = new JPanel(new BorderLayout());
-        leftPanel.setBackground(new Color(153, 153, 153));
-        leftPanel.setBorder(BorderFactory.createEmptyBorder(50, 200, 50, 50));
-        leftPanel.add(logoLabel, BorderLayout.CENTER);
-
-        // Right panel for the title and dynamic content
-        JPanel rightPanel = new JPanel();
-        rightPanel.setBackground(new Color(153, 153, 153));
-        rightPanel.setLayout(new BorderLayout());
-
-        // Title label with extra space above
+        // Title Panel
         JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(153, 153, 153));
+        titlePanel.setOpaque(false); // Transparent background
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
-        titlePanel.add(Box.createRigidArea(new Dimension(0, 50))); // Add spacer above the title
+        titlePanel.add(Box.createRigidArea(new Dimension(0, 100))); // Spacer from the top
 
         JLabel titleLabel = new JLabel("Multiple Sclerosis Monitoring");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 72)); // Original size restored
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 52));
         titleLabel.setForeground(Color.WHITE);
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         titlePanel.add(titleLabel);
-        titlePanel.add(Box.createRigidArea(new Dimension(0, 20))); // Add spacer below the title
-        rightPanel.add(titlePanel, BorderLayout.NORTH);
+        titlePanel.add(Box.createRigidArea(new Dimension(0, 40))); // Spacer below the title
 
-        // Dynamic panel for question, buttons, and forms
+        // Dynamic Panel for question and buttons
         dynamicPanel = new JPanel();
-        dynamicPanel.setBackground(new Color(153, 153, 153));
+        dynamicPanel.setOpaque(false); // Transparent background
         dynamicPanel.setLayout(new BoxLayout(dynamicPanel, BoxLayout.Y_AXIS));
 
-        rightPanel.add(dynamicPanel, BorderLayout.CENTER);
-
-        // Initialize buttons
-        logInButton = new JButton("Log In");
-        signUpButton = new JButton("Sign Up");
-        cancelButton = new JButton("Cancel");
-        okButton = new JButton("OK");
-
-        // Add action listeners for the buttons
-        logInButton.addActionListener(e -> showLogInForm());
-        signUpButton.addActionListener(e -> showSignUpForm());
-        cancelButton.addActionListener(e -> showDefaultContent());
-        okButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "Action confirmed!"));
-
-        // Add the left and right panels to the main layout
-        add(leftPanel, BorderLayout.WEST); // Image on the left
-        add(rightPanel, BorderLayout.CENTER);
-
-        // Show default content on initialization
         showDefaultContent();
+
+        add(titlePanel, BorderLayout.NORTH); // Add title panel
+        add(dynamicPanel, BorderLayout.CENTER); // Add dynamic panel
     }
 
     private void showDefaultContent() {
         dynamicPanel.removeAll(); // Clear existing content
 
-        // Title for the default question
         JLabel questionLabel = new JLabel("What do you want to do?");
-        questionLabel.setFont(new Font("Segoe UI", Font.BOLD, 36)); // Bold and large font
+        questionLabel.setFont(new Font("Segoe UI", Font.BOLD, 36));
         questionLabel.setForeground(Color.WHITE);
         questionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Buttons for Sign Up and Log In
-        JPanel topButtonPanel = new JPanel();
-        topButtonPanel.setBackground(new Color(153, 153, 153)); // Match background
-        topButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0)); // Center-align buttons
-        topButtonPanel.add(signUpButton);
-        topButtonPanel.add(logInButton);
+        JButton signUpButton = new JButton("Sign Up");
+        JButton logInButton = new JButton("Log In");
 
-        // Add components to the dynamic panel in the desired order
+        signUpButton.addActionListener(e -> showSignUpForm());
+        logInButton.addActionListener(e -> showLogInForm());
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(signUpButton);
+        buttonPanel.add(logInButton);
+
+        // Add components to the dynamic panel
         dynamicPanel.add(Box.createRigidArea(new Dimension(0, 150))); // Spacer to lower everything
-        dynamicPanel.add(questionLabel); // Add the question at the top
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 40))); // Spacer (20 pixels)
-        dynamicPanel.add(topButtonPanel); // Add buttons directly below the question
+        dynamicPanel.add(questionLabel);
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 40))); // Spacer
+        dynamicPanel.add(buttonPanel);
 
         dynamicPanel.revalidate();
         dynamicPanel.repaint();
     }
 
     private void showLogInForm() {
-        dynamicPanel.removeAll(); // Clear existing content
+        dynamicPanel.removeAll();
 
-        // Title for the Log In form
         JLabel logInLabel = new JLabel("Log In");
         logInLabel.setFont(new Font("Segoe UI", Font.BOLD, 36));
         logInLabel.setForeground(Color.WHITE);
         logInLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Define font size
-        Font fieldFont = new Font("Segoe UI", Font.PLAIN, 24);
-        int fontSize = fieldFont.getSize();
-        int fieldHeight = fontSize + 10; // Height proportional to font size
-        int fieldWidth = fontSize * 20; // Width proportional to font size
-
-        // Username row
-        JPanel usernameRow = new JPanel();
-        usernameRow.setBackground(new Color(153, 153, 153));
-        usernameRow.setLayout(new BoxLayout(usernameRow, BoxLayout.X_AXIS));
-
-        JLabel usernameLabel = new JLabel("Username:");
-        usernameLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        usernameLabel.setForeground(Color.WHITE);
-        usernameLabel.setPreferredSize(new Dimension(120, fieldHeight)); // Fixed width
         JTextField usernameField = new JTextField();
-        usernameField.setFont(fieldFont);
-        usernameField.setPreferredSize(new Dimension(fieldWidth, fieldHeight)); // Preferred size
-        usernameField.setMaximumSize(new Dimension(fieldWidth, fieldHeight)); // Max size to ensure proper alignment
-        usernameField.setMinimumSize(new Dimension(fieldWidth, fieldHeight)); // Min size to enforce proportionality
-
-        usernameRow.add(usernameLabel);
-        usernameRow.add(usernameField);
-
-        // Password row
-        JPanel passwordRow = new JPanel();
-        passwordRow.setBackground(new Color(153, 153, 153));
-        passwordRow.setLayout(new BoxLayout(passwordRow, BoxLayout.X_AXIS));
-
-        JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        passwordLabel.setForeground(Color.WHITE);
-        passwordLabel.setPreferredSize(new Dimension(120, fieldHeight)); // Fixed width
         JPasswordField passwordField = new JPasswordField();
-        passwordField.setFont(fieldFont);
-        passwordField.setPreferredSize(new Dimension(fieldWidth, fieldHeight)); // Preferred size
-        passwordField.setMaximumSize(new Dimension(fieldWidth, fieldHeight)); // Max size to ensure proper alignment
-        passwordField.setMinimumSize(new Dimension(fieldWidth, fieldHeight)); // Min size to enforce proportionality
 
-        passwordRow.add(passwordLabel);
-        passwordRow.add(passwordField);
+        JPanel usernamePanel = createRow("Username:", usernameField);
+        JPanel passwordPanel = createRow("Password:", passwordField);
 
-        // Buttons (Cancel and OK)
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(153, 153, 153));
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
-        buttonPanel.add(cancelButton);
+        JButton cancelButton = new JButton("Cancel");
+        JButton okButton = new JButton("OK");
+
+        cancelButton.addActionListener(e -> showDefaultContent());
         okButton.addActionListener(e -> {
             String username = usernameField.getText().trim();
-        String password = new String(passwordField.getPassword()).trim();
+            String password = new String(passwordField.getPassword()).trim();
 
-        if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter both username and password.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        
-        //HOLA
-        /*
-        try {
-            
-            if ("Successful login") {
-                // If login is successful, navigate to SecondPanel
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Simulate login logic (replace with actual communication)
+            if (username.equals("admin") && password.equals("admin")) {
                 JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 mainFrame.getContentPane().removeAll();
                 mainFrame.add(new SecondPanel());
                 mainFrame.revalidate();
                 mainFrame.repaint();
             } else {
-                // If login fails, show an error message
-                JOptionPane.showMessageDialog(this, "Incorrect username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "An error occurred while trying to log in. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
-        }*/
         });
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(cancelButton);
         buttonPanel.add(okButton);
 
-        // Add components to the dynamic panel in the desired order
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 50))); // Spacer
-        dynamicPanel.add(logInLabel); // Title at the top
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spacer
-        dynamicPanel.add(usernameRow); // Username row
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spacer
-        dynamicPanel.add(passwordRow); // Password row
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spacer
-        dynamicPanel.add(buttonPanel); // Buttons at the bottom
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 50)));
+        dynamicPanel.add(logInLabel);
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        dynamicPanel.add(usernamePanel);
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        dynamicPanel.add(passwordPanel);
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        dynamicPanel.add(buttonPanel);
 
         dynamicPanel.revalidate();
         dynamicPanel.repaint();
     }
 
     private void showSignUpForm() {
-        dynamicPanel.removeAll(); // Clear existing content
+        dynamicPanel.removeAll();
 
-        // Title for the Sign Up form
         JLabel signUpLabel = new JLabel("Sign Up");
         signUpLabel.setFont(new Font("Segoe UI", Font.BOLD, 36));
         signUpLabel.setForeground(Color.WHITE);
         signUpLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Define font size
-        Font fieldFont = new Font("Segoe UI", Font.PLAIN, 24);
-        int fontSize = fieldFont.getSize();
-        int fieldHeight = fontSize + 10; // Height proportional to font size
-        int fieldWidth = fontSize * 20; // Width proportional to font size
-
-        // Username row
-        JPanel usernameRow = new JPanel();
-        usernameRow.setBackground(new Color(153, 153, 153));
-        usernameRow.setLayout(new BoxLayout(usernameRow, BoxLayout.X_AXIS));
-
-        JLabel usernameLabel = new JLabel("Username:");
-        usernameLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        usernameLabel.setForeground(Color.WHITE);
-        usernameLabel.setPreferredSize(new Dimension(120, fieldHeight)); // Fixed width
+        JTextField nameField = new JTextField();
+        JTextField surnameField = new JTextField();
+        JTextField nifField = new JTextField();
+        JTextField dobField = new JTextField();
+        JTextField phoneField = new JTextField();
+        JComboBox<String> genderComboBox = new JComboBox<>(new String[]{"MALE", "FEMALE"});
         JTextField usernameField = new JTextField();
-        usernameField.setFont(fieldFont);
-        usernameField.setPreferredSize(new Dimension(fieldWidth, fieldHeight));
-        usernameField.setMaximumSize(new Dimension(fieldWidth, fieldHeight));
-        usernameField.setMinimumSize(new Dimension(fieldWidth, fieldHeight));
-
-        usernameRow.add(usernameLabel);
-        usernameRow.add(usernameField);
-
-        // Password row
-        JPanel passwordRow = new JPanel();
-        passwordRow.setBackground(new Color(153, 153, 153));
-        passwordRow.setLayout(new BoxLayout(passwordRow, BoxLayout.X_AXIS));
-
-        JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        passwordLabel.setForeground(Color.WHITE);
-        passwordLabel.setPreferredSize(new Dimension(120, fieldHeight)); // Fixed width
         JPasswordField passwordField = new JPasswordField();
-        passwordField.setFont(fieldFont);
-        passwordField.setPreferredSize(new Dimension(fieldWidth, fieldHeight));
-        passwordField.setMaximumSize(new Dimension(fieldWidth, fieldHeight));
-        passwordField.setMinimumSize(new Dimension(fieldWidth, fieldHeight));
 
-        passwordRow.add(passwordLabel);
-        passwordRow.add(passwordField);
+        JPanel namePanel = createRow("Name:", nameField);
+        JPanel surnamePanel = createRow("Surname:", surnameField);
+        JPanel nifPanel = createRow("NIF:", nifField);
+        JPanel dobPanel = createRow("Date of Birth:", dobField);
+        JPanel phonePanel = createRow("Phone:", phoneField);
+        JPanel genderPanel = createRow("Gender:", genderComboBox);
+        JPanel usernamePanel = createRow("Username:", usernameField);
+        JPanel passwordPanel = createRow("Password:", passwordField);
 
-        // Buttons (Cancel and OK)
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(153, 153, 153));
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        JButton cancelButton = new JButton("Cancel");
+        JButton okButton = new JButton("OK");
+
+        cancelButton.addActionListener(e -> showDefaultContent());
+        okButton.addActionListener(e -> {
+            try {
+                Patient patient = new Patient(
+                        nameField.getText().trim(),
+                        surnameField.getText().trim(),
+                        nifField.getText().trim(),
+                        Date.valueOf(dobField.getText().trim()),
+                        Gender.valueOf((String) genderComboBox.getSelectedItem()),
+                        phoneField.getText().trim()
+                );
+                User user = new User(usernameField.getText().trim(), new String(passwordField.getPassword()).trim());
+
+                //send.register(user, patient);
+                JOptionPane.showMessageDialog(this, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                showDefaultContent();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error during registration. " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonPanel.setOpaque(false);
         buttonPanel.add(cancelButton);
         buttonPanel.add(okButton);
 
-        // Add components to the dynamic panel in the desired order
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 50))); // Spacer
-        dynamicPanel.add(signUpLabel); // Title at the top
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spacer
-        dynamicPanel.add(usernameRow); // Username row
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spacer
-        dynamicPanel.add(passwordRow); // Password row
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spacer
-        dynamicPanel.add(buttonPanel); // Buttons at the bottom
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 50)));
+        dynamicPanel.add(signUpLabel);
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        dynamicPanel.add(namePanel);
+        dynamicPanel.add(surnamePanel);
+        dynamicPanel.add(nifPanel);
+        dynamicPanel.add(dobPanel);
+        dynamicPanel.add(phonePanel);
+        dynamicPanel.add(genderPanel);
+        dynamicPanel.add(usernamePanel);
+        dynamicPanel.add(passwordPanel);
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        dynamicPanel.add(buttonPanel);
 
         dynamicPanel.revalidate();
         dynamicPanel.repaint();
+    }
+
+    private JPanel createRow(String labelText, JComponent field) {
+        JPanel row = new JPanel();
+        row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
+        row.setOpaque(false);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        label.setForeground(Color.WHITE);
+        label.setPreferredSize(new Dimension(150, 40));
+
+        field.setPreferredSize(new Dimension(300, 40));
+        field.setMaximumSize(new Dimension(300, 40));
+
+        row.add(label);
+        row.add(field);
+
+        return row;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 }
