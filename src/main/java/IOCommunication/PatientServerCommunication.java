@@ -26,21 +26,21 @@ public class PatientServerCommunication {
     private ObjectOutputStream out;
     private Patient patient;
     
-    //la idea es que se cree un socket para cada paciente con el server y un thread para cada interacción entre ambos
-    public PatientServerCommunication (String serverAddress,int serverPort){
-        
-        this.serverAddress=serverAddress;
-        this.serverPort=serverPort;//9000
+  
+    public PatientServerCommunication(String serverAddress, int serverPort) {
+
+        this.serverAddress = serverAddress;
+        this.serverPort = serverPort;//9000
         try {
-            this.socket=new Socket(serverAddress,serverPort);
+            this.socket = new Socket(serverAddress, serverPort);
+            
             out = new ObjectOutputStream(socket.getOutputStream());
             this.out.flush();
             in = new ObjectInputStream(socket.getInputStream());
-            
             //el patient debe poder recibir feedback del server mientras manda las solicitudes 
-            Thread receiveThread=new Thread(new Receive());
-            receiveThread.start();
-            
+            // Thread receiveThread=new Thread(new Receive());
+            //receiveThread.start();
+
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -53,18 +53,15 @@ public class PatientServerCommunication {
          * Calls the server so the patient registers in the app and, therefore,
          * it is saved in the database
          *
-         * @param username
-         * @param password
          * @param patient
          */
-        public void register(String username, String password, Patient patient) {
+        public void register(Patient patient) {
             try {
                 out.writeObject("register"); // Acción de registro
-                out.writeObject(new User(username, password));//envía los datos de registro al server
+                out.writeObject(patient.getUser());//envía los datos de registro al server
                 out.writeObject(patient);
                 
                 out.flush();
-                
                 System.out.println("Registering.....");
                 String confirmation=(String) in.readObject();
                 System.out.println(confirmation);//muestra la confirmación del server de que se ha registrado
@@ -81,18 +78,21 @@ public class PatientServerCommunication {
          *
          * @param username
          * @param password
+         * @return message
          */
-        public void login(String username, String password) {
-
+        public Patient login(String username, String password) {
+            
             try {
                 out.writeObject("login"); // Acción de inicio de sesión
                 out.writeObject(username);
                 out.writeObject(password);
-                System.out.println(in.readObject());//mensaje del server de que se ha recibido
+                System.out.println("Logging in.....");
+                patient= (Patient) in.readObject();
+  
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+            return patient;
         }
         
         /**
@@ -112,49 +112,21 @@ public class PatientServerCommunication {
         /**
          * Changes the current password of the patient
          *
-         * @param username
-         * @param oldPassword
-         * @param newPassword
+         * @param user
          */
-        public void changePassword(String username, String oldPassword, String newPassword) {
+        public void updateInformation(User user) {
 
             try {
-                out.writeObject("changePassword"); // Acción de cambio de contraseña
-                out.writeObject(username);
-                out.writeObject(oldPassword);
-                out.writeObject(newPassword);
+                out.writeObject("updateInformation"); // Acción de cambio de contraseña
+                out.writeObject(user.getEmail());
+                out.writeObject(user.getPassword());
                 System.out.println(in.readObject());
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
-
-        /**
-         * Method used to find the patient corresponding to the username and
-         * password in the database
-         *
-         * @param username
-         * @param password
-         * @throws IOException
-         * @throws ClassNotFoundException
-         */
-        public void findPatient(String username, String password) throws IOException, ClassNotFoundException {
-
-            out.writeObject("findPatient"); // Acción para buscar al paciente
-            out.writeObject(username);
-            out.writeObject(password);
-
-            // Lee y muestra la respuesta del servidor
-            Object response = in.readObject();
-            if (response instanceof Patient) {
-                patient = (Patient) response; // Guarda el objeto `Patient`
-                //System.out.println("Patient found and stored: " + patient);
-            } else {
-                System.out.println(response); // Imprimir mensaje de error si es un String
-            }
-
-        }
+        
 
         public void sendECGSignals() {
             //TODO manda la señales al server
@@ -181,11 +153,17 @@ public class PatientServerCommunication {
     }
 
     class Receive implements Runnable {
-
+        
+        private boolean running=true;
+        
+        public void stop() {
+        running = false;
+        }
+        
         @Override
         public void run() {
             try {
-                while (true) {
+                while (running) {
                     // Continuously listens for incoming messages from the server
                     Object feedback = in.readObject();
                     handleFeedbackFromServer(feedback);

@@ -82,8 +82,9 @@ public class PatientMenu {
 
         Patient patient=registerPatientInfo();//only the info from the POJO not the IO info
         User user=getUserInfo();
-        send.register(user.getEmail(),user.getPassword(), patient);
-        patientMenu(patient, user);
+        patient.setUser(user);
+        send.register(patient);
+        patientMenu(patient);
     }
     
     public static Patient registerPatientInfo(){
@@ -174,27 +175,24 @@ public class PatientMenu {
     public static void loginMenu() throws IOException {
 
         System.out.println("\n Press '0' to go back to menu\n");
-
-        User user = getUserInfo();
+        user = getUserInfo();
 
         if (user != null) {
-            try {
-                send.login(user.getEmail(), user.getPassword());
-                //comunicarme con el server para obtener el patient    
-                send.findPatient(user.getEmail(), user.getPassword());
-                Patient patient = send.getPatient();
-                patientMenu(patient, user);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);
+            send.login(user.getEmail(), user.getPassword());
+            //comunicarme con el server para obtener el patient
+            Patient patient = send.getPatient();
+            if (patient != null) {
+                System.out.println("Successful login");
+                patientMenu(patient);
+            } else {
+                System.out.println("Incorrect username and/or password");
             }
 
-        } else {
-            System.out.println("Wrong username/password combination");
         }
 
     }
     
-    public static void patientMenu(Patient patient, User user){
+    public static void patientMenu(Patient patient){
         
         int choice;
         do {
@@ -212,7 +210,7 @@ public class PatientMenu {
                         break;
                     }
                     case 2: {
-                        configurationMenu(patient, user);
+                        configurationMenu(patient);
                         break;
                     }
                     default:
@@ -340,7 +338,7 @@ public class PatientMenu {
         clase Receive se crea al instanciar la communication. Es decir al conectarse un nuevo paciente*/
     }
     
-    public static void configurationMenu(Patient patient, User user){
+    public static void configurationMenu(Patient patient){
         int choice = 0;
         do {
             try {
@@ -358,27 +356,28 @@ public class PatientMenu {
                         break;
                     }
                     case 2: {
-                        System.out.println("Type your current password: ");
-                        String actual_password=Utilities.readString();
-                        if(actual_password.equals(user.getPassword())){
-                            System.out.println("Insert new password: ");
-                            String new_password;
-                            while (true) {
-                                System.out.println("Password: ");
-                                System.out.println("Password must have at least:  \n 8 characters \n 1 capital letter \n 1 number");
-                                new_password = Utilities.readString();
-
-                                if (Utilities.isValidPassword(new_password)) {
-                                    System.out.println("Valid password.");
-                                    break;
-                                } else {
-                                    System.out.println("Not valid password.");
-                                }
+                        
+                        System.out.println("Insert new password: ");
+                        String new_password;
+                        while (true) {
+                            System.out.println("Password: ");
+                            System.out.println("Password must have at least:  \n 8 characters \n 1 capital letter \n 1 number");
+                            new_password = Utilities.readString();
+                            
+                            if (Utilities.isValidPassword(new_password)) {
+                                user.setPassword(new_password);
+                                System.out.println("Valid password.");
+                                break;
+                            } else {
+                                System.out.println("Not valid password.");
                             }
-                            send.changePassword(user.getEmail(), actual_password, new_password);
                         }
+                        
+                        send.updateInformation(user);
                         break;
                     }
+                        
+                    
                     default:
                         break;
                 }

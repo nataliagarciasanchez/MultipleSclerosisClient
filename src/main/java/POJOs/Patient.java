@@ -137,6 +137,20 @@ public class Patient implements Serializable{
         this.reports = reports;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getNIF() {
+        return NIF;
+    }
+
+    public void setNIF(String NIF) {
+        this.NIF = NIF;
+    }
+    
+    
+
     @Override
     public String toString() {
         return "User: " + user + "\n"
