@@ -27,20 +27,20 @@ public class PatientServerCommunication {
     private Patient patient;
     
   
-    public PatientServerCommunication (String serverAddress,int serverPort){
-        
-        this.serverAddress=serverAddress;
-        this.serverPort=serverPort;//9000
+    public PatientServerCommunication(String serverAddress, int serverPort) {
+
+        this.serverAddress = serverAddress;
+        this.serverPort = serverPort;//9000
         try {
-            this.socket=new Socket(serverAddress,serverPort);
+            this.socket = new Socket(serverAddress, serverPort);
+            
             out = new ObjectOutputStream(socket.getOutputStream());
             this.out.flush();
             in = new ObjectInputStream(socket.getInputStream());
-            
             //el patient debe poder recibir feedback del server mientras manda las solicitudes 
             // Thread receiveThread=new Thread(new Receive());
             //receiveThread.start();
-            
+
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -53,8 +53,6 @@ public class PatientServerCommunication {
          * Calls the server so the patient registers in the app and, therefore,
          * it is saved in the database
          *
-         * @param username
-         * @param password
          * @param patient
          */
         public void register(Patient patient) {
@@ -82,19 +80,19 @@ public class PatientServerCommunication {
          * @param password
          * @return message
          */
-        public String login(String username, String password) {
-            String confirmation_message = null;
+        public Patient login(String username, String password) {
+            
             try {
                 out.writeObject("login"); // Acción de inicio de sesión
                 out.writeObject(username);
                 out.writeObject(password);
                 System.out.println("Logging in.....");
-                confirmation_message=(String) in.readObject();//mensaje del server de que se ha recibido
+                patient= (Patient) in.readObject();
   
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return confirmation_message;
+            return patient;
         }
         
         /**

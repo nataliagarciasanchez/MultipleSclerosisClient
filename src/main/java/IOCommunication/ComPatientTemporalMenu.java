@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Class used to test all the method in the communication
  * @author maipa
  */
 public class ComPatientTemporalMenu {
@@ -39,11 +39,11 @@ public class ComPatientTemporalMenu {
     }
     
     public static void login(PatientServerCommunication.Send send){
-       String message=send.login("maipat1310@gmail.com", "Password123");
-        System.out.println(message);
+       Patient patient=send.login("maipat1310@gmail.com", "Password123");
+        System.out.println(patient);
     }
     
-    public static void changePassword(PatientServerCommunication.Send send){
+    public static void updateInfo(PatientServerCommunication.Send send){
         User user=new User("maipat1310@gmail.com", "Password123");
         send.updateInformation(user);
     }

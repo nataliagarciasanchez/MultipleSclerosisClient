@@ -175,18 +175,19 @@ public class PatientMenu {
     public static void loginMenu() throws IOException {
 
         System.out.println("\n Press '0' to go back to menu\n");
-
-        user= getUserInfo();
-        
+        user = getUserInfo();
 
         if (user != null) {
             send.login(user.getEmail(), user.getPassword());
             //comunicarme con el server para obtener el patient
             Patient patient = send.getPatient();
-            patientMenu(patient);
+            if (patient != null) {
+                System.out.println("Successful login");
+                patientMenu(patient);
+            } else {
+                System.out.println("Incorrect username and/or password");
+            }
 
-        } else {
-            System.out.println("Wrong username/password combination");
         }
 
     }
