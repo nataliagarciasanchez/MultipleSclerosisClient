@@ -55,6 +55,9 @@ public class BITalino {
 
     /// Number of bytes expected for a frame sent by the device (auxiliary variable)
     private int number_bytes = 0;
+    
+    // Recording time
+    private final int recordingTime=60;//secs
 
     /// Instance of the Bluetooth socket connection established with the BITalino device
     private StreamConnection hSocket = null;
@@ -453,5 +456,11 @@ public class BITalino {
         }
 
     }
+
+    public int getRecordingTime() {
+        return recordingTime;
+    }
+    
+    
 
 }

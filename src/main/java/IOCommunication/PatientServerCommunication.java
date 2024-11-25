@@ -4,12 +4,18 @@
  */
 package IOCommunication;
 
+import BITalino.BITalino;
+import BITalino.BITalinoException;
+import BITalino.Frame;
+import POJOs.Bitalino;
 import POJOs.User;
 import POJOs.Patient;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -103,9 +109,11 @@ public class PatientServerCommunication {
                 out.writeObject("logout");
                 System.out.println(in.readObject());
                 //ahora mismo lo hace el server cuando recive esta opcion
-                //releaseResources(in, out, socket);
+                
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }finally{
+              releaseResources(in, out, socket);  
             }
         }
 
@@ -128,27 +136,56 @@ public class PatientServerCommunication {
         }
         
 
-        public void sendECGSignals() {
-            //TODO manda la señales al server
+        public void sendECGSignals(Bitalino bitalino, BITalino bitalinoDevice) {
+            try {
+                List<Frame> ecgFrames=bitalino.storeRecordedSignals(bitalinoDevice);
+                // Send the ECG frames to the server
+                out.writeObject("sendECGSignals");
+                out.writeObject(ecgFrames);
+                out.flush();
+                System.out.println("ECG Signals sent.");
+
+                // Read the server's response
+                String response = (String) in.readObject();
+                System.out.println("Server response: " + response);
+            } catch (Throwable ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
-        public void sendEMGSignals() {
-            //TODO manda las señales al server
+
+        public void sendEMGSignals(Bitalino bitalino, BITalino bitalinoDevice) {
+            try {
+                List<Frame> emgFrames=bitalino.storeRecordedSignals(bitalinoDevice);
+                // Send the ECG frames to the server
+                out.writeObject("sendEMGSignals");
+                out.writeObject(emgFrames);
+                out.flush();
+                System.out.println("EMG Signals sent.");
+
+                // Read the server's response
+                String response = (String) in.readObject();
+                System.out.println("Server response: " + response);
+                
+            } catch (Throwable ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         public Patient getPatient() {
             return patient;
         }
         
-        private static void releaseResources(ObjectInputStream in, ObjectOutputStream out, Socket socket){
-        try {
-            in.close();
-            out.close();
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        
+        private static void releaseResources(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
+            try {
+                in.close();
+                out.close();
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    } 
         
     }
 

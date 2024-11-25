@@ -4,9 +4,17 @@
  */
 package POJOs;
 
+import BITalino.BITalino;
+import BITalino.BITalinoException;
+import BITalino.Frame;
+import IOCommunication.PatientServerCommunication;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,33 +22,60 @@ import java.util.Objects;
  */
 
 public class Bitalino implements Serializable{
-     private static final long serialVersionUID = 123456789L;
+     private static final long serialVersionUID = 123456000L;
      
     private Integer id;
     private Date date;
     private SignalType signal_type;
-    private String file_path;
-    private Float duration;
+    private final Float duration=60.0F;//seconds-> 1 min of recording
     private Report report;
      
     public Bitalino(){
     super();
     }
      
-    public Bitalino (Date date,SignalType signal_type,String file_path,Float duration){
+    public Bitalino (Date date,SignalType signal_type){
          this.date=date;
          this.signal_type=signal_type;
-         this.file_path=file_path;
-         this.duration=duration;
      }
 
-    public Bitalino(Integer id, Date date, SignalType signal_type, String file_path, Float duration, Report report) {
+    public Bitalino(Integer id, Date date, SignalType signal_type, Report report) {
         this.id = id;
         this.date = date;
         this.signal_type = signal_type;
-        this.file_path = file_path;
-        this.duration = duration;
         this.report = report;
+    }
+    
+    /**
+     * Method used to store the signals in a list
+     * @param bitalino
+     * @return list with all the frames that have been recorded
+     */
+    public List<Frame> storeRecordedSignals(BITalino bitalino) {
+        List<Frame> signalFrames = new ArrayList<>();
+        try {
+            int samplingRate = 100; // Example sampling rate in Hz
+            int[] channels = {0}; 
+            bitalino.start(channels);
+
+            int samplesToRead = (int) (duration * samplingRate);
+
+            for (int i = 0; i < samplesToRead; i++) {
+                try {
+                    Frame[] frames = bitalino.read(1); // 1 sample at a time
+                    signalFrames.add(frames[0]); 
+                } catch (BITalinoException ex) {
+                    Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            bitalino.stop(); // Stop acquisition
+        } catch (BITalinoException ex) {
+            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Throwable ex) {
+            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return signalFrames;
     }
 
     public static long getSerialVersionUID() {
@@ -57,10 +92,6 @@ public class Bitalino implements Serializable{
 
     public SignalType getSignal_type() {
         return signal_type;
-    }
-
-    public String getFile_path() {
-        return file_path;
     }
 
     public Float getDuration() {
@@ -83,21 +114,13 @@ public class Bitalino implements Serializable{
         this.signal_type = signal_type;
     }
 
-    public void setFile_path(String file_path) {
-        this.file_path = file_path;
-    }
-
-    public void setDuration(Float duration) {
-        this.duration = duration;
-    }
-
     public void setReport(Report report) {
         this.report = report;
     }
 
     @Override
     public String toString() {
-        return "Bitalino{" + "id=" + id + ", date=" + date + ", signal_type=" + signal_type + ", file_path=" + file_path + ", duration=" + duration + ", report=" + report + '}';
+        return "Bitalino{" + "id=" + id + ", date=" + date + ", signal_type=" + signal_type + ", duration=" + duration + ", report=" + report + '}';
     }
 
     @Override
@@ -106,7 +129,6 @@ public class Bitalino implements Serializable{
         hash = 79 * hash + Objects.hashCode(this.id);
         hash = 79 * hash + Objects.hashCode(this.date);
         hash = 79 * hash + Objects.hashCode(this.signal_type);
-        hash = 79 * hash + Objects.hashCode(this.file_path);
         hash = 79 * hash + Objects.hashCode(this.duration);
         hash = 79 * hash + Objects.hashCode(this.report);
         return hash;
@@ -127,9 +149,7 @@ public class Bitalino implements Serializable{
         if (!Objects.equals(this.signal_type, other.signal_type)) {
             return false;
         }
-        if (!Objects.equals(this.file_path, other.file_path)) {
-            return false;
-        }
+       
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
@@ -144,7 +164,7 @@ public class Bitalino implements Serializable{
      
          
      
-        }
+}
 
 
      

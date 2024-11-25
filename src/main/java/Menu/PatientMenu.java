@@ -5,9 +5,11 @@
 package Menu;
 
 
+import BITalino.BITalino;
 import IOCommunication.PatientServerCommunication;
 import POJOs.User;
 import Menu.Utilities.Utilities;
+import POJOs.Bitalino;
 import POJOs.Doctor;
 import POJOs.Gender;
 import POJOs.Patient;
@@ -16,6 +18,7 @@ import POJOs.Symptom;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,6 +35,8 @@ public class PatientMenu {
     private static User user;
     private static PatientServerCommunication patientServerCom;
     private static PatientServerCommunication.Send send;
+    private static BITalino bitalinoDevice;
+    private static Date date;
 
     
     public static void main(String[] args) {
@@ -47,7 +52,7 @@ public class PatientMenu {
                 
                 patientServerCom=new PatientServerCommunication(serverAddress, port);
                 send=patientServerCom.new Send();//llama a la clase anidada de send en PatientServerCommunication
-                
+
                 System.out.println("");
                 System.out.println("\nWelcome to the MultipleSclerosis Patient app!");
                 
@@ -173,21 +178,32 @@ public class PatientMenu {
     }
     
     public static void loginMenu() throws IOException {
+        
+        try {
+            
+            bitalinoDevice=new BITalino();
+            String macAddress = "98:D3:41:FD:4E:E8";
+            bitalinoDevice.open(macAddress);
+            LocalDate localdate=LocalDate.now();
+            date=Date.valueOf(localdate);
 
-        System.out.println("\n Press '0' to go back to menu\n");
-        user = getUserInfo();
-
-        if (user != null) {
-            send.login(user.getEmail(), user.getPassword());
-            //comunicarme con el server para obtener el patient
-            Patient patient = send.getPatient();
-            if (patient != null) {
-                System.out.println("Successful login");
-                patientMenu(patient);
-            } else {
-                System.out.println("Incorrect username and/or password");
+            System.out.println("\n Press '0' to go back to menu\n");
+            user = getUserInfo();
+            
+            if (user != null) {
+                send.login(user.getEmail(), user.getPassword());
+                //comunicarme con el server para obtener el patient
+                Patient patient = send.getPatient();
+                if (patient != null) {
+                    System.out.println("Successful login");
+                    patientMenu(patient);
+                } else {
+                    System.out.println("Incorrect username and/or password");
+                }
+                
             }
-
+        } catch (Throwable ex) {
+            Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -299,6 +315,7 @@ public class PatientMenu {
     public static void recordECG(){
         
         SignalType signal=SignalType.ECG;
+        Bitalino bitalino=new Bitalino(date,signal);
         
         System.out.println("First we would like to perform an ECG. For that you must do exactly as the following intructions tell you:  ");
         System.out.println("Currently there are 3 electrodes placed next to the recording device. ");
@@ -314,12 +331,13 @@ public class PatientMenu {
         
         System.out.println("Great!. Signals have been recorded correctly. ");
         
-        send.sendECGSignals();
+        send.sendECGSignals(bitalino, bitalinoDevice);
     }
     
     public static void recordEMG(){
         
         SignalType signal=SignalType.EMG;
+        Bitalino bitalino=new Bitalino(date, signal);
         System.out.println("Now we will perform an EMG. Please follow the instructions. ");
         System.out.println("1. Positive electrode (RED): Center of biceps muscle. ");
         System.out.println("2. Negative electrode (YELLOW): 2–3 cm along the muscle, aligned with fibers.");
@@ -329,13 +347,13 @@ public class PatientMenu {
         
         System.out.println("Great! EMG performed correctly. ");
         
-        send.sendEMGSignals();
+        send.sendEMGSignals(bitalino, bitalinoDevice);
     }
     
     public static void diagnosisFromDoctor(){
        /*TODO el feedback del doctor se va a mostrar automáticamente cuando el server 
-       se ponga en contacto con este, una vez las señales del patient han sido mandadas ya que el hilo de la 
-        clase Receive se crea al instanciar la communication. Es decir al conectarse un nuevo paciente*/
+       se ponga en contacto con este, una vez las señales del patient han sido mandadas con el hilo de la 
+        clase Receive de la communication. */
     }
     
     public static void configurationMenu(Patient patient){
