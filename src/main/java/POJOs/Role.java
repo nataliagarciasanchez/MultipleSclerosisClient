@@ -22,12 +22,8 @@ public class Role implements Serializable{
 
     public Role() {
         super();
-    }
-
-    public Role(Integer id,String name) {
-        super();
-        this.id=id;
-        this.name = name;
+        this.id=1;
+        this.name = "patient";
     }
 
     public Integer getId() {

@@ -9,6 +9,7 @@ import Menu.Utilities.Utilities;
 import POJOs.Bitalino;
 import POJOs.Gender;
 import POJOs.Patient;
+import POJOs.Role;
 import POJOs.SignalType;
 import POJOs.User;
 import java.sql.Date;
@@ -24,16 +25,18 @@ public class ComPatientTemporalMenu {
     
     public static PatientServerCommunication com; 
     public static PatientServerCommunication.Send send;
+    public static String macAddress = "98:D3:41:FD:4E:E8";
+    public static Role role;
     
     public static void main(String[] args) {
         com= new PatientServerCommunication("localhost", 1027);
         send= com.new Send();
-        
+        role=new Role();
         //register();
         //login();
         //TODO updateInfo() no funciona
-        //updateInfo();
-        sendSignals(SignalType.ECG);
+        updateInfo();
+        //sendSignals(SignalType.ECG);
         //sendSignals(send, SignalType.EMG);
     }
 
@@ -42,8 +45,9 @@ public class ComPatientTemporalMenu {
             java.sql.Date dob = Utilities.convertString2SqlDate("14/10/2003");
             //Doctor doctor=new Doctor("Dr.Garcia", "NEUROLOGY", new User("doctor.garcia@multipleSclerosis.com","Password456"));
             Patient maite = new Patient("maite", "gomez", "05459423M", dob, Gender.FEMALE, "609526931");
-            User user=new User("maipat1310@gmail.com", "Password123");
+            User user=new User("maipat1310@gmail.com", "Password123", role);
             maite.setUser(user);
+            
             send.register(maite);
         } catch (ParseException ex) {
             Logger.getLogger(ComPatientTemporalMenu.class.getName()).log(Level.SEVERE, null, ex);
@@ -55,19 +59,25 @@ public class ComPatientTemporalMenu {
        System.out.println(patient);
     }
     
-    public static void updateInfo(){
-        Patient patient=send.login("maipat1310@gmail.com", "Password123");
+    public static void updateInfo() {
+        Patient patient = send.login("maipat1310@gmail.com", "Password123");
         System.out.println(patient);
-        User user=patient.getUser();
+        User user = patient.getUser();
+        user.setRole(role);
         System.out.println("user\n" + user);
-        user.setPassword("NEW");
-        send.updateInformation(user);
+        String newPass = "Telemedicine345";
+        if (Utilities.isValidPassword(newPass)) {
+            user.setPassword("Telemedicine345");
+            System.out.println("This is to check if the setter is working correctly: " + user.getPassword());
+            send.updateInformation(user);
+        }
+
     }
     
     public static void sendSignals(SignalType signal_type){
         try {
             BITalino bitalinoDevice=new BITalino();
-            String macAddress = "98:D3:41:FD:4E:E8";
+            
             bitalinoDevice.open(macAddress);
             
             Patient patient=send.login("maipat1310@gmail.com", "Password123");

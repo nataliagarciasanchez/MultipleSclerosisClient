@@ -126,12 +126,14 @@ public class PatientServerCommunication {
         public void updateInformation(User user) {
 
             try {
-                out.writeObject("updateInformation"); // Acción de cambio de contraseña
-                out.writeObject(user.getEmail());
-                out.writeObject(user.getPassword());
+                out.writeObject("updateInformation");
+                out.writeObject(user);
                 System.out.println(in.readObject());
+                
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }finally{
+                releaseResources(in,out,socket);//TODO quitar el cerrar, solo para la prueba
             }
 
         }

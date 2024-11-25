@@ -27,11 +27,11 @@ public class User implements Serializable{
     	super();
     }
       
-    public User(String email, String password) {
+    public User(String email, String password, Role role) {
 	super();
 	this.email = email;
 	this.password = password;
-        this.role=new Role(1,"patient");
+        this.role=role;
     }
     
     public Integer getId() {
@@ -57,6 +57,12 @@ public class User implements Serializable{
     public String getEmail() {
         return email;
     }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+    
+    
 
     public void setEmail(String email) {
         this.email = email;

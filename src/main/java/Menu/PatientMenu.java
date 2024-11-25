@@ -13,6 +13,7 @@ import POJOs.Bitalino;
 import POJOs.Doctor;
 import POJOs.Gender;
 import POJOs.Patient;
+import POJOs.Role;
 import POJOs.SignalType;
 import POJOs.Symptom;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class PatientMenu {
     private static PatientServerCommunication.Send send;
     private static BITalino bitalinoDevice;
     private static Date date;
-
+    private static Role role=new Role();
     
     public static void main(String[] args) {
         
@@ -174,7 +175,8 @@ public class PatientMenu {
         }
         
         
-        return new User(email,password);
+        
+        return new User(email,password, role);
     }
     
     public static void loginMenu() throws IOException {
