@@ -10,6 +10,7 @@ import BITalino.Frame;
 import POJOs.Bitalino;
 import POJOs.User;
 import POJOs.Patient;
+import POJOs.SignalType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -138,7 +139,7 @@ public class PatientServerCommunication {
 
         public void sendECGSignals(Bitalino bitalino, BITalino bitalinoDevice) {
             try {
-                List<Frame> ecgFrames=bitalino.storeRecordedSignals(bitalinoDevice);
+                List<Frame> ecgFrames=bitalino.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
                 // Send the ECG frames to the server
                 out.writeObject("sendECGSignals");
                 out.writeObject(ecgFrames);
@@ -156,7 +157,7 @@ public class PatientServerCommunication {
 
         public void sendEMGSignals(Bitalino bitalino, BITalino bitalinoDevice) {
             try {
-                List<Frame> emgFrames=bitalino.storeRecordedSignals(bitalinoDevice);
+                List<Frame> emgFrames=bitalino.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
                 // Send the ECG frames to the server
                 out.writeObject("sendEMGSignals");
                 out.writeObject(emgFrames);

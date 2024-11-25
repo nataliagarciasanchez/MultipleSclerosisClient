@@ -9,6 +9,7 @@ package POJOs;
  * @author Andreoti
  */
 public enum SignalType {
-    ECG,EMG;
+    ECG,//channel 0
+    EMG;//channel 1
     
 }

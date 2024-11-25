@@ -51,11 +51,19 @@ public class Bitalino implements Serializable{
      * @param bitalino
      * @return list with all the frames that have been recorded
      */
-    public List<Frame> storeRecordedSignals(BITalino bitalino) {
+    public List<Frame> storeRecordedSignals(BITalino bitalino, SignalType signal_type) {
         List<Frame> signalFrames = new ArrayList<>();
         try {
             int samplingRate = 100; // Example sampling rate in Hz
-            int[] channels = {0}; 
+            int channel = 0;
+            
+            if(signal_type==SignalType.ECG){
+                channel=0;
+            }else{
+                channel=1;
+            }
+            int [] channels={channel};
+            
             bitalino.start(channels);
 
             int samplesToRead = (int) (duration * samplingRate);
