@@ -39,9 +39,9 @@ public class PatientServerCommunication {
         try {
             this.socket = new Socket(serverAddress, serverPort);
             
-            //out = new ObjectOutputStream(socket.getOutputStream());
-            //this.out.flush();
-            //in = new ObjectInputStream(socket.getInputStream());
+            out = new ObjectOutputStream(socket.getOutputStream());
+            this.out.flush();
+            in = new ObjectInputStream(socket.getInputStream());
             //el patient debe poder recibir feedback del server mientras manda las solicitudes 
             // Thread receiveThread=new Thread(new Receive());
             //receiveThread.start();
@@ -51,16 +51,16 @@ public class PatientServerCommunication {
         }
     }
     
-    public void start(){
+    /*public void start(){
         try {
-            this.in=new ObjectInputStream(socket.getInputStream());
             this.out=new ObjectOutputStream(socket.getOutputStream());
+            this.in=new ObjectInputStream(socket.getInputStream());
             System.out.println("Patient connected to server");
-            new Thread(new Receive(in)).start();
+            //new Thread(new Receive(in)).start();
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
     
     public class Send{
         

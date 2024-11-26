@@ -29,14 +29,13 @@ public class ComPatientTemporalMenu {
     public static Role role;
     
     public static void main(String[] args) {
-        com= new PatientServerCommunication("localhost", 1027);
-        com.start();
+        com= new PatientServerCommunication("localhost", 9000);
+        //com.start();
         send= com.new Send();
         role=new Role();
         //register();
-        //login();
-        //TODO updateInfo() no funciona
-        updateInfo();
+        login();
+        //updateInfo();
         //sendSignals(SignalType.ECG);
         //sendSignals(send, SignalType.EMG);
     }
@@ -46,7 +45,7 @@ public class ComPatientTemporalMenu {
             java.sql.Date dob = Utilities.convertString2SqlDate("14/10/2003");
             //Doctor doctor=new Doctor("Dr.Garcia", "NEUROLOGY", new User("doctor.garcia@multipleSclerosis.com","Password456"));
             Patient maite = new Patient("maite", "gomez", "05459423M", dob, Gender.FEMALE, "609526931");
-            User user=new User("maipat1310@gmail.com", "Password123", role);
+            User user=new User("correoprueba@gmail.com", "Password123", role);
             maite.setUser(user);
             
             send.register(maite);
@@ -56,19 +55,19 @@ public class ComPatientTemporalMenu {
     }
     
     public static void login(){
-       Patient patient=send.login("maipat1310@gmail.com", "Password123");
+       Patient patient=send.login("correoprueba@gmail.com", "Telemedicine345");
        System.out.println(patient);
     }
     
     public static void updateInfo() {
-        Patient patient = send.login("maipat1310@gmail.com", "Password123");
+        Patient patient = send.login("maipat1310@gmail.com", "Telemedicine345");
         System.out.println(patient);
         User user = patient.getUser();
         user.setRole(role);
         System.out.println("user\n" + user);
-        String newPass = "Telemedicine345";
+        String newPass = "Password123";
         if (Utilities.isValidPassword(newPass)) {
-            user.setPassword("Telemedicine345");
+            user.setPassword("Password123");
             System.out.println("This is to check if the setter is working correctly: " + user.getPassword());
             send.updateInformation(user);
         }
