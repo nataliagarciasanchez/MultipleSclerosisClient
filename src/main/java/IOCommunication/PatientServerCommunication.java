@@ -5,7 +5,6 @@
 package IOCommunication;
 
 import BITalino.BITalino;
-import BITalino.BITalinoException;
 import BITalino.Frame;
 import POJOs.Bitalino;
 import POJOs.User;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,10 +38,10 @@ public class PatientServerCommunication {
         this.serverPort = serverPort;//9000
         try {
             this.socket = new Socket(serverAddress, serverPort);
-            
-            out = new ObjectOutputStream(socket.getOutputStream());
-            this.out.flush();
-            in = new ObjectInputStream(socket.getInputStream());
+            System.out.println("Patient connected to server");
+            //out = new ObjectOutputStream(socket.getOutputStream());
+            //this.out.flush();
+            //in = new ObjectInputStream(socket.getInputStream());
             //el patient debe poder recibir feedback del server mientras manda las solicitudes 
             // Thread receiveThread=new Thread(new Receive());
             //receiveThread.start();
@@ -52,9 +50,20 @@ public class PatientServerCommunication {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     
-    public class Send {
+    public void start(){
+        try {
+            this.in=new ObjectInputStream(socket.getInputStream());
+            this.out=new ObjectOutputStream(socket.getOutputStream());
+            
+            new Thread(new Receive(in)).start();
+        } catch (IOException ex) {
+            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public class Send{
+        
 
         /**
          * Calls the server so the patient registers in the app and, therefore,
@@ -194,7 +203,12 @@ public class PatientServerCommunication {
 
     class Receive implements Runnable {
         
+        private ObjectInputStream in;
         private boolean running=true;
+        
+        public Receive(ObjectInputStream in){
+            this.in=in;
+        }
         
         public void stop() {
         running = false;
