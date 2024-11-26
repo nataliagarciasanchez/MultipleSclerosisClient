@@ -55,19 +55,19 @@ public class ComPatientTemporalMenu {
     }
     
     public static void login(){
-       Patient patient=send.login("correoprueba@gmail.com", "Telemedicine345");
+       Patient patient=send.login("correoprueba@gmail.com", "Password123");
        System.out.println(patient);
     }
     
     public static void updateInfo() {
-        Patient patient = send.login("maipat1310@gmail.com", "Telemedicine345");
+        Patient patient = send.login("maipat1310@gmail.com", "Password123");
         System.out.println(patient);
         User user = patient.getUser();
         user.setRole(role);
         System.out.println("user\n" + user);
-        String newPass = "Password123";
+        String newPass = "Password456";
         if (Utilities.isValidPassword(newPass)) {
-            user.setPassword("Password123");
+            user.setPassword("Password456");
             System.out.println("This is to check if the setter is working correctly: " + user.getPassword());
             send.updateInformation(user);
         }
