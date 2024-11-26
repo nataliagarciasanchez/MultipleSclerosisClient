@@ -8,8 +8,11 @@ import javax.swing.*;
 import java.awt.*;
 
 import IOCommunication.PatientServerCommunication;
+import IOCommunication.PatientServerCommunication.Send;
+import static Menu.Utilities.Utilities.convertString2SqlDate;
 import POJOs.Gender;
 import POJOs.Patient;
+import POJOs.Role;
 import POJOs.User;
 import java.sql.Date;
 
@@ -143,7 +146,7 @@ public class PanelPrincipal extends JPanel {
         dynamicPanel.revalidate();
         dynamicPanel.repaint();
     }
-
+    
     private void showSignUpForm() {
         dynamicPanel.removeAll();
 
@@ -152,24 +155,132 @@ public class PanelPrincipal extends JPanel {
         signUpLabel.setForeground(Color.WHITE);
         signUpLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Crear panel de formulario con GridBagLayout
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setOpaque(false); // Fondo transparente
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(3, 10, 3, 10); // Espaciado reducido entre filas
+
+        // Dimensiones ajustadas para campos más grandes
+        Dimension labelSize = new Dimension(150, 40);
+        Dimension fieldSize = new Dimension(350, 40);
+
+        // Campos de texto y etiquetas
+        JLabel nameLabel = new JLabel("Name:");
+        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        nameLabel.setForeground(Color.WHITE);
+        nameLabel.setPreferredSize(labelSize);
         JTextField nameField = new JTextField();
+        nameField.setPreferredSize(fieldSize);
+        nameField.setMaximumSize(fieldSize);
+
+        JLabel surnameLabel = new JLabel("Surname:");
+        surnameLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        surnameLabel.setForeground(Color.WHITE);
+        surnameLabel.setPreferredSize(labelSize);
         JTextField surnameField = new JTextField();
+        surnameField.setPreferredSize(fieldSize);
+        surnameField.setMaximumSize(fieldSize);
+
+        JLabel nifLabel = new JLabel("NIF:");
+        nifLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        nifLabel.setForeground(Color.WHITE);
+        nifLabel.setPreferredSize(labelSize);
         JTextField nifField = new JTextField();
+        nifField.setPreferredSize(fieldSize);
+        nifField.setMaximumSize(fieldSize);
+
+        JLabel dobLabel = new JLabel("Date of Birth:");
+        dobLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        dobLabel.setForeground(Color.WHITE);
+        dobLabel.setPreferredSize(labelSize);
         JTextField dobField = new JTextField();
+        dobField.setPreferredSize(fieldSize);
+        dobField.setMaximumSize(fieldSize);
+
+        JLabel phoneLabel = new JLabel("Phone:");
+        phoneLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        phoneLabel.setForeground(Color.WHITE);
+        phoneLabel.setPreferredSize(labelSize);
         JTextField phoneField = new JTextField();
+        phoneField.setPreferredSize(fieldSize);
+        phoneField.setMaximumSize(fieldSize);
+
+        JLabel genderLabel = new JLabel("Gender:");
+        genderLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        genderLabel.setForeground(Color.WHITE);
+        genderLabel.setPreferredSize(labelSize);
         JComboBox<String> genderComboBox = new JComboBox<>(new String[]{"MALE", "FEMALE"});
+        genderComboBox.setPreferredSize(fieldSize);
+        genderComboBox.setMaximumSize(fieldSize);
+
+        JLabel usernameLabel = new JLabel("Username:");
+        usernameLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        usernameLabel.setForeground(Color.WHITE);
+        usernameLabel.setPreferredSize(labelSize);
         JTextField usernameField = new JTextField();
+        usernameField.setPreferredSize(fieldSize);
+        usernameField.setMaximumSize(fieldSize);
+
+        JLabel passwordLabel = new JLabel("Password:");
+        passwordLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        passwordLabel.setForeground(Color.WHITE);
+        passwordLabel.setPreferredSize(labelSize);
         JPasswordField passwordField = new JPasswordField();
+        passwordField.setPreferredSize(fieldSize);
+        passwordField.setMaximumSize(fieldSize);
 
-        JPanel namePanel = createRow("Name:", nameField);
-        JPanel surnamePanel = createRow("Surname:", surnameField);
-        JPanel nifPanel = createRow("NIF:", nifField);
-        JPanel dobPanel = createRow("Date of Birth:", dobField);
-        JPanel phonePanel = createRow("Phone:", phoneField);
-        JPanel genderPanel = createRow("Gender:", genderComboBox);
-        JPanel usernamePanel = createRow("Username:", usernameField);
-        JPanel passwordPanel = createRow("Password:", passwordField);
+        // Agregar filas al panel de formulario
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        formPanel.add(nameLabel, gbc);
+        gbc.gridx = 1;
+        formPanel.add(nameField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        formPanel.add(surnameLabel, gbc);
+        gbc.gridx = 1;
+        formPanel.add(surnameField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        formPanel.add(nifLabel, gbc);
+        gbc.gridx = 1;
+        formPanel.add(nifField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        formPanel.add(dobLabel, gbc);
+        gbc.gridx = 1;
+        formPanel.add(dobField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        formPanel.add(phoneLabel, gbc);
+        gbc.gridx = 1;
+        formPanel.add(phoneField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        formPanel.add(genderLabel, gbc);
+        gbc.gridx = 1;
+        formPanel.add(genderComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        formPanel.add(usernameLabel, gbc);
+        gbc.gridx = 1;
+        formPanel.add(usernameField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        formPanel.add(passwordLabel, gbc);
+        gbc.gridx = 1;
+        formPanel.add(passwordField, gbc);
+
+        // Botones
         JButton cancelButton = new JButton("Cancel");
         JButton okButton = new JButton("OK");
 
@@ -180,13 +291,14 @@ public class PanelPrincipal extends JPanel {
                         nameField.getText().trim(),
                         surnameField.getText().trim(),
                         nifField.getText().trim(),
-                        Date.valueOf(dobField.getText().trim()),
+                        convertString2SqlDate(dobField.getText()),
                         Gender.valueOf((String) genderComboBox.getSelectedItem()),
                         phoneField.getText().trim()
                 );
-                User user = new User(usernameField.getText().trim(), new String(passwordField.getPassword()).trim());
-
-                //send.register(user, patient);
+                User user = new User(usernameField.getText().trim(), new String(passwordField.getPassword()).trim(),new Role());
+                patient.setUser(user);
+                send.register(patient);
+                
                 JOptionPane.showMessageDialog(this, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 showDefaultContent();
             } catch (Exception ex) {
@@ -199,23 +311,19 @@ public class PanelPrincipal extends JPanel {
         buttonPanel.add(cancelButton);
         buttonPanel.add(okButton);
 
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 50)));
+        // Añadir componentes al dynamicPanel
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         dynamicPanel.add(signUpLabel);
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        dynamicPanel.add(namePanel);
-        dynamicPanel.add(surnamePanel);
-        dynamicPanel.add(nifPanel);
-        dynamicPanel.add(dobPanel);
-        dynamicPanel.add(phonePanel);
-        dynamicPanel.add(genderPanel);
-        dynamicPanel.add(usernamePanel);
-        dynamicPanel.add(passwordPanel);
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        dynamicPanel.add(formPanel);
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         dynamicPanel.add(buttonPanel);
 
         dynamicPanel.revalidate();
         dynamicPanel.repaint();
     }
+
+
 
     private JPanel createRow(String labelText, JComponent field) {
         JPanel row = new JPanel();
