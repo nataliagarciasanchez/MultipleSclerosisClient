@@ -4,6 +4,7 @@
  */
 package Menu;
 
+import POJOs.Patient;
 import java.awt.*;
 import java.util.*;
 import java.util.stream.IntStream;
@@ -17,9 +18,10 @@ public class SecondPanel extends JPanel {
     private JPanel whitePanel; // Panel blanco dinámico
     private JLabel titleLabel; // Título principal
     private java.util.List<String> symptomsList; // Cambiar la declaración
+    private Patient patient;
 
-
-    public SecondPanel() {
+    public SecondPanel(Patient patient) {
+        this.patient = patient;
         symptomsList = new LinkedList<>(); // Inicialización de la lista de síntomas
         setBackground(new Color(153, 153, 153)); // Fondo gris
         setLayout(new BorderLayout()); // Layout principal

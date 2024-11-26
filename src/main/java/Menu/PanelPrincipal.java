@@ -9,6 +9,7 @@ import java.awt.*;
 
 import IOCommunication.PatientServerCommunication;
 import IOCommunication.PatientServerCommunication.Send;
+import Menu.Utilities.Utilities;
 import static Menu.Utilities.Utilities.convertString2SqlDate;
 import POJOs.Gender;
 import POJOs.Patient;
@@ -117,15 +118,22 @@ public class PanelPrincipal extends JPanel {
                 return;
             }
 
-            // Simulate login logic (replace with actual communication)
-            if (username.equals("admin") && password.equals("admin")) {
-                JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                mainFrame.getContentPane().removeAll();
-                mainFrame.add(new SecondPanel());
-                mainFrame.revalidate();
-                mainFrame.repaint();
-            } else {
-                JOptionPane.showMessageDialog(this, "Invalid credentials.", "Error", JOptionPane.ERROR_MESSAGE);
+            try {
+                Patient patient = send.login(username, password); // Communicate with server
+                if (patient != null) {
+                    JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                    // Proceed to the next panel with patient details
+                    JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                    mainFrame.getContentPane().removeAll();
+                    mainFrame.add(new SecondPanel(patient)); // Pass patient details to the next panel
+                    mainFrame.revalidate();
+                    mainFrame.repaint();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Invalid credentials. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error during login: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -287,15 +295,33 @@ public class PanelPrincipal extends JPanel {
         cancelButton.addActionListener(e -> showDefaultContent());
         okButton.addActionListener(e -> {
             try {
+                if (nameField.getText().trim().isEmpty() || surnameField.getText().trim().isEmpty() ||
+                    nifField.getText().trim().isEmpty() || dobField.getText().trim().isEmpty() ||
+                    phoneField.getText().trim().isEmpty() || usernameField.getText().trim().isEmpty() ||
+                    new String(passwordField.getPassword()).trim().isEmpty()) {
+                throw new IllegalArgumentException("All fields must be filled.");
+                }
+                if (!Utilities.validateID(nifField.getText().trim())) {
+                throw new IllegalArgumentException("Invalid NIF.");
+                }
+                if (!Utilities.isValidPhone(phoneField.getText().trim())) {
+                throw new IllegalArgumentException("Invalid phone number.");
+                }
+                if (!Utilities.isValidPassword(new String(passwordField.getPassword()).trim())) {
+                throw new IllegalArgumentException("Invalid password.");
+                }
+                Date dob = Utilities.convertString2SqlDate(dobField.getText().trim());
+                Gender gender = Gender.valueOf((String) genderComboBox.getSelectedItem());
+
                 Patient patient = new Patient(
-                        nameField.getText().trim(),
-                        surnameField.getText().trim(),
-                        nifField.getText().trim(),
-                        convertString2SqlDate(dobField.getText()),
-                        Gender.valueOf((String) genderComboBox.getSelectedItem()),
-                        phoneField.getText().trim()
+                    nameField.getText().trim(),
+                    surnameField.getText().trim(),
+                    nifField.getText().trim(),
+                    dob,
+                    gender,
+                    phoneField.getText().trim()
                 );
-                User user = new User(usernameField.getText().trim(), new String(passwordField.getPassword()).trim(),new Role());
+                User user = new User(usernameField.getText().trim(), new String(passwordField.getPassword()).trim(), new Role());
                 patient.setUser(user);
                 send.register(patient);
                 
