@@ -30,6 +30,7 @@ public class ComPatientTemporalMenu {
     
     public static void main(String[] args) {
         com= new PatientServerCommunication("localhost", 1027);
+        com.start();
         send= com.new Send();
         role=new Role();
         //register();

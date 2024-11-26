@@ -38,7 +38,7 @@ public class PatientServerCommunication {
         this.serverPort = serverPort;//9000
         try {
             this.socket = new Socket(serverAddress, serverPort);
-            System.out.println("Patient connected to server");
+            
             //out = new ObjectOutputStream(socket.getOutputStream());
             //this.out.flush();
             //in = new ObjectInputStream(socket.getInputStream());
@@ -55,7 +55,7 @@ public class PatientServerCommunication {
         try {
             this.in=new ObjectInputStream(socket.getInputStream());
             this.out=new ObjectOutputStream(socket.getOutputStream());
-            
+            System.out.println("Patient connected to server");
             new Thread(new Receive(in)).start();
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
