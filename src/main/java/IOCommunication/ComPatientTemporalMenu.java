@@ -34,9 +34,9 @@ public class ComPatientTemporalMenu {
         send= com.new Send();
         role=new Role();
         //register();
-        login();
+        //login();
         //updateInfo();
-        //sendSignals(SignalType.ECG);
+        sendSignals(SignalType.ECG);
         //sendSignals(send, SignalType.EMG);
     }
 
@@ -44,8 +44,8 @@ public class ComPatientTemporalMenu {
         try {
             java.sql.Date dob = Utilities.convertString2SqlDate("14/10/2003");
             //Doctor doctor=new Doctor("Dr.Garcia", "NEUROLOGY", new User("doctor.garcia@multipleSclerosis.com","Password456"));
-            Patient maite = new Patient("maite", "gomez", "05459423M", dob, Gender.FEMALE, "609526931");
-            User user=new User("correoprueba@gmail.com", "Password123", role);
+            Patient maite = new Patient("noelia", "gomez", "05459423F", dob, Gender.FEMALE, "609526931");
+            User user=new User("noelia@gmail.com", "Password123", role);
             maite.setUser(user);
             
             send.register(maite);
@@ -55,12 +55,12 @@ public class ComPatientTemporalMenu {
     }
     
     public static void login(){
-       Patient patient=send.login("correoprueba@gmail.com", "Password123");
+       Patient patient=send.login("noelia@gmail.com", "Password123");
        System.out.println(patient);
     }
     
     public static void updateInfo() {
-        Patient patient = send.login("maipat1310@gmail.com", "Password123");
+        Patient patient = send.login("noelia@gmail.com", "Password123");
         System.out.println(patient);
         User user = patient.getUser();
         user.setRole(role);
@@ -80,7 +80,7 @@ public class ComPatientTemporalMenu {
             
             bitalinoDevice.open(macAddress);
             
-            Patient patient=send.login("maipat1310@gmail.com", "Password123");
+            Patient patient=send.login("noelia@gmail.com", "Password123");
             System.out.println(patient);
             Date date=new Date(2024,11,25);
             Bitalino bitalinoECG=new Bitalino(date,SignalType.ECG);
