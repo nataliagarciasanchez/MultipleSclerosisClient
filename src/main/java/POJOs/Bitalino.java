@@ -54,6 +54,7 @@ public class Bitalino implements Serializable{
     /**
      * Method used to store the signals in a list
      * @param bitalino
+     * @param signal_type
      * @return list with all the frames that have been recorded
      */
     public List<Frame> storeRecordedSignals(BITalino bitalino, SignalType signal_type) {
@@ -63,9 +64,9 @@ public class Bitalino implements Serializable{
             int channel = 0;
             
             if(signal_type==SignalType.ECG){
-                channel=0;
-            }else{
                 channel=1;
+            }else{
+                channel=2;
             }
             int [] channels={channel};
             
