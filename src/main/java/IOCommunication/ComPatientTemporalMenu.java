@@ -95,7 +95,6 @@ public class ComPatientTemporalMenu {
     }
     
     public static void sendECG(Date date, Bitalino bitalino, BITalino bitalinoDevice){
-        
         send.sendECGSignals(bitalino, bitalinoDevice);
     }
     

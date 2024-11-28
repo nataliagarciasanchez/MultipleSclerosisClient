@@ -11,6 +11,7 @@ import IOCommunication.PatientServerCommunication;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -129,7 +130,24 @@ public class Bitalino implements Serializable{
     public void setReport(Report report) {
         this.report = report;
     }
+    
+    /**
+     * setSignalValues
+     * Transforms the list of frames saved from the recording into a string in order to save it in the database
+     * @param frames list of frames recorded
+     */
+    public void setSignalValues(List<Frame> frames, int channelIndex) {
+        StringBuilder sb = new StringBuilder();
+        Iterator<Frame> it = frames.iterator();
+        while (it.hasNext()) {
+            Frame frame = it.next();
+            sb.append(frame.analog[channelIndex]);
+            sb.append("\n");
+        }
+        this.signalValues = sb.toString();;
+    }
 
+    
     @Override
     public String toString() {
         return "Bitalino{" + "id=" + id + ", date=" + date + ", signal_type=" + signal_type + ", duration=" + duration + ", report=" + report + '}';

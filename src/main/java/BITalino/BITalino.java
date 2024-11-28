@@ -377,10 +377,6 @@ public class BITalino {
                 /*parse frames*/
                 frames[i] = new Frame(); // nuevo frame para almacenar los datos decodificados
                 frames[i].seq = (short) ((buffer[j - 0] & 0xF0) >> 4) & 0xf; 
-                frames[i].digital[0] = (short) ((buffer[j - 1] >> 7) & 0x01);
-                frames[i].digital[1] = (short) ((buffer[j - 1] >> 6) & 0x01);
-                frames[i].digital[2] = (short) ((buffer[j - 1] >> 5) & 0x01);
-                frames[i].digital[3] = (short) ((buffer[j - 1] >> 4) & 0x01);
 
                 /*parse buffer frame*/
                 switch (analogChannels.length - 1) { // usamos switch para decodificar los valores analógicos dependiendo de cuantos canales están configurados

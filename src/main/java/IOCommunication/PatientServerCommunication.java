@@ -151,9 +151,10 @@ public class PatientServerCommunication {
         public void sendECGSignals(Bitalino bitalino, BITalino bitalinoDevice) {
             try {
                 List<Frame> ecgFrames=bitalino.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
+                bitalino.setSignalValues(ecgFrames, 2);
                 // Send the ECG frames to the server
                 out.writeObject("sendECGSignals");
-                out.writeObject(ecgFrames);
+                out.writeObject(bitalino);
                 out.flush();
                 System.out.println("ECG Signals sent.");
 
@@ -169,9 +170,10 @@ public class PatientServerCommunication {
         public void sendEMGSignals(Bitalino bitalino, BITalino bitalinoDevice) {
             try {
                 List<Frame> emgFrames=bitalino.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
-                // Send the ECG frames to the server
+                bitalino.setSignalValues(emgFrames, 1);
+                // Send the EMG frames to the server
                 out.writeObject("sendEMGSignals");
-                out.writeObject(emgFrames);
+                out.writeObject(bitalino);
                 out.flush();
                 System.out.println("EMG Signals sent.");
 
