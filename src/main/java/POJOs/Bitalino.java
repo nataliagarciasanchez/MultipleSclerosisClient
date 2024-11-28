@@ -28,6 +28,7 @@ public class Bitalino implements Serializable{
     private Date date;
     private SignalType signal_type;
     private final Float duration=60.0F;//seconds-> 1 min of recording
+    private String signalValues;
     private Report report;
      
     public Bitalino(){
@@ -39,12 +40,15 @@ public class Bitalino implements Serializable{
          this.signal_type=signal_type;
      }
 
-    public Bitalino(Integer id, Date date, SignalType signal_type, Report report) {
+    public Bitalino(Integer id, Date date, SignalType signal_type, String signalValues, Report report) {
         this.id = id;
         this.date = date;
         this.signal_type = signal_type;
+        this.signalValues = signalValues;
         this.report = report;
     }
+    
+    
     
     /**
      * Method used to store the signals in a list
