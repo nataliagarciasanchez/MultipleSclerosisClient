@@ -34,10 +34,14 @@ public class ComPatientTemporalMenu {
     
     public static void main(String[] args) {
         com= new PatientServerCommunication("localhost", 9000);
+        if (!com.isConnected()) {
+            System.err.println("Could not connect to the server. Exiting...");
+            return;
+        }
         //com.start();
         send= com.new Send();
         role=new Role();
-        //register();
+        register();
         //login();
         //viewInfo();
         //updateInfo();

@@ -262,6 +262,17 @@ public class PatientServerCommunication {
         }
     }
     
-    
+    public boolean isConnected() {
+    try {
+        if (socket != null && socket.isConnected() && !socket.isClosed()) {
+            out.writeObject("x");
+            out.flush();
+            return true;
+        }
+    } catch (IOException e) {
+        System.err.println("Connection check failed: " + e.getMessage());
+    }
+    return false; 
+}
 
 }
