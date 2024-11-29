@@ -39,10 +39,9 @@ public class PatientServerCommunication {
     public PatientServerCommunication(String serverAddress, int serverPort) {
 
         this.serverAddress = serverAddress;
-        this.serverPort = serverPort;//9000
-        try {
+        this.serverPort = serverPort;
+        /*try {
             this.socket = new Socket(serverAddress, serverPort);
-            
             out = new ObjectOutputStream(socket.getOutputStream());
             this.out.flush();
             in = new ObjectInputStream(socket.getInputStream());
@@ -52,19 +51,21 @@ public class PatientServerCommunication {
 
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
     
-    /*public void start(){
+    public void start(){
         try {
+            this.socket=new Socket(serverAddress, serverPort);
             this.out=new ObjectOutputStream(socket.getOutputStream());
+            out.flush();
             this.in=new ObjectInputStream(socket.getInputStream());
             System.out.println("Patient connected to server");
             //new Thread(new Receive(in)).start();
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }*/
+    }
     
     public class Send{
         
@@ -78,9 +79,9 @@ public class PatientServerCommunication {
         public void register(Patient patient) {
             try {
                 out.writeObject("register"); // Acción de registro
+                out.flush();
                 out.writeObject(patient.getUser());//envía los datos de registro al server
                 out.writeObject(patient);
-                
                 out.flush();
                 System.out.println("Registering.....");
                 String confirmation=(String) in.readObject();
@@ -145,8 +146,6 @@ public class PatientServerCommunication {
                 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-            }finally{
-                releaseResources(in,out,socket);//TODO quitar el cerrar, solo para la prueba
             }
 
         }
@@ -262,17 +261,7 @@ public class PatientServerCommunication {
         }
     }
     
-    public boolean isConnected() {
-    try {
-        if (socket != null && socket.isConnected() && !socket.isClosed()) {
-            out.writeObject("x");
-            out.flush();
-            return true;
-        }
-    } catch (IOException e) {
-        System.err.println("Connection check failed: " + e.getMessage());
-    }
-    return false; 
-}
+    
+
 
 }

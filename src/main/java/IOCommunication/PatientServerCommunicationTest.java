@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  * Class used to test all the method in the communication
  * @author maipa
  */
-public class ComPatientTemporalMenu {
+public class PatientServerCommunicationTest {
     
     public static PatientServerCommunication com; 
     public static PatientServerCommunication.Send send;
@@ -34,16 +34,12 @@ public class ComPatientTemporalMenu {
     
     public static void main(String[] args) {
         com= new PatientServerCommunication("localhost", 9000);
-        if (!com.isConnected()) {
-            System.err.println("Could not connect to the server. Exiting...");
-            return;
-        }
-        //com.start();
+        com.start();
         send= com.new Send();
         role=new Role();
-        register();
-        //login();
-        //viewInfo();
+        //register();
+        login();
+        //viewPersonalInfo();
         //updateInfo();
         //sendSignals(SignalType.ECG);
         //sendSignals(SignalType.EMG);
@@ -53,19 +49,19 @@ public class ComPatientTemporalMenu {
     public static void register() {
         try {
             java.sql.Date dob = Utilities.convertString2SqlDate("14/10/2003");
-            //Doctor doctor=new Doctor("Dr.Garcia", "NEUROLOGY", new User("doctor.garcia@multipleSclerosis.com","Password456"));
             Patient maite = new Patient("noelia", "gomez", "05459423F", dob, Gender.FEMALE, "609526931");
             User user=new User("noelia@gmail.com", "Password123", role);
             maite.setUser(user);
             
             send.register(maite);
         } catch (ParseException ex) {
-            Logger.getLogger(ComPatientTemporalMenu.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public static void login(){
        Patient patient=send.login("noelia@gmail.com", "Password123");
+       patient.getUser().setRole(role);
        System.out.println(patient);
     }
     
@@ -105,7 +101,7 @@ public class ComPatientTemporalMenu {
             }else{
                 sendEMG(date, bitalinoEMG, bitalinoDevice);
             }} catch (Throwable ex) {
-            Logger.getLogger(ComPatientTemporalMenu.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -124,7 +120,7 @@ public class ComPatientTemporalMenu {
         try {
             date = Utilities.convertString2SqlDate(r_date.toString());
         } catch (ParseException ex) {
-            Logger.getLogger(ComPatientTemporalMenu.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         Patient patient=send.login("noelia@gmail.com", "Password123");
         Bitalino bitalinoECG=new Bitalino(date,SignalType.ECG);
