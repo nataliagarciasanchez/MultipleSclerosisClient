@@ -34,6 +34,12 @@ public class Report implements Serializable{
         this.bitalinos = bitalinos;
         this.symptoms = symptoms;
     }
+    public Report(Date date, Patient patient, List<Bitalino> bitalinos, List<Symptom> symptoms) {
+        this.date = date;
+        this.patient = patient;
+        this.bitalinos = bitalinos;
+        this.symptoms = symptoms;
+    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;

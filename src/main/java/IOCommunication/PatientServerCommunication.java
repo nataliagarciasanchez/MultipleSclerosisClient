@@ -7,13 +7,17 @@ package IOCommunication;
 import BITalino.BITalino;
 import BITalino.Frame;
 import POJOs.Bitalino;
+import POJOs.Feedback;
 import POJOs.User;
 import POJOs.Patient;
+import POJOs.Report;
 import POJOs.SignalType;
+import POJOs.Symptom;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -185,6 +189,29 @@ public class PatientServerCommunication {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        /**
+         * Sends the report to the server with all the info 
+         * @param report 
+         */
+        public void sendReport(Report report){
+            try {
+                out.writeObject("sendReport");
+                out.writeObject(report);
+                out.flush();
+                System.out.println("Report sent.");
+                // Read the server's response
+                String response = (String) in.readObject();
+                System.out.println("Server response: " + response);
+                
+            } catch (IOException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        
 
         public Patient getPatient() {
             return patient;

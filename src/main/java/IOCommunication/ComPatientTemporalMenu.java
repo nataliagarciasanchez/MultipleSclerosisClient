@@ -9,11 +9,15 @@ import Menu.Utilities.Utilities;
 import POJOs.Bitalino;
 import POJOs.Gender;
 import POJOs.Patient;
+import POJOs.Report;
 import POJOs.Role;
 import POJOs.SignalType;
+import POJOs.Symptom;
 import POJOs.User;
 import java.sql.Date;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,9 +39,11 @@ public class ComPatientTemporalMenu {
         role=new Role();
         //register();
         //login();
+        //viewInfo();
         //updateInfo();
-        sendSignals(SignalType.ECG);
-        //sendSignals(send, SignalType.EMG);
+        //sendSignals(SignalType.ECG);
+        //sendSignals(SignalType.EMG);
+        //report();  
     }
 
     public static void register() {
@@ -74,6 +80,11 @@ public class ComPatientTemporalMenu {
 
     }
     
+    public static void viewPersonalInfo(){
+        Patient patient = send.login("noelia@gmail.com", "Password123");
+        System.out.println(patient);
+    }
+    
     public static void sendSignals(SignalType signal_type){
         try {
             BITalino bitalinoDevice=new BITalino();
@@ -100,5 +111,33 @@ public class ComPatientTemporalMenu {
     
     public static void sendEMG(Date date, Bitalino bitalino, BITalino bitalinoDevice){
        send.sendEMGSignals(bitalino, bitalinoDevice);
+    }
+    
+    
+    public static void report(){
+        LocalDate r_date=LocalDate.now();
+        Date date = null;
+        try {
+            date = Utilities.convertString2SqlDate(r_date.toString());
+        } catch (ParseException ex) {
+            Logger.getLogger(ComPatientTemporalMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Patient patient=send.login("noelia@gmail.com", "Password123");
+        Bitalino bitalinoECG=new Bitalino(date,SignalType.ECG);
+        Bitalino bitalinoEMG=new Bitalino(date,SignalType.EMG);
+        List<Bitalino> bitalinos = null;
+        bitalinos.add(bitalinoECG);
+        bitalinos.add(bitalinoEMG);
+        List<Symptom> symptoms = null;
+        symptoms.add(new Symptom("Loss of balance"));
+        symptoms.add(new Symptom("Muscle spasms"));
+        symptoms.add(new Symptom("Numbness or abnormal sensation in any area"));
+        
+        sendReport(date, patient, bitalinos,symptoms);
+    }
+    
+    public static void sendReport(Date date, Patient patient, List<Bitalino> bitalinos, List<Symptom> symptoms){
+        Report report=new Report(date,patient,bitalinos,symptoms);
+        send.sendReport(report);
     }
 }
