@@ -150,6 +150,21 @@ public class PatientServerCommunication {
 
         }
         
+        /**
+         * Retrieves all the possible symptoms from the database that a patient with multiple sclerosis may have
+         * @return list of symptoms
+         */
+        public List<Symptom> getSymptoms(){
+            List <Symptom> symptoms = null;
+            try {
+                out.writeObject("viewSymptoms");
+                symptoms=(List <Symptom>) in.readObject();
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return symptoms;
+        }
+        
 
         public void sendECGSignals(Bitalino bitalino, BITalino bitalinoDevice) {
             try {

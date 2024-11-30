@@ -18,6 +18,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +40,7 @@ public class PatientServerCommunicationTest {
         role=new Role();
         //register();
         login();
+        //vieSymptoms();
         //viewPersonalInfo();
         //updateInfo();
         //sendSignals(SignalType.ECG);
@@ -83,6 +85,15 @@ public class PatientServerCommunicationTest {
     public static void viewPersonalInfo(){
         Patient patient = send.login("noelia@gmail.com", "Password123");
         System.out.println(patient);
+    }
+    
+    public static void viewSymptoms(){
+        Patient patient = send.login("noelia@gmail.com", "Password123");
+        List<Symptom> symptoms=send.getSymptoms();
+        ListIterator it=symptoms.listIterator();
+        while(it.hasNext()){
+            System.out.println(it.next());
+        }
     }
     
     public static void sendSignals(SignalType signal_type){
