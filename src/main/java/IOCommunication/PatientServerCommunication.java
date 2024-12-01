@@ -4,20 +4,15 @@
  */
 package IOCommunication;
 
-import BITalino.BITalino;
-import BITalino.Frame;
-import POJOs.Bitalino;
-import POJOs.Feedback;
+
 import POJOs.User;
 import POJOs.Patient;
 import POJOs.Report;
-import POJOs.SignalType;
 import POJOs.Symptom;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
