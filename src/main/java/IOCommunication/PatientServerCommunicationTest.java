@@ -18,6 +18,7 @@ import POJOs.User;
 import java.sql.Date;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Level;
@@ -44,8 +45,6 @@ public class PatientServerCommunicationTest {
         //viewSymptoms();
         //viewPersonalInfo();
         //updateInfo();
-        //sendSignals(SignalType.ECG);
-        //sendSignals(SignalType.EMG);
         //sendReport();  
     }
 
@@ -96,36 +95,7 @@ public class PatientServerCommunicationTest {
             System.out.println(it.next());
         }
     }
-    
-    public static void sendSignals(SignalType signal_type){
-        try {
-            BITalino bitalinoDevice=new BITalino();
-            
-            bitalinoDevice.open(macAddress);
-            
-            Patient patient=send.login("noelia@gmail.com", "Password123");
-            System.out.println(patient);
-            Date date=new Date(2024,11,25);
-            Bitalino bitalinoECG=new Bitalino(date,SignalType.ECG);
-            Bitalino bitalinoEMG=new Bitalino(date,SignalType.EMG);
-            if(signal_type==SignalType.ECG){
-                sendECG(date, bitalinoECG, bitalinoDevice);
-            }else{
-                sendEMG(date, bitalinoEMG, bitalinoDevice);
-            }} catch (Throwable ex) {
-            Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public static void sendECG(Date date, Bitalino bitalino, BITalino bitalinoDevice){
-        send.sendECGSignals(bitalino, bitalinoDevice);
-    }
-    
-    public static void sendEMG(Date date, Bitalino bitalino, BITalino bitalinoDevice){
-       send.sendEMGSignals(bitalino, bitalinoDevice);
-    }
-    
-    
+
     public static void sendReport(){
         try {
             BITalino bitalinoDevice=new BITalino();
@@ -150,7 +120,7 @@ public class PatientServerCommunicationTest {
             bitalinoECG.setSignalValues(ecgFrames, 1);
             
             
-            List<Bitalino> bitalinos = null;
+            List<Bitalino> bitalinos = new ArrayList();
             bitalinos.add(bitalinoEMG);
             bitalinos.add(bitalinoECG);
             List<Symptom> symptoms = null;

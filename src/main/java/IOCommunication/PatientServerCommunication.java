@@ -164,46 +164,7 @@ public class PatientServerCommunication {
             }
             return symptoms;
         }
-        
 
-        public void sendECGSignals(Bitalino bitalino, BITalino bitalinoDevice) {
-            try {
-                List<Frame> ecgFrames=bitalino.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
-                bitalino.setSignalValues(ecgFrames, 2);
-                // Send the ECG frames to the server
-                out.writeObject("sendECGSignals");
-                out.writeObject(bitalino);
-                out.flush();
-                System.out.println("ECG Signals sent.");
-
-                // Read the server's response
-                String response = (String) in.readObject();
-                System.out.println("Server response: " + response);
-            } catch (Throwable ex) {
-                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-
-        public void sendEMGSignals(Bitalino bitalino, BITalino bitalinoDevice) {
-            try {
-                List<Frame> emgFrames=bitalino.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
-                bitalino.setSignalValues(emgFrames, 1);
-                // Send the EMG frames to the server
-                out.writeObject("sendEMGSignals");
-                out.writeObject(bitalino);
-                out.flush();
-                System.out.println("EMG Signals sent.");
-
-                // Read the server's response
-                String response = (String) in.readObject();
-                System.out.println("Server response: " + response);
-                
-            } catch (Throwable ex) {
-                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
         /**
          * Sends the report to the server with all the info 
          * @param report 
@@ -275,8 +236,5 @@ public class PatientServerCommunication {
             System.out.println("Received from server: " + message);
         }
     }
-    
-    
-
 
 }

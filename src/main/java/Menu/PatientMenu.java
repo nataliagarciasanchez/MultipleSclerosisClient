@@ -6,6 +6,7 @@ package Menu;
 
 
 import BITalino.BITalino;
+import BITalino.Frame;
 import IOCommunication.PatientServerCommunication;
 import POJOs.User;
 import Menu.Utilities.Utilities;
@@ -13,6 +14,7 @@ import POJOs.Bitalino;
 import POJOs.Doctor;
 import POJOs.Gender;
 import POJOs.Patient;
+import POJOs.Report;
 import POJOs.Role;
 import POJOs.SignalType;
 import POJOs.Symptom;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -242,7 +245,7 @@ public class PatientMenu {
     }    
     
     public static void servicesMenu(Patient patient){
-        //TODO here we should ask for symptoms, connect to the bitalino and so on
+        
         
         System.out.println("Welcome to your remote Multiple Sclerosis clinic. We are now going to attend your needs.");
         System.out.println("To make sure we take care of all your needs and report to your doctor we would "
@@ -256,10 +259,20 @@ public class PatientMenu {
         //symptomsList.add(s1);
         
         System.out.println("We are sorry you are experiencing all those symptoms. Do not worry we will make sure you feel better!");
-        recordECG();
-        recordEMG();
+        Bitalino bitalinoECG=recordECG();
+        Bitalino bitalinoEMG=recordEMG();
+        List<Frame> emgFrames=bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
+        bitalinoEMG.setSignalValues(emgFrames, 1);
+        List<Frame> ecgFrames=bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
+        bitalinoEMG.setSignalValues(ecgFrames, 2);
         
-        diagnosisFromDoctor();
+        List<Bitalino> bitalinos = new ArrayList();
+        bitalinos.add(bitalinoEMG);
+        bitalinos.add(bitalinoECG);
+        Report report=new Report(date,patient,bitalinos,symptomsList);
+        
+
+        diagnosisFromDoctor(report);
     }
     
     public static void showSymptoms() {
@@ -314,7 +327,7 @@ public class PatientMenu {
     }
 
     
-    public static void recordECG(){
+    public static Bitalino recordECG(){
         
         SignalType signal=SignalType.ECG;
         Bitalino bitalino=new Bitalino(date,signal);
@@ -333,10 +346,10 @@ public class PatientMenu {
         
         System.out.println("Great!. Signals have been recorded correctly. ");
         
-        send.sendECGSignals(bitalino, bitalinoDevice);
+        return bitalino;
     }
     
-    public static void recordEMG(){
+    public static Bitalino recordEMG(){
         
         SignalType signal=SignalType.EMG;
         Bitalino bitalino=new Bitalino(date, signal);
@@ -349,10 +362,11 @@ public class PatientMenu {
         
         System.out.println("Great! EMG performed correctly. ");
         
-        send.sendEMGSignals(bitalino, bitalinoDevice);
+        return bitalino;
     }
     
-    public static void diagnosisFromDoctor(){
+    public static void diagnosisFromDoctor(Report report){
+        send.sendReport(report);
        /*TODO el feedback del doctor se va a mostrar automáticamente cuando el server 
        se ponga en contacto con este, una vez las señales del patient han sido mandadas con el hilo de la 
         clase Receive de la communication. */
