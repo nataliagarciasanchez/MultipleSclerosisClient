@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author nataliagarciasanchez
  */
-public class MainPatientUI {
+public class MainPatientGUI {
     private static PatientServerCommunication patientServerCom;
     private static PatientServerCommunication.Send send;
 
@@ -46,7 +46,7 @@ public class MainPatientUI {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Invalid port number. Exiting the application.", "Error", JOptionPane.ERROR_MESSAGE);
         }/*catch (IOException e) {
-            Logger.getLogger(MainPatientUI.class.getName()).log(Level.SEVERE, "Error connecting to server", e);
+            Logger.getLogger(MainPatientGUI.class.getName()).log(Level.SEVERE, "Error connecting to server", e);
             JOptionPane.showMessageDialog(null, "Could not connect to the server. Please check the server IP and port.", "Connection Error", JOptionPane.ERROR_MESSAGE);
         }*/
     }

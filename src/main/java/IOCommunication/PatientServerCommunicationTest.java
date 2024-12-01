@@ -5,6 +5,7 @@
 package IOCommunication;
 
 import BITalino.BITalino;
+import BITalino.Frame;
 import Menu.Utilities.Utilities;
 import POJOs.Bitalino;
 import POJOs.Gender;
@@ -40,12 +41,12 @@ public class PatientServerCommunicationTest {
         role=new Role();
         //register();
         login();
-        //vieSymptoms();
+        //viewSymptoms();
         //viewPersonalInfo();
         //updateInfo();
         //sendSignals(SignalType.ECG);
         //sendSignals(SignalType.EMG);
-        //report();  
+        //sendReport();  
     }
 
     public static void register() {
@@ -125,30 +126,43 @@ public class PatientServerCommunicationTest {
     }
     
     
-    public static void report(){
-        LocalDate r_date=LocalDate.now();
-        Date date = null;
+    public static void sendReport(){
         try {
-            date = Utilities.convertString2SqlDate(r_date.toString());
-        } catch (ParseException ex) {
+            BITalino bitalinoDevice=new BITalino();
+            
+            bitalinoDevice.open(macAddress);
+            LocalDate r_date=LocalDate.now();
+            Date date = null;
+            try {
+                date = Utilities.convertString2SqlDate(r_date.toString());
+            } catch (ParseException ex) {
+                Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            Patient patient=send.login("noelia@gmail.com", "Password123");
+            
+            
+            Bitalino bitalinoEMG=new Bitalino(date,SignalType.EMG);
+            List<Frame> emgFrames=bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
+            bitalinoEMG.setSignalValues(emgFrames, 1);
+            
+            Bitalino bitalinoECG=new Bitalino(date,SignalType.ECG);
+            List<Frame> ecgFrames=bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
+            bitalinoECG.setSignalValues(ecgFrames, 1);
+            
+            
+            List<Bitalino> bitalinos = null;
+            bitalinos.add(bitalinoEMG);
+            bitalinos.add(bitalinoECG);
+            List<Symptom> symptoms = null;
+            symptoms.add(new Symptom("Loss of balance"));
+            symptoms.add(new Symptom("Muscle spasms"));
+            symptoms.add(new Symptom("Numbness or abnormal sensation in any area"));
+            
+            Report report=new Report(date,patient,bitalinos,symptoms);
+            send.sendReport(report);
+            
+        } catch (Throwable ex) {
             Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Patient patient=send.login("noelia@gmail.com", "Password123");
-        Bitalino bitalinoECG=new Bitalino(date,SignalType.ECG);
-        Bitalino bitalinoEMG=new Bitalino(date,SignalType.EMG);
-        List<Bitalino> bitalinos = null;
-        bitalinos.add(bitalinoECG);
-        bitalinos.add(bitalinoEMG);
-        List<Symptom> symptoms = null;
-        symptoms.add(new Symptom("Loss of balance"));
-        symptoms.add(new Symptom("Muscle spasms"));
-        symptoms.add(new Symptom("Numbness or abnormal sensation in any area"));
-        
-        sendReport(date, patient, bitalinos,symptoms);
-    }
-    
-    public static void sendReport(Date date, Patient patient, List<Bitalino> bitalinos, List<Symptom> symptoms){
-        Report report=new Report(date,patient,bitalinos,symptoms);
-        send.sendReport(report);
     }
 }

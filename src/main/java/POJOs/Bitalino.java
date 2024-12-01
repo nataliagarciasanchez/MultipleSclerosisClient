@@ -136,6 +136,7 @@ public class Bitalino implements Serializable{
      * setSignalValues
      * Transforms the list of frames saved from the recording into a string in order to save it in the database
      * @param frames list of frames recorded
+     * @param channelIndex channel depending on the signal (1-EMG, 2-ECG)
      */
     public void setSignalValues(List<Frame> frames, int channelIndex) {
         StringBuilder sb = new StringBuilder();
@@ -145,7 +146,7 @@ public class Bitalino implements Serializable{
             sb.append(frame.analog[channelIndex]);
             sb.append("\n");
         }
-        this.signalValues = sb.toString();;
+        this.signalValues = sb.toString();
     }
 
     
