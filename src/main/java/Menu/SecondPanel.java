@@ -5,6 +5,7 @@
 package Menu;
 
 import BITalino.BITalino;
+import BITalino.Frame;
 import IOCommunication.PatientServerCommunication;
 import Menu.Utilities.Utilities;
 import POJOs.Bitalino;
@@ -408,7 +409,7 @@ public class SecondPanel extends JPanel {
                 Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             Bitalino bitalinoECG = new Bitalino( java.sql.Date.valueOf(date), SignalType.ECG);
-            List<Frames> emgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
+            java.util.List<Frame> emgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
             bitalinoECG.setSignalValues (emgFrames,1);            
         });
 
@@ -477,7 +478,7 @@ public class SecondPanel extends JPanel {
                 Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             Bitalino bitalinoEMG = new Bitalino( java.sql.Date.valueOf(date), SignalType.EMG);
-            List <Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
+             java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
             bitalinoEMG.setSignalValues (emgFrames,1);            
         });
 
