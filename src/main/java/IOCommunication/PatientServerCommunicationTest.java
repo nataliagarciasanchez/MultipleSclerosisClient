@@ -42,7 +42,7 @@ public class PatientServerCommunicationTest {
         role=new Role();
         //register();
         //login();
-        //viewSymptoms();
+        viewSymptoms();
         //viewPersonalInfo();
         //updateInfo();
         sendReport();  

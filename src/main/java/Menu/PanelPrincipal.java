@@ -120,6 +120,7 @@ public class PanelPrincipal extends JPanel {
 
             try {
                 Patient patient = send.login(username, password); // Communicate with server
+                System.out.println("line send.login(username, password)");
                 if (patient != null) {
                     JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
 
