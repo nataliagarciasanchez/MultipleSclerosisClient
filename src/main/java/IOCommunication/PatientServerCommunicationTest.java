@@ -41,8 +41,8 @@ public class PatientServerCommunicationTest {
         send= com.new Send();
         role=new Role();
         //register();
-        login();
-        //viewSymptoms();
+        //login();
+        viewSymptoms();
         //viewPersonalInfo();
         //updateInfo();
         //sendReport();  
