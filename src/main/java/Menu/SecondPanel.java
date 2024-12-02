@@ -4,12 +4,21 @@
  */
 package Menu;
 
+import BITalino.BITalino;
+import IOCommunication.PatientServerCommunication;
+import Menu.Utilities.Utilities;
+import POJOs.Bitalino;
 import POJOs.Patient;
+import POJOs.Report;
+import POJOs.SignalType;
+import POJOs.Symptom;
 import java.awt.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import javax.swing.*;
-
+import java.time.LocalDate;
 /**
  *
  * @author nataliagarciasanchez
@@ -17,9 +26,15 @@ import javax.swing.*;
 public class SecondPanel extends JPanel {
     private JPanel whitePanel; // Dynamic white panel
     private JLabel titleLabel; // Main title
-    private java.util.List<String> symptomsList; // Symptom list
+    private java.util.List<Symptom> symptomsList; // Symptom list
     private Patient patient;
     private final Image backgroundImage; // Background image
+    private final PatientServerCommunication.Send send = null;
+    private LocalDate date = LocalDate.now();
+    public static String macAddress = "98:D3:41:FD:4E:E8";
+    private java.util.List<Bitalino> bitalinos; // Symptom list
+    
+    
     
     public SecondPanel(Patient patient) {
         this.patient = patient;
@@ -312,8 +327,8 @@ public class SecondPanel extends JPanel {
         symptomsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Espaciado interno
 
         // Añadir casillas de verificación para los 100 síntomas
-        for (String symptom : IntStream.range(1, 51).mapToObj(i -> "Symptom " + i).toList()) {
-            JCheckBox symptomCheckBox = new JCheckBox(symptom);
+        for (Symptom symptom : send.getSymptoms()) {
+            JCheckBox symptomCheckBox = new JCheckBox((Icon) symptom);
             symptomCheckBox.setFont(new Font("Segoe UI", Font.PLAIN, 14)); // Tamaño más grande
             symptomCheckBox.setBackground(Color.WHITE);
             symptomsPanel.add(symptomCheckBox);
@@ -368,6 +383,34 @@ public class SecondPanel extends JPanel {
         ecgLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         ecgLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(ecgLabel, BorderLayout.CENTER);
+        
+         // Play Button
+        JButton playButton = new JButton("Play");
+        playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        playButton.setBackground(new Color(0, 128, 0)); // Green background
+        playButton.setForeground(Color.WHITE); // White text
+        playButton.setFocusPainted(false);
+
+        // Center the Play button below the text
+        JPanel playButtonPanel = new JPanel();
+        playButtonPanel.setBackground(Color.WHITE);
+        playButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        playButtonPanel.add(playButton);
+
+        whitePanel.add(playButtonPanel, BorderLayout.SOUTH);
+
+        // Add Play button functionality
+        playButton.addActionListener(e -> {
+            BITalino bitalinoDevice=new BITalino();
+            try {
+                bitalinoDevice.open(macAddress);
+            } catch (Throwable ex) {
+                Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            Bitalino bitalinoECG = new Bitalino( java.sql.Date.valueOf(date), SignalType.ECG);
+            List<Frames> emgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
+            bitalinoECG.setSignalValues (emgFrames,1);            
+        });
 
         // Navigation buttons
         JPanel buttonPanel = new JPanel();
@@ -405,10 +448,39 @@ public class SecondPanel extends JPanel {
                 "1. Place the RED electrode on the center of the biceps muscle.<br>" +
                 "2. Place the YELLOW electrode 2–3 cm along the muscle, aligned with fibers.<br>" +
                 "3. Place the BLACK electrode on a bony area like the elbow or wrist.<br>" +
-                "<br>Once everything is ready, press Play on the device.</center></html>");
+                "<br>Once everything is ready, press PLAY.</center></html>");
         emgLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         emgLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(emgLabel, BorderLayout.CENTER);
+        
+        // Play Button
+        JButton playButton = new JButton("Play");
+        playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        playButton.setBackground(new Color(0, 128, 0)); // Green background
+        playButton.setForeground(Color.WHITE); // White text
+        playButton.setFocusPainted(false);
+
+        // Center the Play button below the text
+        JPanel playButtonPanel = new JPanel();
+        playButtonPanel.setBackground(Color.WHITE);
+        playButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        playButtonPanel.add(playButton);
+
+        whitePanel.add(playButtonPanel, BorderLayout.SOUTH);
+
+        // Add Play button functionality
+        playButton.addActionListener(e -> {
+            BITalino bitalinoDevice=new BITalino();
+            try {
+                bitalinoDevice.open(macAddress);
+            } catch (Throwable ex) {
+                Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            Bitalino bitalinoEMG = new Bitalino( java.sql.Date.valueOf(date), SignalType.EMG);
+            List <Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
+            bitalinoEMG.setSignalValues (emgFrames,1);            
+        });
+
 
         // Navigation buttons
         JPanel buttonPanel = new JPanel();
@@ -461,6 +533,11 @@ public class SecondPanel extends JPanel {
         doneButton.setForeground(Color.BLACK);
         doneButton.addActionListener(e -> showMonitoringIntroduction()); // Return to Introduction
 
+        doneButton.addActionListener(e -> {
+            Report report = new Report( java.sql.Date.valueOf(date), patient, bitalinos, symptomsList);
+            send.sendReport(report);
+        });
+        
         buttonPanel.add(doneButton);
 
         whitePanel.add(buttonPanel, BorderLayout.SOUTH);
