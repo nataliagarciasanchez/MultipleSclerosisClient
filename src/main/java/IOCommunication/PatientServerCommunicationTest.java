@@ -41,11 +41,11 @@ public class PatientServerCommunicationTest {
         send= com.new Send();
         role=new Role();
         //register();
-        login();
+        //login();
         //viewSymptoms();
         //viewPersonalInfo();
         //updateInfo();
-        //sendReport();  
+        sendReport();  
     }
 
     public static void register() {
@@ -104,7 +104,7 @@ public class PatientServerCommunicationTest {
             LocalDate r_date=LocalDate.now();
             Date date = null;
             try {
-                date = Utilities.convertString2SqlDate(r_date.toString());
+                date = Utilities.convertString2SqlDate2(r_date.toString());
             } catch (ParseException ex) {
                 Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -123,7 +123,7 @@ public class PatientServerCommunicationTest {
             List<Bitalino> bitalinos = new ArrayList();
             bitalinos.add(bitalinoEMG);
             bitalinos.add(bitalinoECG);
-            List<Symptom> symptoms = null;
+            List<Symptom> symptoms = new ArrayList();
             symptoms.add(new Symptom("Loss of balance"));
             symptoms.add(new Symptom("Muscle spasms"));
             symptoms.add(new Symptom("Numbness or abnormal sensation in any area"));
