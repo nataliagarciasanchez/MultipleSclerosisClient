@@ -43,9 +43,9 @@ public class PatientServerCommunicationTest {
         //register();
         //login();
         //viewSymptoms();
-        //viewPersonalInfo();
+        viewPersonalInfo();
         //updateInfo();
-        sendReport();  
+        //sendReport();  
     }
 
     public static void register() {
