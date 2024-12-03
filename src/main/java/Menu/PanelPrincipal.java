@@ -119,20 +119,26 @@ public class PanelPrincipal extends JPanel {
             }
 
             try {
-                Patient patient = send.login(username, password); // Communicate with server
-                System.out.println("line send.login(username, password)");
-                if (patient != null) {
-                    JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
 
-                    // Proceed to the next panel with patient details
-                    JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                    mainFrame.getContentPane().removeAll();
-                    mainFrame.add(new SecondPanel(patient, send)); // Pass patient details to the next panel
-                    mainFrame.revalidate();
-                    mainFrame.repaint();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Invalid credentials. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                Patient patient = null;
+                while (patient == null) {
+                    patient = send.login(username, password); // Communicate with server  
+                    if (patient != null) {
+                        JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                        // Proceed to the next panel with patient details
+                        JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                        mainFrame.getContentPane().removeAll();
+                        mainFrame.add(new SecondPanel(patient, send)); // Pass patient details to the next panel
+                        mainFrame.revalidate();
+                        mainFrame.repaint();
+                        break;
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Invalid credentials. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    }
                 }
+
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error during login: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
