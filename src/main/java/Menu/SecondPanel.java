@@ -94,6 +94,8 @@ public class SecondPanel extends JPanel {
         JButton startMonitoringButton = createStyledButton("Start Monitoring");
         JButton settingsButton = createStyledButton("Settings");
         
+        settingsButton.addActionListener(e -> displayPatientInfoUpdate());
+        
         // Add ActionListener to "View My Information" button
         viewInfoButton.addActionListener(e -> displayPatientInfo());
         viewDoctorButton.addActionListener(e -> {
@@ -560,6 +562,102 @@ public class SecondPanel extends JPanel {
         buttonPanel.add(doneButton);
 
         whitePanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        whitePanel.revalidate();
+        whitePanel.repaint();
+    }
+    
+    private void displayPatientInfoUpdate() {
+        whitePanel.removeAll();
+        whitePanel.setLayout(new BorderLayout());
+        whitePanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 0, 20)); 
+
+        JPanel contentPanel = new JPanel();
+        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setLayout(new GridBagLayout());
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20)); 
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 10, 5, 10); 
+
+        JTextField nameField = new JTextField(patient.getName() != null ? patient.getName() : "");
+        JTextField surnameField = new JTextField(patient.getSurname() != null ? patient.getSurname() : "");
+        JTextField nifField = new JTextField(patient.getNIF() != null ? patient.getNIF() : "");
+        JTextField dobField = new JTextField(patient.getDob() != null ? patient.getDob().toString() : "");
+        JTextField phoneField = new JTextField(patient.getPhone() != null ? patient.getPhone() : "");
+
+
+        gbc.gridx = 0; 
+        gbc.gridy = 0; 
+        gbc.anchor = GridBagConstraints.LINE_END; 
+        JLabel namelabel = new JLabel("Name: ");
+        namelabel.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
+        contentPanel.add(namelabel, gbc);
+        gbc.gridy++;
+        JLabel surnamelabel = new JLabel("Surname: ");
+        surnamelabel.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
+        contentPanel.add(surnamelabel, gbc);
+        gbc.gridy++;
+        JLabel dnlabel = new JLabel("DNI: ");
+        dnlabel.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
+        contentPanel.add(dnlabel, gbc);
+        gbc.gridy++;
+        JLabel dobLabel = new JLabel("Birth Date (YYYY-MM-DD): ");
+        dobLabel.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
+        contentPanel.add(dobLabel, gbc);
+        gbc.gridy++;
+        JLabel phoneLabel = new JLabel("Phone: ");
+        phoneLabel.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
+        contentPanel.add(phoneLabel, gbc);
+
+        gbc.gridx = 1; 
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.weightx = 1; 
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        contentPanel.add(nameField, gbc);
+        gbc.gridy++;
+        contentPanel.add(surnameField, gbc);
+        gbc.gridy++;
+        contentPanel.add(nifField, gbc);
+        gbc.gridy++;
+        contentPanel.add(dobField, gbc);
+        gbc.gridy++;
+        contentPanel.add(phoneField, gbc);
+
+        whitePanel.add(contentPanel, BorderLayout.NORTH); 
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER)); 
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0)); 
+
+        JButton saveButton = new JButton("Save Changes");
+        saveButton.setBackground(new Color(0, 128, 0));
+        saveButton.setForeground(Color.BLACK);
+        saveButton.setFocusPainted(false);
+        saveButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        saveButton.addActionListener(e -> {
+            patient.setName(nameField.getText());
+            patient.setSurname(surnameField.getText());
+            patient.setNIF(nifField.getText());
+            try {
+                patient.setDob(java.sql.Date.valueOf(dobField.getText()));
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid date format. Please use YYYY-MM-DD.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            patient.setPhone(phoneField.getText());
+            
+            send.updateInformation(patient.getUser());
+
+            JOptionPane.showMessageDialog(this, "Patient information updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        buttonPanel.add(saveButton); 
+        whitePanel.add(buttonPanel, BorderLayout.CENTER); 
 
         whitePanel.revalidate();
         whitePanel.repaint();
