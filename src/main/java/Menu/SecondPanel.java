@@ -435,20 +435,20 @@ public class SecondPanel extends JPanel {
         navigationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         
         JButton backButton = new JButton("Back");
-        JButton nextButton = new JButton("Next");
+        JButton finishButton = new JButton("Finish Monitoring");
 
         backButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         backButton.setBackground(Color.WHITE);
         backButton.setForeground(Color.BLACK);
         backButton.addActionListener(e -> showSymptomsPanel()); // Go back to Symptoms
 
-        nextButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        nextButton.setBackground(Color.WHITE);
-        nextButton.setForeground(Color.BLACK);
-        nextButton.addActionListener(e -> showCompletionPhase()); // Move to EMG Phase
+        finishButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        finishButton.setBackground(Color.WHITE);
+        finishButton.setForeground(Color.BLACK);
+        finishButton.addActionListener(e -> showCompletionPhase()); // Move to EMG Phase
 
         navigationPanel.add(backButton);
-        navigationPanel.add(nextButton);
+        navigationPanel.add(finishButton);
         
         buttonPanel.add(navigationPanel);
 
@@ -479,7 +479,7 @@ public class SecondPanel extends JPanel {
         // Play Button
         JButton playButton = new JButton("Play");
         playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        playButton.setBackground(new Color(0, 128, 0)); 
+        playButton.setBackground(Color.WHITE); 
         playButton.setForeground(Color.BLACK); 
         playButton.setFocusPainted(false);
         playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -507,7 +507,7 @@ public class SecondPanel extends JPanel {
         navigationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         
         JButton backButton = new JButton("Back");
-        JButton finishButton = new JButton("Finish Monitoring");
+        JButton nextButton = new JButton("Next");
 
 
         backButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -515,13 +515,13 @@ public class SecondPanel extends JPanel {
         backButton.setForeground(Color.BLACK);
         backButton.addActionListener(e -> showECGPhase()); // Go back to ECG
 
-        finishButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        finishButton.setBackground(Color.WHITE);
-        finishButton.setForeground(Color.BLACK);
-        finishButton.addActionListener(e -> showECGPhase());
+        nextButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        nextButton.setBackground(Color.WHITE);
+        nextButton.setForeground(Color.BLACK);
+        nextButton.addActionListener(e -> showECGPhase());
     
         navigationPanel.add(backButton);
-        navigationPanel.add(finishButton);
+        navigationPanel.add(nextButton);
         
         buttonPanel.add(navigationPanel);
 
@@ -676,7 +676,7 @@ public class SecondPanel extends JPanel {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0)); 
 
         JButton saveButton = new JButton("Save Changes");
-        saveButton.setBackground(new Color(0, 128, 0));
+        saveButton.setBackground(Color.WHITE);
         saveButton.setForeground(Color.BLACK);
         saveButton.setFocusPainted(false);
         saveButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
