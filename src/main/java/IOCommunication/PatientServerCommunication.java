@@ -131,12 +131,14 @@ public class PatientServerCommunication {
          * Changes the current password of the patient
          *
          * @param user
+         * @param patient
          */
-        public void updateInformation(User user) {
+        public void updateInformation(User user, Patient patient) {
 
             try {
                 out.writeObject("updateInformation");
                 out.writeObject(user);
+                out.writeObject(patient);
                 System.out.println(in.readObject());
                 
             } catch (IOException | ClassNotFoundException ex) {

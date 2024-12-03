@@ -40,12 +40,12 @@ public class PatientServerCommunicationTest {
         com.start();
         send= com.new Send();
         role=new Role();
-        register();
+        //register();
         //login();
         //viewSymptoms();
         //viewPersonalInfo();
         //updateInfo();
-        //sendReport();  
+        sendReport();  
     }
 
     public static void register() {
@@ -76,8 +76,10 @@ public class PatientServerCommunicationTest {
         String newPass = "Password456";
         if (Utilities.isValidPassword(newPass)) {
             user.setPassword("Password456");
+            String new_name="Josefina";
+            patient.setName(new_name);
             System.out.println("This is to check if the setter is working correctly: " + user.getPassword());
-            send.updateInformation(user);
+            send.updateInformation(user, patient);
         }
 
     }
@@ -108,7 +110,7 @@ public class PatientServerCommunicationTest {
             } catch (ParseException ex) {
                 Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
             }
-            Patient patient=send.login("noelia@gmail.com", "Password123");
+            Patient patient=send.login("noelia@gmail.com", "Password456");
             
             
             Bitalino bitalinoEMG=new Bitalino(date,SignalType.EMG);

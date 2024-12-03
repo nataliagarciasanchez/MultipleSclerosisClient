@@ -693,7 +693,7 @@ public class SecondPanel extends JPanel {
             }
             patient.setPhone(phoneField.getText());
             
-            send.updateInformation(patient.getUser());
+            send.updateInformation(patient.getUser(), patient);
 
             JOptionPane.showMessageDialog(this, "Patient information updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         });
