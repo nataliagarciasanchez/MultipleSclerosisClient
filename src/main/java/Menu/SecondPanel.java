@@ -375,7 +375,7 @@ public class SecondPanel extends JPanel {
         nextButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         nextButton.setBackground(Color.WHITE);
         nextButton.setForeground(Color.BLACK);
-        nextButton.addActionListener(e -> showECGPhase());
+        nextButton.addActionListener(e -> showEMGPhase());
 
         buttonPanel.add(backButton);
         buttonPanel.add(nextButton);
@@ -445,7 +445,7 @@ public class SecondPanel extends JPanel {
         nextButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         nextButton.setBackground(Color.WHITE);
         nextButton.setForeground(Color.BLACK);
-        nextButton.addActionListener(e -> showEMGPhase()); // Move to EMG Phase
+        nextButton.addActionListener(e -> showCompletionPhase()); // Move to EMG Phase
 
         navigationPanel.add(backButton);
         navigationPanel.add(nextButton);
@@ -518,7 +518,7 @@ public class SecondPanel extends JPanel {
         finishButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         finishButton.setBackground(Color.WHITE);
         finishButton.setForeground(Color.BLACK);
-        finishButton.addActionListener(e -> showCompletionPhase());
+        finishButton.addActionListener(e -> showECGPhase());
     
         navigationPanel.add(backButton);
         navigationPanel.add(finishButton);
