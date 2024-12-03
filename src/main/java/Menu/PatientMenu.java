@@ -196,16 +196,19 @@ public class PatientMenu {
             user = getUserInfo();
             
             if (user != null) {
-                send.login(user.getEmail(), user.getPassword());
-                //comunicarme con el server para obtener el patient
-                Patient patient = send.getPatient();
-                if (patient != null) {
-                    System.out.println("Successful login");
-                    patientMenu(patient);
-                } else {
-                    System.out.println("Incorrect username and/or password");
+                Patient patient = null;
+                while(patient==null){
+                    patient = send.login(user.getEmail(), user.getPassword());
+                    //comunicarme con el server para obtener el patient
+
+                    if (patient != null) {
+                        System.out.println("Successful login");
+                        patientMenu(patient);
+                    } else {
+                        System.out.println("Incorrect username and/or password");
+                    }
                 }
-                
+
             }
         } catch (Throwable ex) {
             Logger.getLogger(PatientMenu.class.getName()).log(Level.SEVERE, null, ex);

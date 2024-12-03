@@ -103,7 +103,14 @@ public class PatientServerCommunication {
                 out.writeObject(username);
                 out.writeObject(password);
                 System.out.println("Logging in.....");
-                patient= (Patient) in.readObject();
+                Object response=in.readObject();
+                if(response instanceof Patient){//si es de tipo patient es que las credenciales son correctas
+                   patient= (Patient) in.readObject(); 
+                }else if (response instanceof String){
+                   String errorMessage = (String) response; // Mensaje de error
+                   System.out.println("Error: " + errorMessage); 
+                }
+                
   
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
