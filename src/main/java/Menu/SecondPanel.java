@@ -465,7 +465,7 @@ public class SecondPanel extends JPanel {
         JLabel emgLabel = new JLabel("<html><center><b>EMG Instructions</b><br>" +
                 "Now we will perform an EMG.<br>" +
                 "1. Place the <b><span style='color:red;'>RED</span></b> electrode on the center of the biceps muscle.<br>" +
-                "2. Place the <b><span style='color:#CCCCCC;'>YELLOW</span></b> electrode 2–3 cm along the muscle, aligned with fibers.<br>" +
+                "2. Place the <b><span style='color:#CCCCCC;'>WHITE</span></b> electrode 2–3 cm along the muscle, aligned with fibers.<br>" +
                 "3. Place the <b><span style='color:black;'>BLACK</span></b>  electrode on a bony area like the elbow or wrist.<br>" +
                 "<br>Once everything is ready, press PLAY.</center></html>");
         emgLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
