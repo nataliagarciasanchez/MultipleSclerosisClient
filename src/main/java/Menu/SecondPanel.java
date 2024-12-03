@@ -407,7 +407,7 @@ public class SecondPanel extends JPanel {
         // Play Button
         JButton playButton = new JButton("Play");
         playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        playButton.setBackground(new Color(0, 128, 0)); 
+        playButton.setBackground(Color.BLACK); 
         playButton.setForeground(Color.BLACK); 
         playButton.setFocusPainted(false);
         playButton.setAlignmentX(Component.CENTER_ALIGNMENT);

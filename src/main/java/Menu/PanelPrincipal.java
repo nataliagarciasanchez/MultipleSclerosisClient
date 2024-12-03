@@ -172,7 +172,7 @@ public class PanelPrincipal extends JPanel {
         gbc.insets = new Insets(3, 10, 3, 10); // Espaciado reducido entre filas
 
         // Dimensiones ajustadas para campos más grandes
-        Dimension labelSize = new Dimension(150, 40);
+        Dimension labelSize = new Dimension(220, 40);
         Dimension fieldSize = new Dimension(350, 40);
 
         // Campos de texto y etiquetas
@@ -183,6 +183,7 @@ public class PanelPrincipal extends JPanel {
         JTextField nameField = new JTextField();
         nameField.setPreferredSize(fieldSize);
         nameField.setMaximumSize(fieldSize);
+        nameLabel.setToolTipText("Enter your full first name. Example: John");
 
         JLabel surnameLabel = new JLabel("Surname:");
         surnameLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
@@ -191,6 +192,7 @@ public class PanelPrincipal extends JPanel {
         JTextField surnameField = new JTextField();
         surnameField.setPreferredSize(fieldSize);
         surnameField.setMaximumSize(fieldSize);
+        surnameLabel.setToolTipText("Enter your last name. Example: Doe");
 
         JLabel nifLabel = new JLabel("NIF:");
         nifLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
@@ -199,6 +201,7 @@ public class PanelPrincipal extends JPanel {
         JTextField nifField = new JTextField();
         nifField.setPreferredSize(fieldSize);
         nifField.setMaximumSize(fieldSize);
+        nifLabel.setToolTipText("Enter a valid NIF including the letter. Example: 12345678A");
 
         JLabel dobLabel = new JLabel("Date of Birth:");
         dobLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
@@ -207,6 +210,7 @@ public class PanelPrincipal extends JPanel {
         JTextField dobField = new JTextField();
         dobField.setPreferredSize(fieldSize);
         dobField.setMaximumSize(fieldSize);
+        dobLabel.setToolTipText("Enter your birth date in dd/MM/yyyy format. Example: 10/10/2003");
 
         JLabel phoneLabel = new JLabel("Phone:");
         phoneLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
@@ -215,6 +219,8 @@ public class PanelPrincipal extends JPanel {
         JTextField phoneField = new JTextField();
         phoneField.setPreferredSize(fieldSize);
         phoneField.setMaximumSize(fieldSize);
+        phoneLabel.setToolTipText("Enter your phone number. With or without country code. Example: +34123456789");
+
 
         JLabel genderLabel = new JLabel("Gender:");
         genderLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
@@ -231,6 +237,7 @@ public class PanelPrincipal extends JPanel {
         JTextField usernameField = new JTextField();
         usernameField.setPreferredSize(fieldSize);
         usernameField.setMaximumSize(fieldSize);
+        usernameLabel.setToolTipText("Enter a unique username. Example: johndoe@gmail.com");
 
         JLabel passwordLabel = new JLabel("Password:");
         passwordLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
@@ -239,6 +246,7 @@ public class PanelPrincipal extends JPanel {
         JPasswordField passwordField = new JPasswordField();
         passwordField.setPreferredSize(fieldSize);
         passwordField.setMaximumSize(fieldSize);
+        passwordLabel.setToolTipText("Enter a strong password with at least 8 characters, including uppercase, lowercase, and a number.");
 
         // Agregar filas al panel de formulario
         gbc.gridx = 0;
