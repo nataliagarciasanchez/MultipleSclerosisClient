@@ -397,21 +397,18 @@ public class SecondPanel extends JPanel {
         ecgLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         ecgLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(ecgLabel, BorderLayout.CENTER);
-        
-         // Play Button
+       
+        // Crear un único panel para los botones
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        // Play Button
         JButton playButton = new JButton("Play");
         playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        playButton.setBackground(new Color(0, 128, 0)); // Green background
-        playButton.setForeground(Color.WHITE); // White text
+        playButton.setBackground(new Color(0, 128, 0)); 
+        playButton.setForeground(Color.BLACK); 
         playButton.setFocusPainted(false);
-
-        // Center the Play button below the text
-        JPanel playButtonPanel = new JPanel();
-        playButtonPanel.setBackground(Color.WHITE);
-        playButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        playButtonPanel.add(playButton);
-
-        whitePanel.add(playButtonPanel, BorderLayout.SOUTH);
+        playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Add Play button functionality
         playButton.addActionListener(e -> {
@@ -425,12 +422,16 @@ public class SecondPanel extends JPanel {
             java.util.List<Frame> emgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
             bitalinoECG.setSignalValues (emgFrames,1);            
         });
+        
+        // Añadir el botón "Play" al panel de botones
+        buttonPanel.add(playButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciado
 
-        // Navigation buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(Color.WHITE);
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-
+        // Panel de navegación (Back y Finish Monitoring)
+        JPanel navigationPanel = new JPanel();
+        navigationPanel.setBackground(Color.WHITE);
+        navigationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        
         JButton backButton = new JButton("Back");
         JButton nextButton = new JButton("Next");
 
@@ -444,8 +445,10 @@ public class SecondPanel extends JPanel {
         nextButton.setForeground(Color.BLACK);
         nextButton.addActionListener(e -> showEMGPhase()); // Move to EMG Phase
 
-        buttonPanel.add(backButton);
-        buttonPanel.add(nextButton);
+        navigationPanel.add(backButton);
+        navigationPanel.add(nextButton);
+        
+        buttonPanel.add(navigationPanel);
 
         whitePanel.add(buttonPanel, BorderLayout.SOUTH);
 
