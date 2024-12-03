@@ -413,17 +413,55 @@ public class SecondPanel extends JPanel {
         playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Add Play button functionality
-        playButton.addActionListener(e -> {
-            BITalino bitalinoDevice=new BITalino();
+        /*playButton.addActionListener(e -> {
             try {
+                BITalino bitalinoDevice=new BITalino();
                 bitalinoDevice.open(macAddress);
+                Bitalino bitalinoECG = new Bitalino( java.sql.Date.valueOf(date), SignalType.ECG);
+                java.util.List<Frame> emgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
+                bitalinoECG.setSignalValues (emgFrames,1);  
             } catch (Throwable ex) {
                 Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            Bitalino bitalinoECG = new Bitalino( java.sql.Date.valueOf(date), SignalType.ECG);
-            java.util.List<Frame> emgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
-            bitalinoECG.setSignalValues (emgFrames,1);            
+            }          
+        });*/
+        
+        playButton.addActionListener(e -> {
+            // Crear un SwingWorker para manejar la tarea en segundo plano
+            SwingWorker<Void, Void> worker = new SwingWorker<>() {
+                @Override
+                protected Void doInBackground() {
+                    BITalino bitalinoDevice = new BITalino();
+                    try {
+                        // Intentar abrir la conexión con el BITalino
+                        bitalinoDevice.open(macAddress);
+
+                        // Mostrar un mensaje mientras se realiza la captura
+                        JOptionPane.showMessageDialog(null, "Capturing data...", "Recording", JOptionPane.INFORMATION_MESSAGE);
+
+                        // Simular el proceso de grabación de datos
+                        Bitalino bitalinoECG = new Bitalino(java.sql.Date.valueOf(date), SignalType.ECG);
+                        java.util.List<Frame> emgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
+                        bitalinoECG.setSignalValues(emgFrames, 1);
+
+                    } catch (Throwable ex) {
+                        // Manejar la excepción si no se encuentra el dispositivo
+                        JOptionPane.showMessageDialog(null, "No BITalino device found!", "Error", JOptionPane.ERROR_MESSAGE);
+                        Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+                    // Mostrar el mensaje de éxito después de completar la captura
+                    JOptionPane.showMessageDialog(null, "Successfully recorded data!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+            };
+
+            // Ejecutar la tarea en segundo plano
+            worker.execute();
         });
+
         
         // Añadir el botón "Play" al panel de botones
         buttonPanel.add(playButton);
@@ -485,17 +523,55 @@ public class SecondPanel extends JPanel {
         playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Add Play button functionality
-        playButton.addActionListener(e -> {
-            BITalino bitalinoDevice=new BITalino();
+        /*playButton.addActionListener(e -> {
             try {
+                BITalino bitalinoDevice=new BITalino();
                 bitalinoDevice.open(macAddress);
+                Bitalino bitalinoEMG = new Bitalino( java.sql.Date.valueOf(date), SignalType.EMG);
+                java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
+                bitalinoEMG.setSignalValues (emgFrames,1);  
             } catch (Throwable ex) {
                 Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            Bitalino bitalinoEMG = new Bitalino( java.sql.Date.valueOf(date), SignalType.EMG);
-            java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
-            bitalinoEMG.setSignalValues (emgFrames,1);            
+            }           
+        });*/
+        
+        playButton.addActionListener(e -> {
+            // Crear un SwingWorker para manejar la tarea en segundo plano
+            SwingWorker<Void, Void> worker = new SwingWorker<>() {
+                @Override
+                protected Void doInBackground() {
+                    BITalino bitalinoDevice = new BITalino();
+                    try {
+                        // Intentar abrir la conexión con el BITalino
+                        bitalinoDevice.open(macAddress);
+
+                        // Mostrar un mensaje mientras se realiza la captura
+                        JOptionPane.showMessageDialog(null, "Capturing data...", "Recording", JOptionPane.INFORMATION_MESSAGE);
+
+                        // Simular el proceso de grabación de datos
+                        Bitalino bitalinoEMG = new Bitalino(java.sql.Date.valueOf(date), SignalType.EMG);
+                        java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
+                        bitalinoEMG.setSignalValues(emgFrames, 1);
+
+                    } catch (Throwable ex) {
+                        // Manejar la excepción si no se encuentra el dispositivo
+                        JOptionPane.showMessageDialog(null, "No BITalino device found!", "Error", JOptionPane.ERROR_MESSAGE);
+                        Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+                    // Mostrar el mensaje de éxito después de completar la captura
+                    JOptionPane.showMessageDialog(null, "Successfully recorded data!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+            };
+
+            // Ejecutar la tarea en segundo plano
+            worker.execute();
         });
+
 
         // Añadir el botón "Play" al panel de botones
         buttonPanel.add(playButton);
