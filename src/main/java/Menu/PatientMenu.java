@@ -355,7 +355,7 @@ public class PatientMenu {
         Bitalino bitalino=new Bitalino(date, signal);
         System.out.println("Now we will perform an EMG. Please follow the instructions. ");
         System.out.println("1. Positive electrode (RED): Center of biceps muscle. ");
-        System.out.println("2. Negative electrode (YELLOW): 2–3 cm along the muscle, aligned with fibers.");
+        System.out.println("2. Negative electrode (WHITE): 2–3 cm along the muscle, aligned with fibers.");
         System.out.println("3. Ground electrode (BLACK): On a bony area like the elbow or wrist. ");
         
         System.out.println("\n Once everything is correctly placed hit play on the program that will appear on screen.");
