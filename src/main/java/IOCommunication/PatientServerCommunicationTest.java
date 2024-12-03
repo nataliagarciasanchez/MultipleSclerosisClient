@@ -40,10 +40,10 @@ public class PatientServerCommunicationTest {
         com.start();
         send= com.new Send();
         role=new Role();
-        //register();
+        register();
         //login();
         //viewSymptoms();
-        viewPersonalInfo();
+        //viewPersonalInfo();
         //updateInfo();
         //sendReport();  
     }

@@ -627,6 +627,48 @@ public class SecondPanel extends JPanel {
         contentPanel.add(phoneField, gbc);
 
         whitePanel.add(contentPanel, BorderLayout.NORTH); 
+        
+        JPanel passwordPanel = new JPanel();
+        passwordPanel.setBackground(Color.WHITE);
+        passwordPanel.setLayout(new GridBagLayout());
+        passwordPanel.setBorder(BorderFactory.createTitledBorder("Change Password"));
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.LINE_END;
+
+        JLabel currentPasswordLabel = new JLabel("Current Password: ");
+        currentPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        passwordPanel.add(currentPasswordLabel, gbc);
+
+        gbc.gridy++;
+        JLabel newPasswordLabel = new JLabel("New Password: ");
+        newPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        passwordPanel.add(newPasswordLabel, gbc);
+
+        gbc.gridy++;
+        JLabel confirmPasswordLabel = new JLabel("Confirm Password: ");
+        confirmPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        passwordPanel.add(confirmPasswordLabel, gbc);
+
+        // Campos para las contraseñas
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.LINE_START;
+
+        JPasswordField currentPasswordField = new JPasswordField(15);
+        passwordPanel.add(currentPasswordField, gbc);
+
+        gbc.gridy++;
+        JPasswordField newPasswordField = new JPasswordField(15);
+        passwordPanel.add(newPasswordField, gbc);
+
+        gbc.gridy++;
+        JPasswordField confirmPasswordField = new JPasswordField(15);
+        passwordPanel.add(confirmPasswordField, gbc);
+
+        // Añadir el panel de contraseñas
+        whitePanel.add(passwordPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
