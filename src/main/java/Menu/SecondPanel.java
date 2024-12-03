@@ -30,14 +30,15 @@ public class SecondPanel extends JPanel {
     private java.util.List<Symptom> symptomsList; // Symptom list
     private Patient patient;
     private final Image backgroundImage; // Background image
-    private final PatientServerCommunication.Send send = null;
+    private final PatientServerCommunication.Send send;
     private LocalDate date = LocalDate.now();
     public static String macAddress = "98:D3:41:FD:4E:E8";
     private java.util.List<Bitalino> bitalinos; // Symptom list
     
     
     
-    public SecondPanel(Patient patient) {
+    public SecondPanel(Patient patient, PatientServerCommunication.Send send) {
+        this.send = send;
         this.patient = patient;
         symptomsList = new LinkedList<>(); // Initialize symptoms list
 
@@ -92,6 +93,8 @@ public class SecondPanel extends JPanel {
         JButton viewDoctorButton = createStyledButton("View Doctor Information");
         JButton startMonitoringButton = createStyledButton("Start Monitoring");
         JButton settingsButton = createStyledButton("Settings");
+        
+        settingsButton.addActionListener(e -> displayPatientInfoUpdate());
         
         // Add ActionListener to "View My Information" button
         viewInfoButton.addActionListener(e -> displayPatientInfo());
@@ -327,20 +330,32 @@ public class SecondPanel extends JPanel {
         symptomsPanel.setLayout(new GridLayout(0, 3, 10, 10)); // 3 columnas con espaciado
         symptomsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Espaciado interno
 
-        // Añadir casillas de verificación para los 100 síntomas
-        for (Symptom symptom : send.getSymptoms()) {
-            JCheckBox symptomCheckBox = new JCheckBox((Icon) symptom);
-            symptomCheckBox.setFont(new Font("Segoe UI", Font.PLAIN, 14)); // Tamaño más grande
-            symptomCheckBox.setBackground(Color.WHITE);
-            symptomsPanel.add(symptomCheckBox);
-            symptomCheckBox.addActionListener(e -> {
-                if (symptomCheckBox.isSelected()) {
-                    symptomsList.add(symptom);
-                } else {
-                    symptomsList.remove(symptom);
-                }
-            });
+        java.util.List<Symptom> symptoms = send.getSymptoms(); 
+        if (symptoms != null) {
+            ListIterator<Symptom> it = symptoms.listIterator();
+
+            while (it.hasNext()) {
+                Symptom symptom = it.next(); // Obtener el objeto Symptom actual
+
+                JCheckBox symptomCheckBox = new JCheckBox(symptom.getName()); // Usar el nombre del síntoma
+                symptomCheckBox.setFont(new Font("Segoe UI", Font.PLAIN, 14)); // Ajustar fuente
+                symptomCheckBox.setBackground(Color.WHITE);
+
+                symptomsPanel.add(symptomCheckBox);
+
+                // Agregar funcionalidad para añadir o quitar de la lista seleccionada
+                symptomCheckBox.addActionListener(e -> {
+                    if (symptomCheckBox.isSelected()) {
+                        symptomsList.add(symptom); // Agregar el objeto Symptom completo
+                    } else {
+                        symptomsList.remove(symptom); // Eliminar el objeto Symptom completo
+                    }
+                });
+            }
+        } else {
+            System.out.println("No symptoms received from server.");
         }
+
 
         whitePanel.add(symptomsPanel, BorderLayout.CENTER);
 
@@ -360,7 +375,7 @@ public class SecondPanel extends JPanel {
         nextButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         nextButton.setBackground(Color.WHITE);
         nextButton.setForeground(Color.BLACK);
-        nextButton.addActionListener(e -> showECGPhase());
+        nextButton.addActionListener(e -> showEMGPhase());
 
         buttonPanel.add(backButton);
         buttonPanel.add(nextButton);
@@ -377,28 +392,25 @@ public class SecondPanel extends JPanel {
 
         JLabel ecgLabel = new JLabel("<html><center><b>ECG Instructions</b><br>" +
                 "Follow these steps to record an ECG:<br>" +
-                "1. Place the RED electrode below the right clavicle.<br>" +
-                "2. Place the WHITE electrode on the lower left side of the torso.<br>" +
-                "3. Place the BLACK electrode on the right side of the torso.<br>" +
-                "<br>Once everything is ready, press Play on the device.</center></html>");
+                "1. Place the <b><span style='color:red;'>RED</span></b> electrode below the right clavicle.<br>" +
+                "2. Place the <b><span style='color:#FFD700;'>WHITE</span></b> electrode on the lower left side of the torso.<br>" +
+                "3. Place the <b><span style='color:black;'>BLACK</span></b> electrode on the right side of the torso.<br>" +
+                "<br>Once everything is ready, press PLAY</center></html>");
         ecgLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         ecgLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(ecgLabel, BorderLayout.CENTER);
-        
-         // Play Button
+       
+        // Crear un único panel para los botones
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        // Play Button
         JButton playButton = new JButton("Play");
         playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        playButton.setBackground(new Color(0, 128, 0)); // Green background
-        playButton.setForeground(Color.WHITE); // White text
+        playButton.setBackground(new Color(0, 128, 0)); 
+        playButton.setForeground(Color.BLACK); 
         playButton.setFocusPainted(false);
-
-        // Center the Play button below the text
-        JPanel playButtonPanel = new JPanel();
-        playButtonPanel.setBackground(Color.WHITE);
-        playButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        playButtonPanel.add(playButton);
-
-        whitePanel.add(playButtonPanel, BorderLayout.SOUTH);
+        playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Add Play button functionality
         playButton.addActionListener(e -> {
@@ -412,12 +424,16 @@ public class SecondPanel extends JPanel {
             java.util.List<Frame> emgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
             bitalinoECG.setSignalValues (emgFrames,1);            
         });
+        
+        // Añadir el botón "Play" al panel de botones
+        buttonPanel.add(playButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciado
 
-        // Navigation buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(Color.WHITE);
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-
+        // Panel de navegación (Back y Finish Monitoring)
+        JPanel navigationPanel = new JPanel();
+        navigationPanel.setBackground(Color.WHITE);
+        navigationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        
         JButton backButton = new JButton("Back");
         JButton nextButton = new JButton("Next");
 
@@ -429,10 +445,12 @@ public class SecondPanel extends JPanel {
         nextButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         nextButton.setBackground(Color.WHITE);
         nextButton.setForeground(Color.BLACK);
-        nextButton.addActionListener(e -> showEMGPhase()); // Move to EMG Phase
+        nextButton.addActionListener(e -> showCompletionPhase()); // Move to EMG Phase
 
-        buttonPanel.add(backButton);
-        buttonPanel.add(nextButton);
+        navigationPanel.add(backButton);
+        navigationPanel.add(nextButton);
+        
+        buttonPanel.add(navigationPanel);
 
         whitePanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -446,28 +464,25 @@ public class SecondPanel extends JPanel {
 
         JLabel emgLabel = new JLabel("<html><center><b>EMG Instructions</b><br>" +
                 "Now we will perform an EMG.<br>" +
-                "1. Place the RED electrode on the center of the biceps muscle.<br>" +
-                "2. Place the YELLOW electrode 2–3 cm along the muscle, aligned with fibers.<br>" +
-                "3. Place the BLACK electrode on a bony area like the elbow or wrist.<br>" +
+                "1. Place the <b><span style='color:red;'>RED</span></b> electrode on the center of the biceps muscle.<br>" +
+                "2. Place the <b><span style='color:#FFD700;'>YELLOW</span></b> electrode 2–3 cm along the muscle, aligned with fibers.<br>" +
+                "3. Place the <b><span style='color:black;'>BLACK</span></b>  electrode on a bony area like the elbow or wrist.<br>" +
                 "<br>Once everything is ready, press PLAY.</center></html>");
         emgLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         emgLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(emgLabel, BorderLayout.CENTER);
         
+        // Crear un único panel para los botones
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         // Play Button
         JButton playButton = new JButton("Play");
         playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        playButton.setBackground(new Color(0, 128, 0)); // Green background
-        playButton.setForeground(Color.WHITE); // White text
+        playButton.setBackground(new Color(0, 128, 0)); 
+        playButton.setForeground(Color.BLACK); 
         playButton.setFocusPainted(false);
-
-        // Center the Play button below the text
-        JPanel playButtonPanel = new JPanel();
-        playButtonPanel.setBackground(Color.WHITE);
-        playButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        playButtonPanel.add(playButton);
-
-        whitePanel.add(playButtonPanel, BorderLayout.SOUTH);
+        playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Add Play button functionality
         playButton.addActionListener(e -> {
@@ -478,16 +493,19 @@ public class SecondPanel extends JPanel {
                 Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             Bitalino bitalinoEMG = new Bitalino( java.sql.Date.valueOf(date), SignalType.EMG);
-             java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
+            java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
             bitalinoEMG.setSignalValues (emgFrames,1);            
         });
 
+        // Añadir el botón "Play" al panel de botones
+        buttonPanel.add(playButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciado
 
-        // Navigation buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(Color.WHITE);
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-
+        // Panel de navegación (Back y Finish Monitoring)
+        JPanel navigationPanel = new JPanel();
+        navigationPanel.setBackground(Color.WHITE);
+        navigationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        
         JButton backButton = new JButton("Back");
         JButton finishButton = new JButton("Finish Monitoring");
 
@@ -500,10 +518,12 @@ public class SecondPanel extends JPanel {
         finishButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         finishButton.setBackground(Color.WHITE);
         finishButton.setForeground(Color.BLACK);
-        finishButton.addActionListener(e -> showCompletionPhase());
+        finishButton.addActionListener(e -> showECGPhase());
     
-        buttonPanel.add(backButton);
-        buttonPanel.add(finishButton);
+        navigationPanel.add(backButton);
+        navigationPanel.add(finishButton);
+        
+        buttonPanel.add(navigationPanel);
 
         whitePanel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -542,6 +562,144 @@ public class SecondPanel extends JPanel {
         buttonPanel.add(doneButton);
 
         whitePanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        whitePanel.revalidate();
+        whitePanel.repaint();
+    }
+    
+    private void displayPatientInfoUpdate() {
+        whitePanel.removeAll();
+        whitePanel.setLayout(new BorderLayout());
+        whitePanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 0, 20)); 
+
+        JPanel contentPanel = new JPanel();
+        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setLayout(new GridBagLayout());
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20)); 
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 10, 5, 10); 
+
+        JTextField nameField = new JTextField(patient.getName() != null ? patient.getName() : "");
+        JTextField surnameField = new JTextField(patient.getSurname() != null ? patient.getSurname() : "");
+        JTextField nifField = new JTextField(patient.getNIF() != null ? patient.getNIF() : "");
+        JTextField dobField = new JTextField(patient.getDob() != null ? patient.getDob().toString() : "");
+        JTextField phoneField = new JTextField(patient.getPhone() != null ? patient.getPhone() : "");
+
+
+        gbc.gridx = 0; 
+        gbc.gridy = 0; 
+        gbc.anchor = GridBagConstraints.LINE_END; 
+        JLabel namelabel = new JLabel("Name: ");
+        namelabel.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
+        contentPanel.add(namelabel, gbc);
+        gbc.gridy++;
+        JLabel surnamelabel = new JLabel("Surname: ");
+        surnamelabel.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
+        contentPanel.add(surnamelabel, gbc);
+        gbc.gridy++;
+        JLabel dnlabel = new JLabel("DNI: ");
+        dnlabel.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
+        contentPanel.add(dnlabel, gbc);
+        gbc.gridy++;
+        JLabel dobLabel = new JLabel("Birth Date (YYYY-MM-DD): ");
+        dobLabel.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
+        contentPanel.add(dobLabel, gbc);
+        gbc.gridy++;
+        JLabel phoneLabel = new JLabel("Phone: ");
+        phoneLabel.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
+        contentPanel.add(phoneLabel, gbc);
+
+        gbc.gridx = 1; 
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.weightx = 1; 
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        contentPanel.add(nameField, gbc);
+        gbc.gridy++;
+        contentPanel.add(surnameField, gbc);
+        gbc.gridy++;
+        contentPanel.add(nifField, gbc);
+        gbc.gridy++;
+        contentPanel.add(dobField, gbc);
+        gbc.gridy++;
+        contentPanel.add(phoneField, gbc);
+
+        whitePanel.add(contentPanel, BorderLayout.NORTH); 
+        
+        JPanel passwordPanel = new JPanel();
+        passwordPanel.setBackground(Color.WHITE);
+        passwordPanel.setLayout(new GridBagLayout());
+        passwordPanel.setBorder(BorderFactory.createTitledBorder("Change Password"));
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.LINE_END;
+
+        JLabel currentPasswordLabel = new JLabel("Current Password: ");
+        currentPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        passwordPanel.add(currentPasswordLabel, gbc);
+
+        gbc.gridy++;
+        JLabel newPasswordLabel = new JLabel("New Password: ");
+        newPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        passwordPanel.add(newPasswordLabel, gbc);
+
+        gbc.gridy++;
+        JLabel confirmPasswordLabel = new JLabel("Confirm Password: ");
+        confirmPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        passwordPanel.add(confirmPasswordLabel, gbc);
+
+        // Campos para las contraseñas
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.LINE_START;
+
+        JPasswordField currentPasswordField = new JPasswordField(15);
+        passwordPanel.add(currentPasswordField, gbc);
+
+        gbc.gridy++;
+        JPasswordField newPasswordField = new JPasswordField(15);
+        passwordPanel.add(newPasswordField, gbc);
+
+        gbc.gridy++;
+        JPasswordField confirmPasswordField = new JPasswordField(15);
+        passwordPanel.add(confirmPasswordField, gbc);
+
+        // Añadir el panel de contraseñas
+        whitePanel.add(passwordPanel, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER)); 
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0)); 
+
+        JButton saveButton = new JButton("Save Changes");
+        saveButton.setBackground(new Color(0, 128, 0));
+        saveButton.setForeground(Color.BLACK);
+        saveButton.setFocusPainted(false);
+        saveButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        saveButton.addActionListener(e -> {
+            patient.setName(nameField.getText());
+            patient.setSurname(surnameField.getText());
+            patient.setNIF(nifField.getText());
+            try {
+                patient.setDob(java.sql.Date.valueOf(dobField.getText()));
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid date format. Please use YYYY-MM-DD.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            patient.setPhone(phoneField.getText());
+            
+            send.updateInformation(patient.getUser());
+
+            JOptionPane.showMessageDialog(this, "Patient information updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        buttonPanel.add(saveButton); 
+        whitePanel.add(buttonPanel, BorderLayout.CENTER); 
 
         whitePanel.revalidate();
         whitePanel.repaint();

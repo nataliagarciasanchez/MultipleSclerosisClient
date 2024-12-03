@@ -117,6 +117,9 @@ public class Patient implements Serializable{
         return surname;
     }
     
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
 
     public void setDob(Date dob) {
         this.dob = dob;
