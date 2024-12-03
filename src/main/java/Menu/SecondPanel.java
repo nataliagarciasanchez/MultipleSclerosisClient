@@ -30,14 +30,15 @@ public class SecondPanel extends JPanel {
     private java.util.List<Symptom> symptomsList; // Symptom list
     private Patient patient;
     private final Image backgroundImage; // Background image
-    private final PatientServerCommunication.Send send = null;
+    private final PatientServerCommunication.Send send;
     private LocalDate date = LocalDate.now();
     public static String macAddress = "98:D3:41:FD:4E:E8";
     private java.util.List<Bitalino> bitalinos; // Symptom list
     
     
     
-    public SecondPanel(Patient patient) {
+    public SecondPanel(Patient patient, PatientServerCommunication.Send send) {
+        this.send = send;
         this.patient = patient;
         symptomsList = new LinkedList<>(); // Initialize symptoms list
 
@@ -327,20 +328,32 @@ public class SecondPanel extends JPanel {
         symptomsPanel.setLayout(new GridLayout(0, 3, 10, 10)); // 3 columnas con espaciado
         symptomsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Espaciado interno
 
-        // Añadir casillas de verificación para los 100 síntomas
-        for (Symptom symptom : send.getSymptoms()) {
-            JCheckBox symptomCheckBox = new JCheckBox((Icon) symptom);
-            symptomCheckBox.setFont(new Font("Segoe UI", Font.PLAIN, 14)); // Tamaño más grande
-            symptomCheckBox.setBackground(Color.WHITE);
-            symptomsPanel.add(symptomCheckBox);
-            symptomCheckBox.addActionListener(e -> {
-                if (symptomCheckBox.isSelected()) {
-                    symptomsList.add(symptom);
-                } else {
-                    symptomsList.remove(symptom);
-                }
-            });
+        java.util.List<Symptom> symptoms = send.getSymptoms(); 
+        if (symptoms != null) {
+            ListIterator<Symptom> it = symptoms.listIterator();
+
+            while (it.hasNext()) {
+                Symptom symptom = it.next(); // Obtener el objeto Symptom actual
+
+                JCheckBox symptomCheckBox = new JCheckBox(symptom.getName()); // Usar el nombre del síntoma
+                symptomCheckBox.setFont(new Font("Segoe UI", Font.PLAIN, 14)); // Ajustar fuente
+                symptomCheckBox.setBackground(Color.WHITE);
+
+                symptomsPanel.add(symptomCheckBox);
+
+                // Agregar funcionalidad para añadir o quitar de la lista seleccionada
+                symptomCheckBox.addActionListener(e -> {
+                    if (symptomCheckBox.isSelected()) {
+                        symptomsList.add(symptom); // Agregar el objeto Symptom completo
+                    } else {
+                        symptomsList.remove(symptom); // Eliminar el objeto Symptom completo
+                    }
+                });
+            }
+        } else {
+            System.out.println("No symptoms received from server.");
         }
+
 
         whitePanel.add(symptomsPanel, BorderLayout.CENTER);
 
@@ -377,10 +390,10 @@ public class SecondPanel extends JPanel {
 
         JLabel ecgLabel = new JLabel("<html><center><b>ECG Instructions</b><br>" +
                 "Follow these steps to record an ECG:<br>" +
-                "1. Place the RED electrode below the right clavicle.<br>" +
-                "2. Place the WHITE electrode on the lower left side of the torso.<br>" +
-                "3. Place the BLACK electrode on the right side of the torso.<br>" +
-                "<br>Once everything is ready, press Play on the device.</center></html>");
+                "1. Place the <b><span style='color:red;'>RED</span></b> electrode below the right clavicle.<br>" +
+                "2. Place the <b><span style='color:#FFD700;'>WHITE</span></b> electrode on the lower left side of the torso.<br>" +
+                "3. Place the <b><span style='color:black;'>BLACK</span></b> electrode on the right side of the torso.<br>" +
+                "<br>Once everything is ready, press PLAY</center></html>");
         ecgLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         ecgLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(ecgLabel, BorderLayout.CENTER);
@@ -446,28 +459,25 @@ public class SecondPanel extends JPanel {
 
         JLabel emgLabel = new JLabel("<html><center><b>EMG Instructions</b><br>" +
                 "Now we will perform an EMG.<br>" +
-                "1. Place the RED electrode on the center of the biceps muscle.<br>" +
-                "2. Place the YELLOW electrode 2–3 cm along the muscle, aligned with fibers.<br>" +
-                "3. Place the BLACK electrode on a bony area like the elbow or wrist.<br>" +
+                "1. Place the <b><span style='color:red;'>RED</span></b> electrode on the center of the biceps muscle.<br>" +
+                "2. Place the <b><span style='color:#FFD700;'>YELLOW</span></b> electrode 2–3 cm along the muscle, aligned with fibers.<br>" +
+                "3. Place the <b><span style='color:black;'>BLACK</span></b>  electrode on a bony area like the elbow or wrist.<br>" +
                 "<br>Once everything is ready, press PLAY.</center></html>");
         emgLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         emgLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(emgLabel, BorderLayout.CENTER);
         
+        // Crear un único panel para los botones
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         // Play Button
         JButton playButton = new JButton("Play");
         playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        playButton.setBackground(new Color(0, 128, 0)); // Green background
-        playButton.setForeground(Color.WHITE); // White text
+        playButton.setBackground(new Color(0, 128, 0)); 
+        playButton.setForeground(Color.BLACK); 
         playButton.setFocusPainted(false);
-
-        // Center the Play button below the text
-        JPanel playButtonPanel = new JPanel();
-        playButtonPanel.setBackground(Color.WHITE);
-        playButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        playButtonPanel.add(playButton);
-
-        whitePanel.add(playButtonPanel, BorderLayout.SOUTH);
+        playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Add Play button functionality
         playButton.addActionListener(e -> {
@@ -478,16 +488,19 @@ public class SecondPanel extends JPanel {
                 Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             Bitalino bitalinoEMG = new Bitalino( java.sql.Date.valueOf(date), SignalType.EMG);
-             java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
+            java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
             bitalinoEMG.setSignalValues (emgFrames,1);            
         });
 
+        // Añadir el botón "Play" al panel de botones
+        buttonPanel.add(playButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciado
 
-        // Navigation buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(Color.WHITE);
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-
+        // Panel de navegación (Back y Finish Monitoring)
+        JPanel navigationPanel = new JPanel();
+        navigationPanel.setBackground(Color.WHITE);
+        navigationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        
         JButton backButton = new JButton("Back");
         JButton finishButton = new JButton("Finish Monitoring");
 
@@ -502,8 +515,10 @@ public class SecondPanel extends JPanel {
         finishButton.setForeground(Color.BLACK);
         finishButton.addActionListener(e -> showCompletionPhase());
     
-        buttonPanel.add(backButton);
-        buttonPanel.add(finishButton);
+        navigationPanel.add(backButton);
+        navigationPanel.add(finishButton);
+        
+        buttonPanel.add(navigationPanel);
 
         whitePanel.add(buttonPanel, BorderLayout.SOUTH);
 

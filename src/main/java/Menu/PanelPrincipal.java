@@ -127,7 +127,7 @@ public class PanelPrincipal extends JPanel {
                     // Proceed to the next panel with patient details
                     JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                     mainFrame.getContentPane().removeAll();
-                    mainFrame.add(new SecondPanel(patient)); // Pass patient details to the next panel
+                    mainFrame.add(new SecondPanel(patient, send)); // Pass patient details to the next panel
                     mainFrame.revalidate();
                     mainFrame.repaint();
                 } else {
