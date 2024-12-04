@@ -106,7 +106,7 @@ public class PatientServerCommunication {
                 System.out.println("Logging in.....");
                 Object response=in.readObject();
                 if(response instanceof Patient){//si es de tipo patient es que las credenciales son correctas
-                   patient= (Patient) in.readObject(); 
+                   patient= (Patient) response; 
                 }else if (response instanceof String){
                    String errorMessage = (String) response; // Mensaje de error
                    System.out.println("Error: " + errorMessage); 

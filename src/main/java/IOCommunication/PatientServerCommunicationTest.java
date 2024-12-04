@@ -44,7 +44,7 @@ public class PatientServerCommunicationTest {
         //login();
         //viewSymptoms();
         //viewPersonalInfo();
-        //updateInfo();
+        updateInfo();
         //sendReport();  
     }
 
@@ -52,7 +52,7 @@ public class PatientServerCommunicationTest {
         try {
             java.sql.Date dob = Utilities.convertString2SqlDate("31/10/2003");
             Patient maite = new Patient("noelia", "gomez", "05459423F", dob, Gender.FEMALE, "609526931");
-            User user=new User("noelia123@gmail.com", "Password123", role);
+            User user=new User("noelia@gmail.com", "Password123", role);
             maite.setUser(user);
             
             send.register(maite);
@@ -75,7 +75,7 @@ public class PatientServerCommunicationTest {
         System.out.println("user\n" + user);
         String newPass = "Password456";
         if (Utilities.isValidPassword(newPass)) {
-            user.setPassword("Password456");
+            user.setPassword(newPass);
             String new_name="Josefina";
             patient.setName(new_name);
             System.out.println("This is to check if the setter is working correctly: " + user.getPassword());
