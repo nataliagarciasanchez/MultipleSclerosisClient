@@ -78,8 +78,11 @@ public class PatientServerCommunication {
                 out.flush();
                 System.out.println("Registering.....");
                 String confirmation=(String) in.readObject();
-                System.out.println(confirmation);//muestra la confirmación del server de que se ha registrado
-                
+                if (confirmation.contains("Username already in use") ){
+                   System.out.println("Error: " + confirmation); 
+                }else{
+                    System.out.println(confirmation);//muestra la confirmación del server de que se ha registrado
+                }
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }

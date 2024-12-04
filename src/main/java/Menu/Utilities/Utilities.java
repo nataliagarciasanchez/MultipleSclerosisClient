@@ -25,7 +25,7 @@ public class Utilities {
         boolean ok = true;
         if (doaLocalDate.isAfter(LocalDate.now())) {
             ok = false;
-            System.out.println("Invalid email, try again");
+            System.out.println("Invalid date of birth, try again");
         }
         return ok;
     }

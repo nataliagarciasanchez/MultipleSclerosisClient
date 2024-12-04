@@ -40,19 +40,19 @@ public class PatientServerCommunicationTest {
         com.start();
         send= com.new Send();
         role=new Role();
-        //register();
+        register();
         //login();
         //viewSymptoms();
         //viewPersonalInfo();
         //updateInfo();
-        sendReport();  
+        //sendReport();  
     }
 
     public static void register() {
         try {
-            java.sql.Date dob = Utilities.convertString2SqlDate("14/10/2003");
+            java.sql.Date dob = Utilities.convertString2SqlDate("31/10/2003");
             Patient maite = new Patient("noelia", "gomez", "05459423F", dob, Gender.FEMALE, "609526931");
-            User user=new User("noelia@gmail.com", "Password123", role);
+            User user=new User("noelia123@gmail.com", "Password123", role);
             maite.setUser(user);
             
             send.register(maite);
