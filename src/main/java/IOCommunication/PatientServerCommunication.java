@@ -5,6 +5,7 @@
 package IOCommunication;
 
 
+import POJOs.Feedback;
 import POJOs.User;
 import POJOs.Patient;
 import POJOs.Report;
@@ -39,10 +40,7 @@ public class PatientServerCommunication {
             this.socket = new Socket(serverAddress, serverPort);
             out = new ObjectOutputStream(socket.getOutputStream());
             this.out.flush();
-            in = new ObjectInputStream(socket.getInputStream());
-            //el patient debe poder recibir feedback del server mientras manda las solicitudes 
-            // Thread receiveThread=new Thread(new Receive());
-            //receiveThread.start();
+            in = new ObjectInputStream(socket.getInputStream());     
 
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
@@ -183,6 +181,11 @@ public class PatientServerCommunication {
                 String response = (String) in.readObject();
                 System.out.println("Server response: " + response);
                 
+                //When we send the report we create a thread that listens to the feedback and 
+                //after receiving it closes the connection
+                Thread receiveThread=new Thread(new Receive(in));
+                receiveThread.start();
+                
             } catch (IOException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
@@ -224,20 +227,22 @@ public class PatientServerCommunication {
         
         @Override
         public void run() {
-            try {
-                while (running) {
-                    // Continuously listens for incoming messages from the server
-                    Object feedback = in.readObject();
-                    handleFeedbackFromServer(feedback);
-                }
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+            while (running) {
+                // Continuously listens for incoming messages from the server
+                handleFeedbackFromServer();
             }
         }
 
-        private void handleFeedbackFromServer(Object message) {
-            // Process messages received from the server
-            System.out.println("Received from server: " + message);
+        private void handleFeedbackFromServer() {
+            try {
+                List<Feedback> feedbacks= (List<Feedback>) in.readObject();
+                out.writeObject("Feedback recedived!.");
+                // message is shown in the swing interface
+                //TODO debería msotrar todos los mensajes de los feedbacks por orden de fecha
+                this.stop();
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
