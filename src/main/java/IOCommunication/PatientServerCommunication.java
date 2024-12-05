@@ -74,14 +74,17 @@ public class PatientServerCommunication {
             try {
                 out.writeObject("register"); // Acción de registro
                 out.flush();
+                
                 //TODO quitar souts
                 System.out.println("Plain: " + patient.getUser().getPassword()); // para comprobar si el hash se hace bien
                 String hashedPassword = PasswordEncryption.hashPassword(patient.getUser().getPassword()); 
                 patient.getUser().setPassword(hashedPassword); // para comprobar si el hash se hace bien
                 System.out.println("Hashed: " + patient.getUser().getPassword());
+                
                 out.writeObject(patient.getUser());//envía los datos de registro al server
                 out.writeObject(patient);
                 out.flush();
+                
                 System.out.println("Registering.....");
                 String confirmation=(String) in.readObject();
                 if (confirmation.contains("Username already in use") ){
