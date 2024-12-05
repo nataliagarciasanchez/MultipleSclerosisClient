@@ -10,6 +10,7 @@ import POJOs.User;
 import POJOs.Patient;
 import POJOs.Report;
 import POJOs.Symptom;
+import Security.PasswordEncryption;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -73,6 +74,11 @@ public class PatientServerCommunication {
             try {
                 out.writeObject("register"); // Acción de registro
                 out.flush();
+                //TODO quitar souts
+                System.out.println("Plain: " + patient.getUser().getPassword()); // para comprobar si el hash se hace bien
+                String hashedPassword = PasswordEncryption.hashPassword(patient.getUser().getPassword()); 
+                patient.getUser().setPassword(hashedPassword); // para comprobar si el hash se hace bien
+                System.out.println("Hashed: " + patient.getUser().getPassword());
                 out.writeObject(patient.getUser());//envía los datos de registro al server
                 out.writeObject(patient);
                 out.flush();
@@ -102,11 +108,15 @@ public class PatientServerCommunication {
             try {
                 out.writeObject("login"); // Acción de inicio de sesión
                 out.writeObject(username);
+                System.out.println("Plain: " + password);
+                password = PasswordEncryption.hashPassword(password); // encriptamos
+                System.out.println("Hashed: "+ password);
                 out.writeObject(password);
                 System.out.println("Logging in.....");
                 Object response=in.readObject();
                 if(response instanceof Patient){//si es de tipo patient es que las credenciales son correctas
-                   patient= (Patient) response; 
+                   patient= (Patient) response;
+                   System.out.println("Successfull log in!");
                 }else if (response instanceof String){
                    String errorMessage = (String) response; // Mensaje de error
                    System.out.println("Error: " + errorMessage); 
