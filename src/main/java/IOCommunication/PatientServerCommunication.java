@@ -37,15 +37,7 @@ public class PatientServerCommunication {
 
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
-        try {
-            this.socket = new Socket(serverAddress, serverPort);
-            out = new ObjectOutputStream(socket.getOutputStream());
-            this.out.flush();
-            in = new ObjectInputStream(socket.getInputStream());     
-
-        } catch (IOException ex) {
-            Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }
     
     public void start(){
