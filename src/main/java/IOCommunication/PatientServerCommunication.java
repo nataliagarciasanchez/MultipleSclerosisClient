@@ -155,6 +155,10 @@ public class PatientServerCommunication {
 
             try {
                 out.writeObject("updateInformation");
+                System.out.println("Plain: " + patient.getUser().getPassword()); // para comprobar si el hash se hace bien
+                String hashedPassword = PasswordEncryption.hashPassword(patient.getUser().getPassword()); 
+                patient.getUser().setPassword(hashedPassword); 
+                System.out.println("Hashed: " + patient.getUser().getPassword());// para comprobar si el hash se hace bien
                 out.writeObject(user);
                 out.writeObject(patient);
                 System.out.println(in.readObject());
