@@ -40,11 +40,11 @@ public class PatientServerCommunicationTest {
         com.start();
         send= com.new Send();
         role=new Role();
-        register();
+        //register();
         //login();
         //viewSymptoms();
         //viewPersonalInfo();
-        //updateInfo();
+        updateInfo();
         //sendReport();  
     }
 
@@ -68,21 +68,21 @@ public class PatientServerCommunicationTest {
     }
     
     public static void updateInfo() {
-        Patient patient1 = send.login("probando@gmail.com", "Password123");
+        Patient patient1 = send.login("probando@gmail.com", "Password456");
         System.out.println(patient1);
         User user = patient1.getUser();
         user.setRole(role);
         System.out.println("user\n" + user);
-        String newPass = "Password456";
+        String newPass = "Password123";
         if (Utilities.isValidPassword(newPass)) {
             user.setPassword(newPass);
-            String new_name="Josefina";
+            String new_name="Noelia";
             patient1.setName(new_name);
             System.out.println("This is to check if the setter is working correctly: " + user.getPassword());
             send.updateInformation(user, patient1);
         }
         
-        Patient patient2 = send.login("probando@gmail.com", "Password456");
+        Patient patient2 = send.login("probando@gmail.com", "Password123");
 
     }
     
