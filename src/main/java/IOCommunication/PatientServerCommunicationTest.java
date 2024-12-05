@@ -40,12 +40,12 @@ public class PatientServerCommunicationTest {
         com.start();
         send= com.new Send();
         role=new Role();
-        register();
+        //register();
         //login();
         //viewSymptoms();
         //viewPersonalInfo();
-        updateInfo();
-        //sendReport();  
+        //updateInfo();
+        sendReport();  
     }
 
     public static void register() {
@@ -115,12 +115,13 @@ public class PatientServerCommunicationTest {
             
             Bitalino bitalinoEMG=new Bitalino(date,SignalType.EMG);
             List<Frame> emgFrames=bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
-            bitalinoEMG.setSignalValues(emgFrames, 1);
+            bitalinoEMG.setSignalValues(emgFrames, 0);
+            System.out.println("Strings EMG:"+bitalinoEMG.getSignalValues());
             
             Bitalino bitalinoECG=new Bitalino(date,SignalType.ECG);
             List<Frame> ecgFrames=bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
             bitalinoECG.setSignalValues(ecgFrames, 1);
-            
+            System.out.println("Strings ECG: "+bitalinoECG.getSignalValues());
             
             List<Bitalino> bitalinos = new ArrayList();
             bitalinos.add(bitalinoEMG);

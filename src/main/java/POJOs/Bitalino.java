@@ -11,6 +11,7 @@ import IOCommunication.PatientServerCommunication;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -64,9 +65,9 @@ public class Bitalino implements Serializable{
             int channel = 0;
             
             if(signal_type==SignalType.ECG){
-                channel=1;
+                channel=0;
             }else{
-                channel=2;
+                channel=1;
             }
             int [] channels={channel};
             
@@ -116,6 +117,11 @@ public class Bitalino implements Serializable{
         return report;
     }
 
+    public String getSignalValues() {
+        return signalValues;
+    }
+    
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -139,11 +145,14 @@ public class Bitalino implements Serializable{
      * @param channelIndex channel depending on the signal (1-EMG, 2-ECG)
      */
     public void setSignalValues(List<Frame> frames, int channelIndex) {
+        for (Frame frame : frames) {
+            System.out.println("arrays"+Arrays.toString(frame.analog)); // Debug to inspect analog array
+        }
         StringBuilder sb = new StringBuilder();
         Iterator<Frame> it = frames.iterator();
         while (it.hasNext()) {
             Frame frame = it.next();
-            sb.append(frame.analog[channelIndex]);
+            sb.append(frame.analog[0]);//para que coja la primera columna
             sb.append("\n");
         }
         this.signalValues = sb.toString();
