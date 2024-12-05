@@ -111,10 +111,12 @@ public class PatientServerCommunication {
             try {
                 out.writeObject("login"); // Acción de inicio de sesión
                 out.writeObject(username);
+                
                 System.out.println("Plain: " + password);
                 password = PasswordEncryption.hashPassword(password); // encriptamos
                 System.out.println("Hashed: "+ password);
                 out.writeObject(password);
+                
                 System.out.println("Logging in.....");
                 Object response=in.readObject();
                 if(response instanceof Patient){//si es de tipo patient es que las credenciales son correctas
@@ -158,10 +160,12 @@ public class PatientServerCommunication {
 
             try {
                 out.writeObject("updateInformation");
+                
                 System.out.println("Plain: " + patient.getUser().getPassword()); // para comprobar si el hash se hace bien
                 String hashedPassword = PasswordEncryption.hashPassword(patient.getUser().getPassword()); 
                 patient.getUser().setPassword(hashedPassword); 
                 System.out.println("Hashed: " + patient.getUser().getPassword());// para comprobar si el hash se hace bien
+                
                 out.writeObject(user);
                 out.writeObject(patient);
                 System.out.println(in.readObject());
