@@ -22,6 +22,7 @@ public class PatientTempCommuUI {
 
             // Inicializar la conexión al servidor
             PatientServerCommunication patientServerCom = new PatientServerCommunication(serverAddress, port);
+            patientServerCom.start(); // was missing, required to start communication
             PatientServerCommunication.Send send = patientServerCom.new Send();
 
             JOptionPane.showMessageDialog(null, "Connected to the server successfully!", "Connection Status", JOptionPane.INFORMATION_MESSAGE);
