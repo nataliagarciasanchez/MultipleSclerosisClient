@@ -93,10 +93,10 @@ public class SecondPanel extends JPanel {
         JButton viewDoctorButton = createStyledButton("View Doctor Information");
         JButton startMonitoringButton = createStyledButton("Start Monitoring");
         JButton settingsButton = createStyledButton("Settings");
+        JButton viewReportsButton = createStyledButton("View My Reports");
         
         settingsButton.addActionListener(e -> displayPatientInfoUpdate());
-        
-        // Add ActionListener to "View My Information" button
+        startMonitoringButton.addActionListener(e -> showMonitoringIntroduction());
         viewInfoButton.addActionListener(e -> displayPatientInfo());
         viewDoctorButton.addActionListener(e -> {
             if (patient.getDoctor() != null) {
@@ -105,6 +105,7 @@ public class SecondPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "No doctor assigned to this patient.", "Doctor Info", JOptionPane.WARNING_MESSAGE);
             }
         });
+        viewReportsButton.addActionListener(e -> displayPatientInfoUpdate());//TODO cambiar esto por la accion
 
         // Add buttons to the button panel with spacing
         buttonPanel.add(viewInfoButton);
@@ -112,6 +113,8 @@ public class SecondPanel extends JPanel {
         buttonPanel.add(viewDoctorButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         buttonPanel.add(startMonitoringButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+         buttonPanel.add(viewReportsButton);
         buttonPanel.add(Box.createVerticalGlue()); // Spacer before settings button
         buttonPanel.add(settingsButton);
 
@@ -163,9 +166,6 @@ public class SecondPanel extends JPanel {
 
         // Add the main container to the main panel
         add(mainContainer, BorderLayout.CENTER);
-
-        // Add action to the "Start Monitoring" button
-        startMonitoringButton.addActionListener(e -> showMonitoringIntroduction());
     }
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
