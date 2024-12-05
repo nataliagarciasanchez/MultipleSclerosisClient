@@ -52,7 +52,7 @@ public class PatientServerCommunicationTest {
         try {
             java.sql.Date dob = Utilities.convertString2SqlDate("31/10/2003");
             Patient maite = new Patient("noelia", "gomez", "05459423F", dob, Gender.FEMALE, "609526931");
-            User user=new User("noelia@gmail.com", "Password123", role);
+            User user=new User("probando@gmail.com", "Password123", role);
             maite.setUser(user);
             
             send.register(maite);
@@ -62,25 +62,27 @@ public class PatientServerCommunicationTest {
     }
     
     public static void login(){
-       Patient patient=send.login("noelia@gmail.com", "Password123");
+       Patient patient=send.login("probando@gmail.com", "Password123");
        patient.getUser().setRole(role);
        System.out.println(patient);
     }
     
     public static void updateInfo() {
-        Patient patient = send.login("noelia@gmail.com", "Password123");
-        System.out.println(patient);
-        User user = patient.getUser();
+        Patient patient1 = send.login("probando@gmail.com", "Password123");
+        System.out.println(patient1);
+        User user = patient1.getUser();
         user.setRole(role);
         System.out.println("user\n" + user);
         String newPass = "Password456";
         if (Utilities.isValidPassword(newPass)) {
             user.setPassword(newPass);
             String new_name="Josefina";
-            patient.setName(new_name);
+            patient1.setName(new_name);
             System.out.println("This is to check if the setter is working correctly: " + user.getPassword());
-            send.updateInformation(user, patient);
+            send.updateInformation(user, patient1);
         }
+        
+        Patient patient2 = send.login("probando@gmail.com", "Password456");
 
     }
     
