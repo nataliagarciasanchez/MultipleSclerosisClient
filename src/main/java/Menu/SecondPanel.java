@@ -883,11 +883,11 @@ public class SecondPanel extends JPanel {
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.LINE_END;
 
-        JLabel currentPasswordLabel = new JLabel("Current Password:");
+        /*JLabel currentPasswordLabel = new JLabel("Current Password:");
         currentPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        passwordPanel.add(currentPasswordLabel, gbc);
+        passwordPanel.add(currentPasswordLabel, gbc);*/
 
-        gbc.gridy++;
+        //gbc.gridy++;
         JLabel newPasswordLabel = new JLabel("New Password:");
         newPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         passwordPanel.add(newPasswordLabel, gbc);
@@ -902,10 +902,10 @@ public class SecondPanel extends JPanel {
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.LINE_START;
 
-        JPasswordField currentPasswordField = new JPasswordField(20);
-        passwordPanel.add(currentPasswordField, gbc);
+        /*JPasswordField currentPasswordField = new JPasswordField(20);
+        passwordPanel.add(currentPasswordField, gbc);*/
 
-        gbc.gridy++;
+        //gbc.gridy++;
         JPasswordField newPasswordField = new JPasswordField(20);
         passwordPanel.add(newPasswordField, gbc);
 
@@ -931,16 +931,16 @@ public class SecondPanel extends JPanel {
 
         savePasswordButton.addActionListener(e -> {
             
-            String currentPassword = new String(currentPasswordField.getPassword());
+            //String currentPassword = new String(currentPasswordField.getPassword());
             String newPassword = new String(newPasswordField.getPassword());
             String confirmPassword = new String(confirmPasswordField.getPassword());
             try{
-                String hashedCurrentPassword = PasswordEncryption.hashPassword(currentPassword);
+                //String hashedCurrentPassword = PasswordEncryption.hashPassword(currentPassword);
 
-                if (!hashedCurrentPassword.equals(patient.getUser().getPassword())) {
+                /*if (!hashedCurrentPassword.equals(patient.getUser().getPassword())) {
                     JOptionPane.showMessageDialog(whitePanel, "Current password is incorrect.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
-                }
+                }*/
 
                 if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
                     JOptionPane.showMessageDialog(whitePanel, "Password fields cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
