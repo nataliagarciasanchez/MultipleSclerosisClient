@@ -152,10 +152,13 @@ public class PatientServerCommunication {
 
             try {
                 out.writeObject("updateInformation");
-                System.out.println("user.getPassword(): " + user.getPassword());
-                if (!patient.getUser().getPassword().equals(user.getPassword())){ // si la contraseña ha cambiado
-                    System.out.println("Plain patient.getUser().getPassword(): " + patient.getUser().getPassword()); // para comprobar si el hash se hace bien
-                    String hashedPassword = PasswordEncryption.hashPassword(patient.getUser().getPassword()); 
+                System.out.println("Updating info");
+                System.out.println("user.getPassword(): " + user.getPassword()); //deberia ser nueva contraseña plana
+                System.out.println("patient.getUser().getPassword(): " + patient.getUser().getPassword()); //contraseña antigua encriptada
+                String hashedPassword = PasswordEncryption.hashPassword(user.getPassword());
+                
+                
+                if (!patient.getUser().getPassword().equals(hashedPassword)){ // comprobamos encriptadas para ver si la contraseña ha cambiado
                     patient.getUser().setPassword(hashedPassword); 
                     System.out.println("Hashed patient.getUser().getPassword(): " + patient.getUser().getPassword());// para comprobar si el hash se hace bien
                 

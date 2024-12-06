@@ -839,7 +839,7 @@ public class SecondPanel extends JPanel {
             patient.setDob(java.sql.Date.valueOf(dobField.getText()));
             User user = patient.getUser();
             user.setRole(role);
-            send.updateInformation(user, patient);
+            send.updateInformation(user, patient); // pasamos el user y patient con la info modificada
 
             JOptionPane.showMessageDialog(this, "Patient information updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         });
@@ -957,10 +957,11 @@ public class SecondPanel extends JPanel {
                     return;
                 }
 
-                patient.getUser().setPassword(newPassword);
+                //patient.getUser().setPassword(newPassword);
                 User user = patient.getUser();
+                user.setPassword(newPassword); // plana, se encripta en updateInformation
                 user.setRole(role);
-                send.updateInformation(user, patient);
+                send.updateInformation(user, patient); // pasamos user y patient con la informacion modificada
 
                 JOptionPane.showMessageDialog(whitePanel, "Password successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 auxiliar(); 
