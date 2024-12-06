@@ -7,12 +7,15 @@ package Menu;
 import BITalino.BITalino;
 import BITalino.Frame;
 import IOCommunication.PatientServerCommunication;
+import static IOCommunication.PatientServerCommunicationTest.role;
 import Menu.Utilities.Utilities;
 import POJOs.Bitalino;
 import POJOs.Patient;
 import POJOs.Report;
+import POJOs.Role;
 import POJOs.SignalType;
 import POJOs.Symptom;
+import POJOs.User;
 import java.awt.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -34,13 +37,15 @@ public class SecondPanel extends JPanel {
     private LocalDate date = LocalDate.now();
     public static String macAddress = "98:D3:41:FD:4E:E8";
     private java.util.List<Bitalino> bitalinos; // Symptom list
+    public static Role role;
     
     
     
     public SecondPanel(Patient patient, PatientServerCommunication.Send send) {
         this.send = send;
         this.patient = patient;
-        symptomsList = new LinkedList<>(); // Initialize symptoms list
+        this.role=new Role();
+        this.symptomsList = new LinkedList<>(); // Initialize symptoms list
 
         // Load the background image
         backgroundImage = new ImageIcon(getClass().getResource("/images/Fondo.jpg")).getImage();
@@ -95,7 +100,7 @@ public class SecondPanel extends JPanel {
         JButton settingsButton = createStyledButton("Settings");
         JButton viewReportsButton = createStyledButton("View My Reports");
         
-        settingsButton.addActionListener(e -> displayPatientInfoUpdate());
+        settingsButton.addActionListener(e -> auxiliar());
         startMonitoringButton.addActionListener(e -> showMonitoringIntroduction());
         viewInfoButton.addActionListener(e -> displayPatientInfo());
         viewDoctorButton.addActionListener(e -> {
@@ -105,7 +110,7 @@ public class SecondPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "No doctor assigned to this patient.", "Doctor Info", JOptionPane.WARNING_MESSAGE);
             }
         });
-        viewReportsButton.addActionListener(e -> displayPatientInfoUpdate());//TODO cambiar esto por la accion
+        viewReportsButton.addActionListener(e -> displayPatientInfo());//TODO cambiar esto por la accion
 
         // Add buttons to the button panel with spacing
         buttonPanel.add(viewInfoButton);
@@ -643,6 +648,51 @@ public class SecondPanel extends JPanel {
         whitePanel.repaint();
     }
     
+    
+    private void auxiliar(){
+        whitePanel.removeAll();
+        whitePanel.setLayout(new BorderLayout());
+        whitePanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 0, 20)); 
+        
+        // Panel principal con el borde negro
+        JPanel borderedPanel = new JPanel();
+        borderedPanel.setLayout(new BorderLayout());
+        borderedPanel.setBackground(Color.WHITE);
+        borderedPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // Línea negra como borde
+        
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10)); 
+        //buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0)); 
+        
+        JButton changeInfoButton = new JButton("Change my personal information");
+        changeInfoButton.setBackground(Color.WHITE);
+        changeInfoButton.setForeground(Color.BLACK);
+        changeInfoButton.setFocusPainted(false);
+        changeInfoButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        
+        JButton changePasswordButton = new JButton("Change my password");
+        changePasswordButton.setBackground(Color.WHITE);
+        changePasswordButton.setForeground(Color.BLACK);
+        changePasswordButton.setFocusPainted(false);
+        changePasswordButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        
+        changeInfoButton.addActionListener(e -> displayPatientInfoUpdate());
+        changePasswordButton.addActionListener(e -> displayPatientPasswordUpdate());
+        
+        buttonPanel.add(changeInfoButton); 
+        buttonPanel.add(changePasswordButton); 
+        
+        borderedPanel.add(buttonPanel, BorderLayout.CENTER);
+    
+        whitePanel.add(buttonPanel, BorderLayout.CENTER); 
+        
+        whitePanel.revalidate();
+        whitePanel.repaint();
+        
+    }
+    
+    
     private void displayPatientInfoUpdate() {
         whitePanel.removeAll();
         whitePanel.setLayout(new BorderLayout());
@@ -703,48 +753,6 @@ public class SecondPanel extends JPanel {
         contentPanel.add(phoneField, gbc);
 
         whitePanel.add(contentPanel, BorderLayout.NORTH); 
-        
-        JPanel passwordPanel = new JPanel();
-        passwordPanel.setBackground(Color.WHITE);
-        passwordPanel.setLayout(new GridBagLayout());
-        passwordPanel.setBorder(BorderFactory.createTitledBorder("Change Password"));
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.LINE_END;
-
-        JLabel currentPasswordLabel = new JLabel("Current Password: ");
-        currentPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        passwordPanel.add(currentPasswordLabel, gbc);
-
-        gbc.gridy++;
-        JLabel newPasswordLabel = new JLabel("New Password: ");
-        newPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        passwordPanel.add(newPasswordLabel, gbc);
-
-        gbc.gridy++;
-        JLabel confirmPasswordLabel = new JLabel("Confirm Password: ");
-        confirmPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        passwordPanel.add(confirmPasswordLabel, gbc);
-
-        // Campos para las contraseñas
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.LINE_START;
-
-        JPasswordField currentPasswordField = new JPasswordField(15);
-        passwordPanel.add(currentPasswordField, gbc);
-
-        gbc.gridy++;
-        JPasswordField newPasswordField = new JPasswordField(15);
-        passwordPanel.add(newPasswordField, gbc);
-
-        gbc.gridy++;
-        JPasswordField confirmPasswordField = new JPasswordField(15);
-        passwordPanel.add(confirmPasswordField, gbc);
-
-        // Añadir el panel de contraseñas
-        whitePanel.add(passwordPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
@@ -758,18 +766,35 @@ public class SecondPanel extends JPanel {
         saveButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
         saveButton.addActionListener(e -> {
+          
+            try {
+                if (nameField.getText().trim().isEmpty() || surnameField.getText().trim().isEmpty() ||
+                    nifField.getText().trim().isEmpty() || dobField.getText().trim().isEmpty() ||
+                    phoneField.getText().trim().isEmpty()){
+                throw new IllegalArgumentException("All fields must be filled.");
+                }
+                if (!Utilities.validateID(nifField.getText().trim())) {
+                throw new IllegalArgumentException("Invalid NIF.");
+                }
+                if (!Utilities.isValidPhone(phoneField.getText().trim())) {
+                throw new IllegalArgumentException("Invalid phone number.");
+                }
+                if (!Utilities.validateDate(LocalDate.parse(dobField.getText()))) {
+                throw new IllegalArgumentException("Invalid Date.");
+                }
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+           
             patient.setName(nameField.getText());
             patient.setSurname(surnameField.getText());
             patient.setNIF(nifField.getText());
-            try {
-                patient.setDob(java.sql.Date.valueOf(dobField.getText()));
-            } catch (IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(this, "Invalid date format. Please use YYYY-MM-DD.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
             patient.setPhone(phoneField.getText());
-            
-            send.updateInformation(patient.getUser(), patient);
+            patient.setDob(java.sql.Date.valueOf(dobField.getText()));
+            User user = patient.getUser();
+            user.setRole(role);
+            send.updateInformation(user, patient);
 
             JOptionPane.showMessageDialog(this, "Patient information updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         });
@@ -780,4 +805,107 @@ public class SecondPanel extends JPanel {
         whitePanel.revalidate();
         whitePanel.repaint();
     }
+    
+    private void displayPatientPasswordUpdate() {
+        whitePanel.removeAll();
+        whitePanel.setLayout(new BorderLayout());
+        whitePanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 0, 20)); 
+
+        JPanel passwordPanel = new JPanel(new GridBagLayout());
+        passwordPanel.setBackground(Color.WHITE);
+        passwordPanel.setBorder(BorderFactory.createTitledBorder("Change Password"));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        // Etiquetas y campos
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.LINE_END;
+
+        JLabel currentPasswordLabel = new JLabel("Current Password:");
+        currentPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        passwordPanel.add(currentPasswordLabel, gbc);
+
+        gbc.gridy++;
+        JLabel newPasswordLabel = new JLabel("New Password:");
+        newPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        passwordPanel.add(newPasswordLabel, gbc);
+
+        gbc.gridy++;
+        JLabel confirmPasswordLabel = new JLabel("Confirm Password:");
+        confirmPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        passwordPanel.add(confirmPasswordLabel, gbc);
+
+        // Campos para las contraseñas
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.LINE_START;
+
+        JPasswordField currentPasswordField = new JPasswordField(20);
+        passwordPanel.add(currentPasswordField, gbc);
+
+        gbc.gridy++;
+        JPasswordField newPasswordField = new JPasswordField(20);
+        passwordPanel.add(newPasswordField, gbc);
+
+        gbc.gridy++;
+        JPasswordField confirmPasswordField = new JPasswordField(20);
+        passwordPanel.add(confirmPasswordField, gbc);
+
+        // Botón para guardar cambios
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(Color.WHITE);
+
+        JButton savePasswordButton = new JButton("Save New Password");
+        savePasswordButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        savePasswordButton.setBackground(Color.WHITE);
+        savePasswordButton.setForeground(Color.BLACK);
+        savePasswordButton.setFocusPainted(false);
+
+        savePasswordButton.addActionListener(e -> {
+            String currentPassword = new String(currentPasswordField.getPassword());
+            String newPassword = new String(newPasswordField.getPassword());
+            String confirmPassword = new String(confirmPasswordField.getPassword());
+
+            if (!currentPassword.equals(patient.getUser().getPassword())) {
+                JOptionPane.showMessageDialog(whitePanel, "Current password is incorrect.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
+                JOptionPane.showMessageDialog(whitePanel, "Password fields cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!newPassword.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(whitePanel, "New password and confirm password do not match.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (newPassword.length() < 8) {
+                JOptionPane.showMessageDialog(whitePanel, "Password must be at least 8 characters long.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Actualizar contraseña en el objeto paciente y enviar al servidor
+            patient.getUser().setPassword(newPassword);
+            User user = patient.getUser();
+            user.setRole(role);
+            send.updateInformation(user, patient);
+
+            JOptionPane.showMessageDialog(whitePanel, "Password successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            auxiliar(); // Volver al menú principal
+        });
+
+        buttonPanel.add(savePasswordButton);
+
+        whitePanel.add(passwordPanel, BorderLayout.CENTER);
+        whitePanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        whitePanel.revalidate();
+        whitePanel.repaint();
+    }
+
 }
