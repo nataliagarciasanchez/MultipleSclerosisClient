@@ -16,6 +16,7 @@ import POJOs.Role;
 import POJOs.SignalType;
 import POJOs.Symptom;
 import POJOs.User;
+import Security.PasswordEncryption;
 import java.awt.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -929,39 +930,40 @@ public class SecondPanel extends JPanel {
         cancelButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
         savePasswordButton.addActionListener(e -> {
-            try{
+            
             String currentPassword = new String(currentPasswordField.getPassword());
             String newPassword = new String(newPasswordField.getPassword());
             String confirmPassword = new String(confirmPasswordField.getPassword());
-            String hashedCurrentPassword = Utilities.hashPassword(currentPassword);
+            try{
+                String hashedCurrentPassword = PasswordEncryption.hashPassword(currentPassword);
 
-            if (!hashedCurrentPassword.equals(patient.getUser().getPassword())) {
-                JOptionPane.showMessageDialog(whitePanel, "Current password is incorrect.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+                if (!hashedCurrentPassword.equals(patient.getUser().getPassword())) {
+                    JOptionPane.showMessageDialog(whitePanel, "Current password is incorrect.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-            if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
-                JOptionPane.showMessageDialog(whitePanel, "Password fields cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+                if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
+                    JOptionPane.showMessageDialog(whitePanel, "Password fields cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-            if (!newPassword.equals(confirmPassword)) {
-                JOptionPane.showMessageDialog(whitePanel, "New password and confirm password do not match.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+                if (!newPassword.equals(confirmPassword)) {
+                    JOptionPane.showMessageDialog(whitePanel, "New password and confirm password do not match.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-            if (!Utilities.isValidPassword(newPassword)) {
-                JOptionPane.showMessageDialog(whitePanel, "Password must be at least 8 characters long.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            String hashedNewPassword = Utilities.hashPassword(newPassword);
-            patient.getUser().setPassword(hashedNewPassword);
-            User user = patient.getUser();
-            user.setRole(role);
-            send.updateInformation(user, patient);
+                if (!Utilities.isValidPassword(newPassword)) {
+                    JOptionPane.showMessageDialog(whitePanel, "Password must be at least 8 characters long.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-            JOptionPane.showMessageDialog(whitePanel, "Password successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
-            auxiliar(); 
+                patient.getUser().setPassword(newPassword);
+                User user = patient.getUser();
+                user.setRole(role);
+                send.updateInformation(user, patient);
+
+                JOptionPane.showMessageDialog(whitePanel, "Password successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                auxiliar(); 
             }catch(Exception ex){
                 JOptionPane.showMessageDialog(whitePanel, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
