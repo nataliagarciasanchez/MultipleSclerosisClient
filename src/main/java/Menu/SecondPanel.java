@@ -120,7 +120,7 @@ public class SecondPanel extends JPanel {
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         buttonPanel.add(startMonitoringButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-         buttonPanel.add(viewReportsButton);
+        buttonPanel.add(viewReportsButton);
         buttonPanel.add(Box.createVerticalGlue()); // Spacer before settings button
         buttonPanel.add(settingsButton);
 
@@ -144,8 +144,26 @@ public class SecondPanel extends JPanel {
         // Create a wrapper panel for the title to adjust spacing and alignment
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setOpaque(false); // Transparent to allow background visibility
-        titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0)); // Adjust spacing (top, left, bottom, right)
-        titlePanel.add(titleLabel, BorderLayout.CENTER);
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20)); // Adjust spacing (top, left, bottom, right)
+        titlePanel.add(titleLabel, BorderLayout.WEST);
+        
+        // Add "Log Out" button at the top-right corner
+        JButton logoutButton = createStyledButton("Log Out");
+        logoutButton.setPreferredSize(new Dimension(120, 40)); // Slightly smaller size for top-right placement
+        logoutButton.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to log out?", "Log Out", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                System.exit(0); 
+            }
+        });
+        
+        // Panel for positioning the logout button
+        JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        logoutPanel.setOpaque(false); // Transparent to blend with the background
+        logoutPanel.add(logoutButton);
+
+        // Add the logout panel to the title panel
+        titlePanel.add(logoutPanel, BorderLayout.CENTER);
 
         rightPanel.add(titlePanel, BorderLayout.NORTH);
 
