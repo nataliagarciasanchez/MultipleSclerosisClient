@@ -41,10 +41,10 @@ public class PatientServerCommunicationTest {
         send= com.new Send();
         role=new Role();
         //register();
-        //login();
+        login();
         //viewSymptoms();
         //viewPersonalInfo();
-        updateInfo();
+        //updateInfo();
         //sendReport();  
     }
 
@@ -65,6 +65,7 @@ public class PatientServerCommunicationTest {
        Patient patient=send.login("probando@gmail.com", "Password123");
        patient.getUser().setRole(role);
        System.out.println(patient);
+       send.logout();
     }
     
     public static void updateInfo() {
