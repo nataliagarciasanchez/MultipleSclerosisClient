@@ -153,7 +153,7 @@ public class SecondPanel extends JPanel {
         logoutButton.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to log out?", "Log Out", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                System.exit(0); 
+                System.exit(0); // Close the application
             }
         });
         
@@ -276,8 +276,6 @@ public class SecondPanel extends JPanel {
 
         contentPanel.add(createInfoLine("Specialty: ", patient.getDoctor().getSpecialty() != null ? patient.getDoctor().getSpecialty() : "N/A"));
         contentPanel.add(Box.createRigidArea(new Dimension(0, 6)));
-
-        contentPanel.add(createInfoLine("User: ", patient.getDoctor().getUser() != null ? patient.getDoctor().getUser().toString() : "N/A"));
 
         // Añade el panel interno al panel blanco
         contentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
