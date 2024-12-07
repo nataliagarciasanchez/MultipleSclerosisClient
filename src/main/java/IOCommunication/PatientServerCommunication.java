@@ -54,7 +54,21 @@ public class PatientServerCommunication {
     }
     
     public class Send{
-        
+        /**
+         * Logs out of the app by closing all connections from that patient to the server
+         */
+        public void obtainPort(){
+            try {
+                out.writeObject("obtainPort");
+                System.out.println(in.readObject());
+                //ahora mismo lo hace el server cuando recive esta opcion
+                
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }finally{
+              releaseResources(in, out, socket);  
+            }
+        }
 
         /**
          * Calls the server so the patient registers in the app and, therefore,
