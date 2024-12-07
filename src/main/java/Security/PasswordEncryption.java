@@ -16,7 +16,9 @@ public class PasswordEncryption {
     
     //method for hashing password
     public static String hashPassword(String plainPassword){
-        try {         
+        try {      
+            
+            
             // Crear instancia de MessageDigest para MD5
             MessageDigest md = MessageDigest.getInstance("MD5");
             
