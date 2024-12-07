@@ -262,16 +262,19 @@ public class PatientServerCommunication {
             }
         }
 
-        private void handleFeedbackFromServer() {
+        private List<Feedback> handleFeedbackFromServer() {
+            List<Feedback> feedbacks = null;
             try {
-                List<Feedback> feedbacks= (List<Feedback>) in.readObject();
-                out.writeObject("Feedback recedived!.");
-                // message is shown in the swing interface
-                //TODO debería msotrar todos los mensajes de los feedbacks por orden de fecha
+                feedbacks= (List<Feedback>) in.readObject();
+                out.writeObject("Feedback received!.");
+                // list of feedbacks is shown in the swing interface
                 this.stop();
+                
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
+            return feedbacks;
+            
         }
         
         private void handleAddressandPortFromServer() {
