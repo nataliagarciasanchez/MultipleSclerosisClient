@@ -40,7 +40,11 @@ public class PatientServerCommunicationTest {
         com.start();
         send= com.new Send();
         role=new Role();
-        register();
+        //register();
+        //register1();
+        //register2();
+       //register3();
+        register4();
         //login();
         //viewSymptoms();
         //viewPersonalInfo();
@@ -60,6 +64,54 @@ public class PatientServerCommunicationTest {
             Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public static void register1() {
+    try {
+        java.sql.Date dob = Utilities.convertString2SqlDate("31/10/2003");
+        Patient patient = new Patient("Noelia", "Gomez", "05459423F", dob, Gender.FEMALE, "609526931");
+        User user = new User("noelia.gomez@gmail.com", "Password123", role);
+        patient.setUser(user);
+        send.register(patient);
+    } catch (ParseException ex) {
+        Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}
+
+public static void register2() {
+    try {
+        java.sql.Date dob = Utilities.convertString2SqlDate("15/05/1990");
+        Patient patient = new Patient("Carlos", "Lopez", "12345678Z", dob, Gender.MALE, "617234567");
+        User user = new User("carlos.lopez@gmail.com", "SecurePass456", role);
+        patient.setUser(user);
+        send.register(patient);
+    } catch (ParseException ex) {
+        Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}
+
+public static void register3() {
+    try {
+        java.sql.Date dob = Utilities.convertString2SqlDate("20/11/1985");
+        Patient patient = new Patient("Maria", "Fernandez", "87654321A", dob, Gender.FEMALE, "624789012");
+        User user = new User("maria.fernandez@gmail.com", "MyPass789", role);
+        patient.setUser(user);
+        send.register(patient);
+    } catch (ParseException ex) {
+        Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}
+
+public static void register4() {
+    try {
+        java.sql.Date dob = Utilities.convertString2SqlDate("01/01/1995");
+        Patient patient = new Patient("David", "Martinez", "56789012B", dob, Gender.MALE, "632987654");
+        User user = new User("david.martinez@gmail.com", "DavidPass456", role);
+        patient.setUser(user);
+        send.register(patient);
+    } catch (ParseException ex) {
+        Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}
+
     
     public static void login(){
        Patient patient=send.login("probando@gmail.com", "Password123");
