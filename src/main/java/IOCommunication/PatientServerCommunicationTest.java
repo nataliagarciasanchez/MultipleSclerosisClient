@@ -40,18 +40,23 @@ public class PatientServerCommunicationTest {
         com.start();
         send= com.new Send();
         role=new Role();
-        //obtainAddressandPort()
+        //obtainAddressandPort();
         //register();
         //register1();
         //register2();
        //register3();
-        register4();
+        //register4();
         //login();
         //logout()
         //viewSymptoms();
         //viewPersonalInfo();
         //updateInfo();
         //sendReport();  
+    }
+    
+    public static void obtainAddressandPort() {
+        send.obtainAddressandPort();
+       
     }
 
     public static void register() {
