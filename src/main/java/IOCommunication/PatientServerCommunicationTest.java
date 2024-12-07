@@ -46,6 +46,8 @@ public class PatientServerCommunicationTest {
        //register3();
         register4();
         //login();
+        //logout()
+        //obtainAddressandPort()
         //viewSymptoms();
         //viewPersonalInfo();
         //updateInfo();
