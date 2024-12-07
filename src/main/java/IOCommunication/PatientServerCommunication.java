@@ -57,9 +57,9 @@ public class PatientServerCommunication {
         /**
          * Logs out of the app by closing all connections from that patient to the server
          */
-        public void obtainPort(){
+        public void obtainAddressandPort(){
             try {
-                out.writeObject("obtainPort");
+                out.writeObject("obtainAddressandPort");
                 System.out.println(in.readObject());
                 //ahora mismo lo hace el server cuando recive esta opcion
                 
