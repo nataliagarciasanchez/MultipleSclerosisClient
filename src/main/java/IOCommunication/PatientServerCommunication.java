@@ -65,8 +65,6 @@ public class PatientServerCommunication {
                 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-            }finally{
-              releaseResources(in, out, socket);  
             }
         }
 
