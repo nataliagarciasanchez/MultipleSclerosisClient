@@ -259,12 +259,18 @@ public class PatientServerCommunication {
         
         public void stop() {
         running = false;
+        try{
+            in.close();
+        }catch (IOException ex){
+           Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+         }
         }
         
         @Override
         public void run() {
             while (running) {
                 // Continuously listens for incoming messages from the server
+                handleAddressandPortFromServer();
                 handleFeedbackFromServer();
             }
         }
@@ -280,6 +286,29 @@ public class PatientServerCommunication {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        private void handleAddressandPortFromServer() {
+            try {
+                String IpAddress= (String) in.readObject();
+                int port= (int) in.readObject();
+                out.writeObject("Server Address and Server Port recedived!");
+                if(IpAddress != null && IpAddress.equals(serverAddress)){//IpAddress correcta
+                    System.out.println("Correct ServerAddress:" +IpAddress);
+                } else{
+                    System.out.print("Incorrect ServerAddress to connect");}
+                
+                if (port == serverPort){
+                     System.out.println("Correct ServerPort");
+                } else { 
+                    System.out.print("Not correct ServerPort to connect");
+                }
+                
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        
     }
 
 }
