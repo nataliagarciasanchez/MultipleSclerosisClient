@@ -40,7 +40,6 @@ public class PatientServerCommunicationTest {
         com.start();
         send= com.new Send();
         role=new Role();
-        //obtainAddressandPort();
         //register();
         //register1();
         //register2();
