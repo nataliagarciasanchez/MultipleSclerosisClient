@@ -56,20 +56,7 @@ public class PatientServerCommunication {
     }
     
     public class Send{
-        /**
-         * Makes a request to obtain the Server port and Server address 
-         */
-        public void obtainAddressandPort(){
-            try {
-                out.writeObject("obtainAddressandPort");
-                System.out.println(in.readObject());
-                //ahora mismo lo hace el server cuando recive esta opcion
-                
-            } catch (IOException | ClassNotFoundException ex) {
-                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
+        
         /**
          * Calls the server so the patient registers in the app and, therefore,
          * it is saved in the database
