@@ -672,128 +672,164 @@ public class SecondPanel extends JPanel {
     }
     
     private void displayFeedbacks() {
-        whitePanel.removeAll(); // Limpiar el contenido del panel blanco
-        whitePanel.setLayout(new BorderLayout());
+    whitePanel.removeAll(); // Clear the white panel content
+    whitePanel.setLayout(new BorderLayout());
 
-        // Título superior
-        JLabel titleLabel = new JLabel("View Feedbacks");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        whitePanel.add(titleLabel, BorderLayout.NORTH);
+    // Title at the top
+    JLabel titleLabel = new JLabel("View Feedbacks");
+    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+    titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    whitePanel.add(titleLabel, BorderLayout.NORTH);
 
-        // Panel contenedor para el buscador y la lista de feedbacks
-        JPanel feedbackContainer = new JPanel();
-        feedbackContainer.setLayout(new BorderLayout());
-        feedbackContainer.setBackground(Color.WHITE);
+    // Container for the search bar and feedback list
+    JPanel feedbackContainer = new JPanel(new BorderLayout());
+    feedbackContainer.setBackground(Color.WHITE);
 
-        // Crear un buscador para los feedbacks
-        JPanel searchPanel = new JPanel(new BorderLayout());
-        searchPanel.setBackground(Color.WHITE);
-        searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+    // Search panel for feedbacks
+    JPanel searchPanel = new JPanel(new BorderLayout());
+    searchPanel.setBackground(Color.WHITE);
+    searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        JLabel searchLabel = new JLabel("Search Feedbacks by Date (YYYY-MM-DD):");
-        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+    JLabel searchLabel = new JLabel("Search Feedbacks by Date (YYYY-MM-DD):");
+    searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
 
-        JTextField searchField = new JTextField();
-        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+    JTextField searchField = new JTextField();
+    searchField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
-        searchPanel.add(searchLabel, BorderLayout.WEST);
-        searchPanel.add(searchField, BorderLayout.CENTER);
+    searchPanel.add(searchLabel, BorderLayout.WEST);
+    searchPanel.add(searchField, BorderLayout.CENTER);
 
-        feedbackContainer.add(searchPanel, BorderLayout.NORTH);
+    feedbackContainer.add(searchPanel, BorderLayout.NORTH);
 
-        // Panel para la lista de feedbacks
-        JPanel feedbackPanel = new JPanel();
-        feedbackPanel.setLayout(new BoxLayout(feedbackPanel, BoxLayout.Y_AXIS));
-        feedbackPanel.setBackground(Color.WHITE);
+    // Panel for the list of feedbacks
+    JPanel feedbackPanel = new JPanel();
+    feedbackPanel.setLayout(new BoxLayout(feedbackPanel, BoxLayout.Y_AXIS));
+    feedbackPanel.setBackground(Color.WHITE);
 
-        // JScrollPane para hacer desplazable la lista de feedbacks
-        JScrollPane scrollPane = new JScrollPane(feedbackPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+    // Scrollable panel for feedbacks
+    JScrollPane scrollPane = new JScrollPane(feedbackPanel);
+    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+    scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        feedbackContainer.add(scrollPane, BorderLayout.CENTER);
+    feedbackContainer.add(scrollPane, BorderLayout.CENTER);
+    whitePanel.add(feedbackContainer, BorderLayout.CENTER);
 
-        whitePanel.add(feedbackContainer, BorderLayout.CENTER);
+    // Retrieve feedbacks for the current patient
+    java.util.List<Feedback> feedbacks = getMockFeedbacks(); // Replace with handleFeedbackFromServer() when ready
+    if (feedbacks != null && !feedbacks.isEmpty()) {
+        updateFeedbackList(feedbacks, feedbackPanel); // Display all feedbacks initially
+    } else {
+        System.out.println("No feedbacks available for this patient.");
+    }
 
-        // Obtener los feedbacks para el paciente actual
-        java.util.List<Feedback> feedbacks = getMockFeedbacks(); //handleFeedbackFromServer() cuando este listo
-        if (feedbacks != null) {
-            updateFeedbackList(feedbacks, feedbackPanel); // Mostrar todos los feedbacks al principio
-        } else {
-            System.out.println("No feedbacks available for this patient.");
+    // Add search functionality to filter feedbacks
+    searchField.getDocument().addDocumentListener(new DocumentListener() {
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            filterFeedbacks();
         }
 
-        // Filtrar feedbacks en función de la búsqueda
-        searchField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                filterFeedbacks();
-            }
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            filterFeedbacks();
+        }
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                filterFeedbacks();
-            }
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            filterFeedbacks();
+        }
 
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                filterFeedbacks();
+        private void filterFeedbacks() {
+            String searchText = searchField.getText().toLowerCase();
+            if (feedbacks != null) {
+                java.util.List<Feedback> filteredFeedbacks = feedbacks.stream()
+                        .filter(feedback -> feedback.getDate().toString().contains(searchText)) // Filter by date
+                        .collect(Collectors.toList());
+                updateFeedbackList(filteredFeedbacks, feedbackPanel);
             }
+        }
+    });
 
-            private void filterFeedbacks() {
-                String searchText = searchField.getText().toLowerCase();
-                if (feedbacks != null) {
-                    java.util.List<Feedback> filteredFeedbacks = feedbacks.stream()
-                            .filter(feedback -> feedback.getDate().toString().contains(searchText)) // Filtrar por fecha
-                            .collect(Collectors.toList());
-                    updateFeedbackList(filteredFeedbacks, feedbackPanel);
-                }
-            }
-        });
+    whitePanel.revalidate();
+    whitePanel.repaint();
+}
 
-        whitePanel.revalidate();
-        whitePanel.repaint();
-    }
 
     // Método para actualizar la lista de feedbacks
     private void updateFeedbackList(java.util.List<Feedback> feedbacks, JPanel feedbackPanel) {
-        feedbackPanel.removeAll(); // Limpiar el contenido anterior
+    feedbackPanel.removeAll(); // Clear the previous content
 
-        Dimension fixedSize = new Dimension(1000, 50); // Tamaño fijo para cada panel de feedback
+    Dimension fixedSize = new Dimension(1000, 50); // Fixed size for each feedback panel
 
-        for (Feedback feedback : feedbacks) {
-            JPanel feedbackItemPanel = new JPanel(new BorderLayout());
-            feedbackItemPanel.setBackground(Color.LIGHT_GRAY);
-            feedbackItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            feedbackItemPanel.setPreferredSize(fixedSize); // Aplicar tamaño fijo
-            feedbackItemPanel.setMaximumSize(fixedSize);
-            feedbackItemPanel.setMinimumSize(fixedSize);
+    for (Feedback feedback : feedbacks) {
+        JPanel feedbackItemPanel = new JPanel(new BorderLayout());
+        feedbackItemPanel.setBackground(Color.LIGHT_GRAY);
+        feedbackItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        feedbackItemPanel.setPreferredSize(fixedSize); // Apply fixed size
+        feedbackItemPanel.setMaximumSize(fixedSize);
+        feedbackItemPanel.setMinimumSize(fixedSize);
 
-            JLabel feedbackLabel = new JLabel("Date: " + feedback.getDate().toString());
-            feedbackLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        JLabel feedbackLabel = new JLabel("Date: " + feedback.getDate().toString());
+        feedbackLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
-            JButton viewButton = new JButton("View Entire Message");
-            viewButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            viewButton.setBackground(Color.WHITE);
-            viewButton.setForeground(Color.BLACK);
+        JButton viewButton = new JButton("View Entire Message");
+        viewButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        viewButton.setBackground(Color.WHITE);
+        viewButton.setForeground(Color.BLACK);
 
-            viewButton.addActionListener(e -> {
-                JOptionPane.showMessageDialog(whitePanel, feedback.getMessage(), "Feedback Message", JOptionPane.INFORMATION_MESSAGE);
-            });
+        // Use displayFeedbacksInUI for a detailed view
+        viewButton.addActionListener(e -> displayFeedbacksInUI(feedback));
 
-            feedbackItemPanel.add(feedbackLabel, BorderLayout.CENTER);
-            feedbackItemPanel.add(viewButton, BorderLayout.EAST);
+        feedbackItemPanel.add(feedbackLabel, BorderLayout.CENTER);
+        feedbackItemPanel.add(viewButton, BorderLayout.EAST);
 
-            feedbackPanel.add(feedbackItemPanel);
-            feedbackPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Espacio entre feedbacks
-        }
-
-        feedbackPanel.revalidate();
-        feedbackPanel.repaint();
+        feedbackPanel.add(feedbackItemPanel);
+        feedbackPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Space between feedbacks
     }
+
+    feedbackPanel.revalidate();
+    feedbackPanel.repaint();
+}
+    
+    private void displayFeedbacksInUI(Feedback feedback) {
+    whitePanel.removeAll(); // Clear the white panel content
+    whitePanel.setLayout(new BorderLayout());
+
+    // Panel for feedback details
+    JPanel feedbackDetailsPanel = new JPanel();
+    feedbackDetailsPanel.setBackground(Color.WHITE);
+    feedbackDetailsPanel.setLayout(new BoxLayout(feedbackDetailsPanel, BoxLayout.Y_AXIS));
+    feedbackDetailsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+    // Add feedback details
+    feedbackDetailsPanel.add(createInfoLine("Doctor: ", feedback.getDoctor().getName()));
+    feedbackDetailsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+    feedbackDetailsPanel.add(createInfoLine("Date: ", feedback.getDate().toString()));
+    feedbackDetailsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+    feedbackDetailsPanel.add(createInfoLine("Message: ", feedback.getMessage()));
+
+    whitePanel.add(feedbackDetailsPanel, BorderLayout.CENTER);
+
+    // Add a "Back" button to return to feedback list
+    JButton backButton = new JButton("Back");
+    backButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+    backButton.setBackground(Color.WHITE);
+    backButton.setForeground(Color.BLACK);
+    backButton.addActionListener(e -> displayFeedbacks());
+
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    buttonPanel.setBackground(Color.WHITE);
+    buttonPanel.add(backButton);
+
+    whitePanel.add(buttonPanel, BorderLayout.SOUTH);
+
+    whitePanel.revalidate();
+    whitePanel.repaint();
+}
+
+
 
     // Método de prueba para obtener feedbacks ficticios
     private java.util.List<Feedback> getMockFeedbacks() {
