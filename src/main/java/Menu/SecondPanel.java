@@ -10,6 +10,9 @@ import IOCommunication.PatientServerCommunication;
 import static IOCommunication.PatientServerCommunicationTest.role;
 import Menu.Utilities.Utilities;
 import POJOs.Bitalino;
+import POJOs.Doctor;
+import POJOs.Feedback;
+import POJOs.Gender;
 import POJOs.Patient;
 import POJOs.Report;
 import POJOs.Role;
@@ -24,6 +27,9 @@ import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import java.time.LocalDate;
+import java.util.stream.Collectors;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 /**
  *
  * @author nataliagarciasanchez
@@ -111,7 +117,7 @@ public class SecondPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "No doctor assigned to this patient.", "Doctor Info", JOptionPane.WARNING_MESSAGE);
             }
         });
-        viewReportsButton.addActionListener(e -> displayPatientInfo());//TODO cambiar esto por la accion
+        viewReportsButton.addActionListener(e -> displayFeedbacks());
 
         // Add buttons to the button panel with spacing
         buttonPanel.add(viewInfoButton);
@@ -665,6 +671,154 @@ public class SecondPanel extends JPanel {
         whitePanel.repaint();
     }
     
+    private void displayFeedbacks() {
+        whitePanel.removeAll(); // Limpiar el contenido del panel blanco
+        whitePanel.setLayout(new BorderLayout());
+
+        // Título superior
+        JLabel titleLabel = new JLabel("View Feedbacks");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        whitePanel.add(titleLabel, BorderLayout.NORTH);
+
+        // Panel contenedor para el buscador y la lista de feedbacks
+        JPanel feedbackContainer = new JPanel();
+        feedbackContainer.setLayout(new BorderLayout());
+        feedbackContainer.setBackground(Color.WHITE);
+
+        // Crear un buscador para los feedbacks
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.setBackground(Color.WHITE);
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        JLabel searchLabel = new JLabel("Search Feedbacks by Date (YYYY-MM-DD):");
+        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+
+        JTextField searchField = new JTextField();
+        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+
+        searchPanel.add(searchLabel, BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+
+        feedbackContainer.add(searchPanel, BorderLayout.NORTH);
+
+        // Panel para la lista de feedbacks
+        JPanel feedbackPanel = new JPanel();
+        feedbackPanel.setLayout(new BoxLayout(feedbackPanel, BoxLayout.Y_AXIS));
+        feedbackPanel.setBackground(Color.WHITE);
+
+        // JScrollPane para hacer desplazable la lista de feedbacks
+        JScrollPane scrollPane = new JScrollPane(feedbackPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        feedbackContainer.add(scrollPane, BorderLayout.CENTER);
+
+        whitePanel.add(feedbackContainer, BorderLayout.CENTER);
+
+        // Obtener los feedbacks para el paciente actual
+        java.util.List<Feedback> feedbacks = getMockFeedbacks(); //handleFeedbackFromServer() cuando este listo
+        if (feedbacks != null) {
+            updateFeedbackList(feedbacks, feedbackPanel); // Mostrar todos los feedbacks al principio
+        } else {
+            System.out.println("No feedbacks available for this patient.");
+        }
+
+        // Filtrar feedbacks en función de la búsqueda
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterFeedbacks();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterFeedbacks();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterFeedbacks();
+            }
+
+            private void filterFeedbacks() {
+                String searchText = searchField.getText().toLowerCase();
+                if (feedbacks != null) {
+                    java.util.List<Feedback> filteredFeedbacks = feedbacks.stream()
+                            .filter(feedback -> feedback.getDate().toString().contains(searchText)) // Filtrar por fecha
+                            .collect(Collectors.toList());
+                    updateFeedbackList(filteredFeedbacks, feedbackPanel);
+                }
+            }
+        });
+
+        whitePanel.revalidate();
+        whitePanel.repaint();
+    }
+
+    // Método para actualizar la lista de feedbacks
+    private void updateFeedbackList(java.util.List<Feedback> feedbacks, JPanel feedbackPanel) {
+        feedbackPanel.removeAll(); // Limpiar el contenido anterior
+
+        Dimension fixedSize = new Dimension(1000, 50); // Tamaño fijo para cada panel de feedback
+
+        for (Feedback feedback : feedbacks) {
+            JPanel feedbackItemPanel = new JPanel(new BorderLayout());
+            feedbackItemPanel.setBackground(Color.LIGHT_GRAY);
+            feedbackItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            feedbackItemPanel.setPreferredSize(fixedSize); // Aplicar tamaño fijo
+            feedbackItemPanel.setMaximumSize(fixedSize);
+            feedbackItemPanel.setMinimumSize(fixedSize);
+
+            JLabel feedbackLabel = new JLabel("Date: " + feedback.getDate().toString());
+            feedbackLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+
+            JButton viewButton = new JButton("View Entire Message");
+            viewButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            viewButton.setBackground(Color.WHITE);
+            viewButton.setForeground(Color.BLACK);
+
+            viewButton.addActionListener(e -> {
+                JOptionPane.showMessageDialog(whitePanel, feedback.getMessage(), "Feedback Message", JOptionPane.INFORMATION_MESSAGE);
+            });
+
+            feedbackItemPanel.add(feedbackLabel, BorderLayout.CENTER);
+            feedbackItemPanel.add(viewButton, BorderLayout.EAST);
+
+            feedbackPanel.add(feedbackItemPanel);
+            feedbackPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Espacio entre feedbacks
+        }
+
+        feedbackPanel.revalidate();
+        feedbackPanel.repaint();
+    }
+
+    // Método de prueba para obtener feedbacks ficticios
+    private java.util.List<Feedback> getMockFeedbacks() {
+        java.util.List<Feedback> mockFeedbacks = new ArrayList<>();
+        Patient mockPatient = new Patient("John", "Doe", "12345678A", java.sql.Date.valueOf("1990-01-01"), Gender.MALE, "123456789");
+
+        // Crear doctores con el constructor correcto
+        Doctor doctor1 = new Doctor(1, "Dr. Garcia", "Neurologist");
+        Doctor doctor2 = new Doctor(2, "Dr. Lopez", "General Practitioner");
+        Doctor doctor3 = new Doctor(3, "Dr. Martinez", "Physiotherapist");
+        Doctor doctor4 = new Doctor(4, "Dr. Smith", "Rehabilitation Specialist");
+        Doctor doctor5 = new Doctor(5, "Dr. Taylor", "Consultant");
+
+        // Añadir feedbacks ficticios
+        mockFeedbacks.add(new Feedback(1,"Great improvement!", java.sql.Date.valueOf("2023-12-01"), doctor1, mockPatient));
+        mockFeedbacks.add(new Feedback(2,"Please schedule a follow-up.", java.sql.Date.valueOf("2023-11-15"), doctor2, mockPatient));
+        mockFeedbacks.add(new Feedback(3,"Your condition is stable.", java.sql.Date.valueOf("2023-11-10"), doctor3, mockPatient));
+        mockFeedbacks.add(new Feedback(4,"Keep up the good work with therapy.", java.sql.Date.valueOf("2023-10-25"), doctor4, mockPatient));
+        mockFeedbacks.add(new Feedback(5,"I noticed some irregularities. Please visit.", java.sql.Date.valueOf("2023-10-10"), doctor5, mockPatient));
+
+        return mockFeedbacks;
+    }
+
+
+    
     private void auxiliar() {
         // Clear the whitePanel
         whitePanel.removeAll();
@@ -724,8 +878,6 @@ public class SecondPanel extends JPanel {
         whitePanel.revalidate();
         whitePanel.repaint();
     }
-
-    
     
     private void displayPatientInfoUpdate() {
         whitePanel.removeAll();
@@ -872,9 +1024,6 @@ public class SecondPanel extends JPanel {
         whitePanel.repaint();
     }
 
-
-
-    
     private void displayPatientPasswordUpdate() {
         whitePanel.removeAll();
         whitePanel.setLayout(new BorderLayout());
