@@ -54,11 +54,7 @@ public class PatientServerCommunicationTest {
         //sendReport();  
     }
     
-    public static void obtainAddressandPort() {
-        send.obtainAddressandPort();
-       
-    }
-
+   
     public static void register() {
         try {
             java.sql.Date dob = Utilities.convertString2SqlDate("31/10/2003");
