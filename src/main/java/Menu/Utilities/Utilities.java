@@ -186,7 +186,7 @@ public class Utilities {
         return new java.sql.Date(utilDate.getTime());
     }
     
-    
+    //TODO use these methods in swing
     public static List <String> validatePatient (Patient patient){
         List <String> errors = new ArrayList ();
         
