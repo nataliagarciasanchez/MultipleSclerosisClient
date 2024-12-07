@@ -55,7 +55,7 @@ public class PatientServerCommunication {
     
     public class Send{
         /**
-         * Logs out of the app by closing all connections from that patient to the server
+         * Makes a request to obtain the Server port and Server address 
          */
         public void obtainAddressandPort(){
             try {
