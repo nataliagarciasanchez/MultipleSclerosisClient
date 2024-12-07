@@ -4,6 +4,8 @@
  */
 package Menu.Utilities;
 
+import POJOs.Patient;
+import POJOs.User;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +14,8 @@ import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -182,18 +186,55 @@ public class Utilities {
         return new java.sql.Date(utilDate.getTime());
     }
     
-    public static String hashPassword(String password) throws Exception {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
-        StringBuilder hexString = new StringBuilder();
-        for (byte b : hash) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
+    
+    public static List <String> validatePatient (Patient patient){
+        List <String> errors = new ArrayList ();
+        
+        if(patient.getName().trim().isEmpty()){
+        errors.add("The name field cannot be empty");
         }
-        return hexString.toString();
+        if(patient.getSurname().trim().isEmpty()){
+        errors.add("The surname field cannot be empty");
+        }
+        if(patient.getNIF().trim().isEmpty()){
+        errors.add("The name field cannot be empty");
+        }
+        if(!validateID(patient.getNIF())){
+        errors.add("Invalid NIF");
+        }
+        if(patient.getPhone().trim().isEmpty()){
+        errors.add("The name field cannot be empty");
+        }
+        if(!isValidPhone(patient.getPhone())){
+        errors.add("Invalid phone number");
+        }
+        if(patient.getDob() == null){
+        errors.add("The date birth field cannot be empty");
+        }
+        if(!validateDate(patient.getDob().toLocalDate())){
+        errors.add("Invalid birth date.");
+        }
+        if(patient.getGender()== null){
+        errors.add("The gender field cannot be empty");
+        }
+       
+        return errors;
+    }
+    
+    public static List <String> validateUser (User user){
+        List <String> errors = new ArrayList ();
+        
+        if(user.getEmail().trim().isEmpty()){
+        errors.add("The username field cannot be empty");
+        }
+        if(user.getPassword().trim().isEmpty()){
+        errors.add("The password field cannot be empty");
+        }
+        if(!isValidPassword(user.getPassword())){
+        errors.add("Invalid password.");
+        }
+        
+        return errors;
     }
     
 }
