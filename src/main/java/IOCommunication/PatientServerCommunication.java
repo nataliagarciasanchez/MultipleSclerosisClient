@@ -47,6 +47,8 @@ public class PatientServerCommunication {
             out.flush();
             this.in=new ObjectInputStream(socket.getInputStream());
             System.out.println("Patient connected to server");
+            String message = "PatientServerCommunication";
+            out.writeObject(message);
             //new Thread(new Receive(in)).start();
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
