@@ -457,6 +457,36 @@ public class BITalino {
         return recordingTime;
     }
     
+    public boolean isChannelConnected(int channel) throws BITalinoException {
+        if (channel < 0 || channel > 5) {
+            throw new IllegalArgumentException("Invalid channel. Must be between 0 and 5.");
+        }
+
+        try {
+            // Leer un bloque pequeño de datos para verificar el canal
+            Frame[] testFrames = read(10); // Leer 10 muestras
+            for (Frame frame : testFrames) {
+                // Comprobar si los valores del canal están en un rango esperado
+                if (channel < 4) { // Canales A1 a A4 tienen valores entre 0 y 1023
+                    if (frame.analog[channel] >= 0 && frame.analog[channel] <= 1023) {
+                        return true; // El canal está conectado
+                    }
+                } else { // Canales A5 y A6 tienen valores entre 0 y 63
+                    if (frame.analog[channel] >= 0 && frame.analog[channel] <= 63) {
+                        return true; // El canal está conectado
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Error durante la lectura, probablemente el canal no está conectado
+            return false;
+        }
+
+        // Si todos los valores son inválidos, el canal no está conectado
+        return false;
+    }
+
+    
     
 
 }

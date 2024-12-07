@@ -45,6 +45,8 @@ public class SecondPanel extends JPanel {
     public static String macAddress = "98:D3:41:FD:4E:E8";
     private java.util.List<Bitalino> bitalinos; // Symptom list
     public static Role role;
+    private BITalino bitalinoDevice; // Variable global para mantener la conexión
+
     
     
     
@@ -435,45 +437,39 @@ public class SecondPanel extends JPanel {
         // Play Button
         JButton playButton = new JButton("Play");
         playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        playButton.setBackground(Color.BLACK); 
+        playButton.setBackground(Color.WHITE); 
         playButton.setForeground(Color.BLACK); 
         playButton.setFocusPainted(false);
         playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Add Play button functionality
-        /*playButton.addActionListener(e -> {
-            try {
-                BITalino bitalinoDevice=new BITalino();
-                bitalinoDevice.open(macAddress);
-                Bitalino bitalinoECG = new Bitalino( java.sql.Date.valueOf(date), SignalType.ECG);
-                java.util.List<Frame> emgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
-                bitalinoECG.setSignalValues (emgFrames,1);  
-            } catch (Throwable ex) {
-                Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }          
-        });*/
         
         playButton.addActionListener(e -> {
             // Crear un SwingWorker para manejar la tarea en segundo plano
             SwingWorker<Void, Void> worker = new SwingWorker<>() {
                 @Override
                 protected Void doInBackground() {
-                    BITalino bitalinoDevice = new BITalino();
                     try {
-                        // Intentar abrir la conexión con el BITalino
+                        bitalinoDevice = new BITalino();
                         bitalinoDevice.open(macAddress);
+                        
+                        if (!bitalinoDevice.isChannelConnected(1)) { // Suponemos que el EMG está en el canal 1
+                            JOptionPane.showMessageDialog(null, "No ECG signal detected. Please check the connection.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return null;
+                        }
 
                         // Mostrar un mensaje mientras se realiza la captura
                         JOptionPane.showMessageDialog(null, "Capturing data...", "Recording", JOptionPane.INFORMATION_MESSAGE);
 
                         // Simular el proceso de grabación de datos
+                        bitalinoDevice.start(new int[]{1}); // Canal ECG
                         Bitalino bitalinoECG = new Bitalino(java.sql.Date.valueOf(date), SignalType.ECG);
-                        java.util.List<Frame> emgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
-                        bitalinoECG.setSignalValues(emgFrames, 1);
+                        java.util.List<Frame> ecgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
+                        bitalinoECG.setSignalValues(ecgFrames, 1);
+                        bitalinos.add(bitalinoECG);
 
+                    }  catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Error while recording EMG data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        ex.printStackTrace();
                     } catch (Throwable ex) {
-                        // Manejar la excepción si no se encuentra el dispositivo
-                        JOptionPane.showMessageDialog(null, "No BITalino device found!", "Error", JOptionPane.ERROR_MESSAGE);
                         Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     return null;
@@ -568,23 +564,35 @@ public class SecondPanel extends JPanel {
             SwingWorker<Void, Void> worker = new SwingWorker<>() {
                 @Override
                 protected Void doInBackground() {
-                    BITalino bitalinoDevice = new BITalino();
                     try {
-                        // Intentar abrir la conexión con el BITalino
+                        bitalinoDevice = new BITalino();
                         bitalinoDevice.open(macAddress);
 
-                        // Mostrar un mensaje mientras se realiza la captura
-                        JOptionPane.showMessageDialog(null, "Capturing data...", "Recording", JOptionPane.INFORMATION_MESSAGE);
+                        if (!bitalinoDevice.isChannelConnected(0)) { // Cambiar SignalType según corresponda
+                            JOptionPane.showMessageDialog(null, "No EMG signal detected on the BITalino.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return null;
+                        }
+                        // Mostrar un mensaje mientras se realiza la grabación
+                        JOptionPane.showMessageDialog(null, "Capturing data... Please wait.", "Recording", JOptionPane.INFORMATION_MESSAGE);
 
                         // Simular el proceso de grabación de datos
+                        bitalinoDevice.start(new int[]{0});
                         Bitalino bitalinoEMG = new Bitalino(java.sql.Date.valueOf(date), SignalType.EMG);
                         java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
                         bitalinoEMG.setSignalValues(emgFrames, 1);
+                        bitalinos.add(bitalinoEMG); 
 
+                    }catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Error while recording EMG data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        ex.printStackTrace();
                     } catch (Throwable ex) {
-                        // Manejar la excepción si no se encuentra el dispositivo
-                        JOptionPane.showMessageDialog(null, "No BITalino device found!", "Error", JOptionPane.ERROR_MESSAGE);
                         Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }finally {
+                        try {
+                            bitalinoDevice.close();
+                        } catch (Exception ex) {
+                            // Ignorar errores de cierre
+                        }
                     }
                     return null;
                 }
@@ -661,6 +669,14 @@ public class SecondPanel extends JPanel {
         doneButton.addActionListener(e -> {
             Report report = new Report( java.sql.Date.valueOf(date), patient, bitalinos, symptomsList);
             send.sendReport(report);
+            try {
+                if (bitalinoDevice != null) {
+                    bitalinoDevice.close();
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error while closing the BITalino device: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            showMonitoringIntroduction(); 
         });
         
         buttonPanel.add(doneButton);
