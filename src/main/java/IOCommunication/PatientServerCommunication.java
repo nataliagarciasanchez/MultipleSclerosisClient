@@ -4,7 +4,7 @@
  */
 package IOCommunication;
 
-
+import Menu.Utilities.Utilities;
 import POJOs.Feedback;
 import POJOs.User;
 import POJOs.Patient;
@@ -65,6 +65,8 @@ public class PatientServerCommunication {
          */
         public void register(Patient patient) {
             try {
+                Utilities.validateRegisterPatient(patient);
+                
                 out.writeObject("register"); // Acción de registro
                 out.flush();
                 
@@ -102,12 +104,14 @@ public class PatientServerCommunication {
         public Patient login(String username, String password) {
             
             try {
+                User user = new User(username, password);
+                Utilities.validateLogin(user); 
+                
                 out.writeObject("login"); // Acción de inicio de sesión
                 out.writeObject(username);
                 
-                System.out.println("Plain: " + password);
+                
                 password = PasswordEncryption.hashPassword(password); // encriptamos
-                System.out.println("Hashed: "+ password);
                 out.writeObject(password);
                 
                 System.out.println("Logging in.....");

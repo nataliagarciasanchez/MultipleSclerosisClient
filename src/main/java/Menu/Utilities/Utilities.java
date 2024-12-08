@@ -37,7 +37,7 @@ public class Utilities {
     }
 
     public static boolean isValidEmail(String email) {
-        String emailFormat = "^[a-zA-Z0-9_+.-]+@[a-zA-Z0-9.-]+$";
+        String emailFormat = "^[a-zA-Z0-9_+.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(emailFormat);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
@@ -187,54 +187,62 @@ public class Utilities {
     }
     
     //TODO use these methods in swing
-    public static List <String> validatePatient (Patient patient){
-        List <String> errors = new ArrayList ();
+    public static void validateRegisterPatient (Patient patient) throws IllegalArgumentException{
+        
         
         if(patient.getName().trim().isEmpty()){
-        errors.add("The name field cannot be empty");
+            throw new IllegalArgumentException("The name field cannot be empty.");
         }
         if(patient.getSurname().trim().isEmpty()){
-        errors.add("The surname field cannot be empty");
+            throw new IllegalArgumentException("The surname field cannot be empty.");
         }
         if(patient.getNIF().trim().isEmpty()){
-        errors.add("The name field cannot be empty");
+            throw new IllegalArgumentException("The NIF field cannot be empty.");
         }
         if(!validateID(patient.getNIF())){
-        errors.add("Invalid NIF");
+            throw new IllegalArgumentException("Invalid NIF.");
         }
         if(patient.getPhone().trim().isEmpty()){
-        errors.add("The name field cannot be empty");
+            throw new IllegalArgumentException("The phone field cannot be empty.");
         }
         if(!isValidPhone(patient.getPhone())){
-        errors.add("Invalid phone number");
+            throw new IllegalArgumentException("Invalid phone.");
         }
         if(patient.getDob() == null){
-        errors.add("The date birth field cannot be empty");
+            throw new IllegalArgumentException("The date of birth field cannot be empty.");
         }
         if(!validateDate(patient.getDob().toLocalDate())){
-        errors.add("Invalid birth date.");
+            throw new IllegalArgumentException("Invalid date of birth.");
         }
         if(patient.getGender()== null){
-        errors.add("The gender field cannot be empty");
+            throw new IllegalArgumentException("The name field cannot be empty.");
+        }
+        
+        if (patient.getUser().getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("The username field cannot be empty.");
+        }
+        
+        if (!isValidEmail(patient.getUser().getEmail().trim())) {
+            throw new IllegalArgumentException("Invalid username.\nIt must be in the format: example@domain.com, using only letters, numbers, periods (.), underscores (_), plus signs (+), or hyphens (-).");
+        }
+        if (patient.getUser().getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("The password field cannot be empty.");
+        }
+        if (!isValidPassword(patient.getUser().getPassword().trim())) {
+            throw new IllegalArgumentException("Invalid password.\nIt must be at least 8 characters long, contain at least one uppercase letter, and include at least one number.");
         }
        
-        return errors;
+        
     }
     
-    public static List <String> validateUser (User user){
-        List <String> errors = new ArrayList ();
-        
-        if(user.getEmail().trim().isEmpty()){
-        errors.add("The username field cannot be empty");
+    public static void validateLogin(User user) throws IllegalArgumentException {
+        if (user.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("The username field cannot be empty");
         }
-        if(user.getPassword().trim().isEmpty()){
-        errors.add("The password field cannot be empty");
-        }
-        if(!isValidPassword(user.getPassword())){
-        errors.add("Invalid password.");
+        if (user.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("The password field cannot be empty");
         }
         
-        return errors;
     }
     
 }

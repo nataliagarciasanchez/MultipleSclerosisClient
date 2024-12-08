@@ -40,12 +40,12 @@ public class PatientServerCommunicationTest {
         com.start();
         send= com.new Send();
         role=new Role();
-        //register();
+        register();
         //register1();
         //register2();
        //register3();
         //register4();
-        //login();
+        login();
         //logout()
         //viewSymptoms();
         //viewPersonalInfo();
@@ -57,7 +57,7 @@ public class PatientServerCommunicationTest {
     public static void register() {
         try {
             java.sql.Date dob = Utilities.convertString2SqlDate("31/10/2003");
-            Patient maite = new Patient("noelia", "gomez", "05459423F", dob, Gender.FEMALE, "609526931");
+            Patient maite = new Patient("noelia", "gomez", "53993542F", dob, Gender.FEMALE, "609526931");
             User user=new User("probando@gmail.com", "Password123", role);
             maite.setUser(user);
             

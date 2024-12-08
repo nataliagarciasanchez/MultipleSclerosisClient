@@ -113,10 +113,6 @@ public class PanelPrincipal extends JPanel {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword()).trim();
 
-            if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
 
             try {
 
@@ -310,21 +306,6 @@ public class PanelPrincipal extends JPanel {
         cancelButton.addActionListener(e -> showDefaultContent());
         okButton.addActionListener(e -> {
             try {
-                if (nameField.getText().trim().isEmpty() || surnameField.getText().trim().isEmpty() ||
-                    nifField.getText().trim().isEmpty() || dobField.getText().trim().isEmpty() ||
-                    phoneField.getText().trim().isEmpty() || usernameField.getText().trim().isEmpty() ||
-                    new String(passwordField.getPassword()).trim().isEmpty()) {
-                throw new IllegalArgumentException("All fields must be filled.");
-                }
-                if (!Utilities.validateID(nifField.getText().trim())) {
-                throw new IllegalArgumentException("Invalid NIF.");
-                }
-                if (!Utilities.isValidPhone(phoneField.getText().trim())) {
-                throw new IllegalArgumentException("Invalid phone number.");
-                }
-                if (!Utilities.isValidPassword(new String(passwordField.getPassword()).trim())) {
-                throw new IllegalArgumentException("Invalid password.");
-                }
                 Date dob = Utilities.convertString2SqlDate(dobField.getText().trim());
                 Gender gender = Gender.valueOf((String) genderComboBox.getSelectedItem());
 
