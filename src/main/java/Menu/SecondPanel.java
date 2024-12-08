@@ -456,6 +456,7 @@ public class SecondPanel extends JPanel {
 
             // Ejecutar la captura de datos en un SwingWorker para evitar bloquear el hilo principal
             SwingWorker<Void, Void> worker = new SwingWorker<>() {
+                private boolean success = true; 
                 @Override
                 protected Void doInBackground() {
                     try {
@@ -469,9 +470,11 @@ public class SecondPanel extends JPanel {
                         bitalinoECG.setSignalValues(ecgFrames, 1);
                         bitalinos.add(bitalinoECG);
                     } catch (Exception ex) {
+                        success = false;
                         JOptionPane.showMessageDialog(null, "Error while recording ECG data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                     } catch (Throwable ex) {
+                        success = false;
                         Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
                     } finally {
                         try {
@@ -488,9 +491,12 @@ public class SecondPanel extends JPanel {
 
                 @Override
                 protected void done() {
-                    // Cerrar el cuadro de diálogo de progreso y mostrar un mensaje de éxito
                     progressDialog.dispose();
-                    JOptionPane.showMessageDialog(null, "Successfully recorded data!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    // Cerrar el cuadro de diálogo de progreso y mostrar un mensaje de éxito
+                    if (success) {
+                        // Mostrar el mensaje de éxito solo si no hubo errores
+                        JOptionPane.showMessageDialog(null, "Successfully recorded data!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
             };
 
@@ -571,6 +577,7 @@ public class SecondPanel extends JPanel {
 
             // Crear un SwingWorker para manejar la tarea en segundo plano
             SwingWorker<Void, Void> worker = new SwingWorker<>() {
+                private boolean success = true; 
                 @Override
                 protected Void doInBackground() {
                     try {
@@ -578,15 +585,17 @@ public class SecondPanel extends JPanel {
                         bitalinoDevice = new BITalino();
                         bitalinoDevice.open(macAddress);
 
-                        bitalinoDevice.start(new int[]{1}); // Canal ECG
-                        Bitalino bitalinoECG = new Bitalino(java.sql.Date.valueOf(date), SignalType.ECG);
-                        java.util.List<Frame> ecgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
-                        bitalinoECG.setSignalValues(ecgFrames, 1);
-                        bitalinos.add(bitalinoECG);
+                        bitalinoDevice.start(new int[]{0}); 
+                        Bitalino bitalinoEMG = new Bitalino(java.sql.Date.valueOf(date), SignalType.EMG);
+                        java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
+                        bitalinoEMG.setSignalValues(emgFrames, 0);
+                        bitalinos.add(bitalinoEMG);
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Error while recording ECG data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        success = false; 
+                        JOptionPane.showMessageDialog(null, "Error while recording EMG data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                     } catch (Throwable ex) {
+                        success = false;
                         Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
                     } finally {
                         try {
@@ -603,8 +612,11 @@ public class SecondPanel extends JPanel {
 
                 @Override
                 protected void done() {
-                    // Mostrar el mensaje de éxito después de completar la captura
-                    JOptionPane.showMessageDialog(null, "Successfully recorded data!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    progressDialog.dispose();
+                    if (success) {
+                        // Mostrar el mensaje de éxito solo si no hubo errores
+                        JOptionPane.showMessageDialog(null, "Successfully recorded data!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
             };
 
@@ -674,13 +686,6 @@ public class SecondPanel extends JPanel {
         doneButton.addActionListener(e -> {
             Report report = new Report( java.sql.Date.valueOf(date), patient, bitalinos, symptomsList);
             send.sendReport(report);
-            try {
-                if (bitalinoDevice != null) {
-                    bitalinoDevice.close();
-                }
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error while closing the BITalino device: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
             showMonitoringIntroduction(); 
         });
         
