@@ -5,6 +5,7 @@
 package Menu;
 
 import BITalino.BITalino;
+import BITalino.BITalinoException;
 import BITalino.Frame;
 import IOCommunication.PatientServerCommunication;
 import static IOCommunication.PatientServerCommunicationTest.role;
@@ -429,11 +430,12 @@ public class SecondPanel extends JPanel {
         ecgLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         ecgLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(ecgLabel, BorderLayout.CENTER);
-       
+
         // Crear un único panel para los botones
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+
         // Play Button
         JButton playButton = new JButton("Play");
         playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -441,52 +443,62 @@ public class SecondPanel extends JPanel {
         playButton.setForeground(Color.BLACK); 
         playButton.setFocusPainted(false);
         playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
+
         playButton.addActionListener(e -> {
-            // Crear un SwingWorker para manejar la tarea en segundo plano
+            // Crear un cuadro de diálogo no bloqueante para mostrar el progreso
+            JDialog progressDialog = new JDialog((Window) null, "Recording", Dialog.ModalityType.APPLICATION_MODAL);
+            progressDialog.setLayout(new BorderLayout());
+            progressDialog.setSize(300, 100);
+            progressDialog.setLocationRelativeTo(null);
+            JLabel progressLabel = new JLabel("Capturing data, please wait...", SwingConstants.CENTER);
+            progressLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            progressDialog.add(progressLabel, BorderLayout.CENTER);
+
+            // Ejecutar la captura de datos en un SwingWorker para evitar bloquear el hilo principal
             SwingWorker<Void, Void> worker = new SwingWorker<>() {
                 @Override
                 protected Void doInBackground() {
                     try {
+                        // Inicializar BITalino y empezar a grabar
                         bitalinoDevice = new BITalino();
                         bitalinoDevice.open(macAddress);
-                        
-                        if (!bitalinoDevice.isChannelConnected(1)) { // Suponemos que el EMG está en el canal 1
-                            JOptionPane.showMessageDialog(null, "No ECG signal detected. Please check the connection.", "Error", JOptionPane.ERROR_MESSAGE);
-                            return null;
-                        }
 
-                        // Mostrar un mensaje mientras se realiza la captura
-                        JOptionPane.showMessageDialog(null, "Capturing data...", "Recording", JOptionPane.INFORMATION_MESSAGE);
-
-                        // Simular el proceso de grabación de datos
                         bitalinoDevice.start(new int[]{1}); // Canal ECG
                         Bitalino bitalinoECG = new Bitalino(java.sql.Date.valueOf(date), SignalType.ECG);
                         java.util.List<Frame> ecgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
                         bitalinoECG.setSignalValues(ecgFrames, 1);
                         bitalinos.add(bitalinoECG);
-
-                    }  catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Error while recording EMG data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Error while recording ECG data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                     } catch (Throwable ex) {
                         Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    } finally {
+                        try {
+                            if (bitalinoDevice != null) {
+                                bitalinoDevice.stop();
+                                bitalinoDevice.close();
+                            }
+                        } catch (BITalinoException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                     return null;
                 }
 
                 @Override
                 protected void done() {
-                    // Mostrar el mensaje de éxito después de completar la captura
+                    // Cerrar el cuadro de diálogo de progreso y mostrar un mensaje de éxito
+                    progressDialog.dispose();
                     JOptionPane.showMessageDialog(null, "Successfully recorded data!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
             };
 
-            // Ejecutar la tarea en segundo plano
+            // Mostrar el cuadro de diálogo de progreso y ejecutar la tarea en segundo plano
             worker.execute();
+            progressDialog.setVisible(true);
         });
 
-        
         // Añadir el botón "Play" al panel de botones
         buttonPanel.add(playButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciado
@@ -495,14 +507,14 @@ public class SecondPanel extends JPanel {
         JPanel navigationPanel = new JPanel();
         navigationPanel.setBackground(Color.WHITE);
         navigationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        
+
         JButton backButton = new JButton("Back");
         JButton finishButton = new JButton("Finish Monitoring");
 
         backButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         backButton.setBackground(Color.WHITE);
         backButton.setForeground(Color.BLACK);
-        backButton.addActionListener(e -> showSymptomsPanel()); // Go back to Symptoms
+        backButton.addActionListener(e -> showEMGPhase()); // Go back to Symptoms
 
         finishButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         finishButton.setBackground(Color.WHITE);
@@ -511,7 +523,7 @@ public class SecondPanel extends JPanel {
 
         navigationPanel.add(backButton);
         navigationPanel.add(finishButton);
-        
+
         buttonPanel.add(navigationPanel);
 
         whitePanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -519,6 +531,7 @@ public class SecondPanel extends JPanel {
         whitePanel.revalidate();
         whitePanel.repaint();
     }
+
     
     private void showEMGPhase() {
         whitePanel.removeAll();
@@ -545,53 +558,44 @@ public class SecondPanel extends JPanel {
         playButton.setForeground(Color.BLACK); 
         playButton.setFocusPainted(false);
         playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Add Play button functionality
-        /*playButton.addActionListener(e -> {
-            try {
-                BITalino bitalinoDevice=new BITalino();
-                bitalinoDevice.open(macAddress);
-                Bitalino bitalinoEMG = new Bitalino( java.sql.Date.valueOf(date), SignalType.EMG);
-                java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
-                bitalinoEMG.setSignalValues (emgFrames,1);  
-            } catch (Throwable ex) {
-                Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }           
-        });*/
         
         playButton.addActionListener(e -> {
+            // Crear un cuadro de diálogo no bloqueante para mostrar el progreso
+            JDialog progressDialog = new JDialog((Window) null, "Recording", Dialog.ModalityType.APPLICATION_MODAL);
+            progressDialog.setLayout(new BorderLayout());
+            progressDialog.setSize(300, 100);
+            progressDialog.setLocationRelativeTo(null);
+            JLabel progressLabel = new JLabel("Capturing data, please wait...", SwingConstants.CENTER);
+            progressLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            progressDialog.add(progressLabel, BorderLayout.CENTER);
+
             // Crear un SwingWorker para manejar la tarea en segundo plano
             SwingWorker<Void, Void> worker = new SwingWorker<>() {
                 @Override
                 protected Void doInBackground() {
                     try {
+                        // Inicializar BITalino y empezar a grabar
                         bitalinoDevice = new BITalino();
                         bitalinoDevice.open(macAddress);
 
-                        if (!bitalinoDevice.isChannelConnected(0)) { // Cambiar SignalType según corresponda
-                            JOptionPane.showMessageDialog(null, "No EMG signal detected on the BITalino.", "Error", JOptionPane.ERROR_MESSAGE);
-                            return null;
-                        }
-                        // Mostrar un mensaje mientras se realiza la grabación
-                        JOptionPane.showMessageDialog(null, "Capturing data... Please wait.", "Recording", JOptionPane.INFORMATION_MESSAGE);
-
-                        // Simular el proceso de grabación de datos
-                        bitalinoDevice.start(new int[]{0});
-                        Bitalino bitalinoEMG = new Bitalino(java.sql.Date.valueOf(date), SignalType.EMG);
-                        java.util.List<Frame> emgFrames = bitalinoEMG.storeRecordedSignals(bitalinoDevice, SignalType.EMG);
-                        bitalinoEMG.setSignalValues(emgFrames, 1);
-                        bitalinos.add(bitalinoEMG); 
-
-                    }catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Error while recording EMG data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        bitalinoDevice.start(new int[]{1}); // Canal ECG
+                        Bitalino bitalinoECG = new Bitalino(java.sql.Date.valueOf(date), SignalType.ECG);
+                        java.util.List<Frame> ecgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
+                        bitalinoECG.setSignalValues(ecgFrames, 1);
+                        bitalinos.add(bitalinoECG);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Error while recording ECG data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                     } catch (Throwable ex) {
                         Logger.getLogger(SecondPanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }finally {
+                    } finally {
                         try {
-                            bitalinoDevice.close();
-                        } catch (Exception ex) {
-                            // Ignorar errores de cierre
+                            if (bitalinoDevice != null) {
+                                bitalinoDevice.stop();
+                                bitalinoDevice.close();
+                            }
+                        } catch (BITalinoException ex) {
+                            ex.printStackTrace();
                         }
                     }
                     return null;
@@ -606,6 +610,7 @@ public class SecondPanel extends JPanel {
 
             // Ejecutar la tarea en segundo plano
             worker.execute();
+            progressDialog.setVisible(true);
         });
 
 
@@ -625,7 +630,7 @@ public class SecondPanel extends JPanel {
         backButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         backButton.setBackground(Color.WHITE);
         backButton.setForeground(Color.BLACK);
-        backButton.addActionListener(e -> showECGPhase()); // Go back to ECG
+        backButton.addActionListener(e -> showSymptomsPanel());
 
         nextButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         nextButton.setBackground(Color.WHITE);
@@ -775,75 +780,75 @@ public class SecondPanel extends JPanel {
 
     // Método para actualizar la lista de feedbacks
     private void updateFeedbackList(java.util.List<Feedback> feedbacks, JPanel feedbackPanel) {
-    feedbackPanel.removeAll(); // Clear the previous content
+        feedbackPanel.removeAll(); // Clear the previous content
 
-    Dimension fixedSize = new Dimension(1000, 50); // Fixed size for each feedback panel
+        Dimension fixedSize = new Dimension(1000, 50); // Fixed size for each feedback panel
 
-    for (Feedback feedback : feedbacks) {
-        JPanel feedbackItemPanel = new JPanel(new BorderLayout());
-        feedbackItemPanel.setBackground(Color.LIGHT_GRAY);
-        feedbackItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        feedbackItemPanel.setPreferredSize(fixedSize); // Apply fixed size
-        feedbackItemPanel.setMaximumSize(fixedSize);
-        feedbackItemPanel.setMinimumSize(fixedSize);
+        for (Feedback feedback : feedbacks) {
+            JPanel feedbackItemPanel = new JPanel(new BorderLayout());
+            feedbackItemPanel.setBackground(Color.LIGHT_GRAY);
+            feedbackItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            feedbackItemPanel.setPreferredSize(fixedSize); // Apply fixed size
+            feedbackItemPanel.setMaximumSize(fixedSize);
+            feedbackItemPanel.setMinimumSize(fixedSize);
 
-        JLabel feedbackLabel = new JLabel("Date: " + feedback.getDate().toString());
-        feedbackLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            JLabel feedbackLabel = new JLabel("Date: " + feedback.getDate().toString());
+            feedbackLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
-        JButton viewButton = new JButton("View Entire Message");
-        viewButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        viewButton.setBackground(Color.WHITE);
-        viewButton.setForeground(Color.BLACK);
+            JButton viewButton = new JButton("View Entire Message");
+            viewButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            viewButton.setBackground(Color.WHITE);
+            viewButton.setForeground(Color.BLACK);
 
-        // Use displayFeedbacksInUI for a detailed view
-        viewButton.addActionListener(e -> displayFeedbacksInUI(feedback));
+            // Use displayFeedbacksInUI for a detailed view
+            viewButton.addActionListener(e -> displayFeedbacksInUI(feedback));
 
-        feedbackItemPanel.add(feedbackLabel, BorderLayout.CENTER);
-        feedbackItemPanel.add(viewButton, BorderLayout.EAST);
+            feedbackItemPanel.add(feedbackLabel, BorderLayout.CENTER);
+            feedbackItemPanel.add(viewButton, BorderLayout.EAST);
 
-        feedbackPanel.add(feedbackItemPanel);
-        feedbackPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Space between feedbacks
+            feedbackPanel.add(feedbackItemPanel);
+            feedbackPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Space between feedbacks
+        }
+
+        feedbackPanel.revalidate();
+        feedbackPanel.repaint();
     }
 
-    feedbackPanel.revalidate();
-    feedbackPanel.repaint();
-}
-    
     private void displayFeedbacksInUI(Feedback feedback) {
-    whitePanel.removeAll(); // Clear the white panel content
-    whitePanel.setLayout(new BorderLayout());
+        whitePanel.removeAll(); // Clear the white panel content
+        whitePanel.setLayout(new BorderLayout());
 
-    // Panel for feedback details
-    JPanel feedbackDetailsPanel = new JPanel();
-    feedbackDetailsPanel.setBackground(Color.WHITE);
-    feedbackDetailsPanel.setLayout(new BoxLayout(feedbackDetailsPanel, BoxLayout.Y_AXIS));
-    feedbackDetailsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        // Panel for feedback details
+        JPanel feedbackDetailsPanel = new JPanel();
+        feedbackDetailsPanel.setBackground(Color.WHITE);
+        feedbackDetailsPanel.setLayout(new BoxLayout(feedbackDetailsPanel, BoxLayout.Y_AXIS));
+        feedbackDetailsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-    // Add feedback details
-    feedbackDetailsPanel.add(createInfoLine("Doctor: ", feedback.getDoctor().getName()));
-    feedbackDetailsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-    feedbackDetailsPanel.add(createInfoLine("Date: ", feedback.getDate().toString()));
-    feedbackDetailsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-    feedbackDetailsPanel.add(createInfoLine("Message: ", feedback.getMessage()));
+        // Add feedback details
+        feedbackDetailsPanel.add(createInfoLine("Doctor: ", feedback.getDoctor().getName()));
+        feedbackDetailsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        feedbackDetailsPanel.add(createInfoLine("Date: ", feedback.getDate().toString()));
+        feedbackDetailsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        feedbackDetailsPanel.add(createInfoLine("Message: ", feedback.getMessage()));
 
-    whitePanel.add(feedbackDetailsPanel, BorderLayout.CENTER);
+        whitePanel.add(feedbackDetailsPanel, BorderLayout.CENTER);
 
-    // Add a "Back" button to return to feedback list
-    JButton backButton = new JButton("Back");
-    backButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-    backButton.setBackground(Color.WHITE);
-    backButton.setForeground(Color.BLACK);
-    backButton.addActionListener(e -> displayFeedbacks());
+        // Add a "Back" button to return to feedback list
+        JButton backButton = new JButton("Back");
+        backButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        backButton.setBackground(Color.WHITE);
+        backButton.setForeground(Color.BLACK);
+        backButton.addActionListener(e -> displayFeedbacks());
 
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    buttonPanel.setBackground(Color.WHITE);
-    buttonPanel.add(backButton);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.add(backButton);
 
-    whitePanel.add(buttonPanel, BorderLayout.SOUTH);
+        whitePanel.add(buttonPanel, BorderLayout.SOUTH);
 
-    whitePanel.revalidate();
-    whitePanel.repaint();
-}
+        whitePanel.revalidate();
+        whitePanel.repaint();
+    }
 
 
 
