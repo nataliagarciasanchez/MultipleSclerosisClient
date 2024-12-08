@@ -228,12 +228,18 @@ public class PatientServerCommunicationTest {
             bitalinos.add(bitalinoECG);
 
             // Crear lista de síntomas
-            List<Symptom> symptoms = new ArrayList<>();
+            List<Symptom> symptoms = send.getSymptoms();
+            
+            List <Symptom> symptomsSend = new ArrayList<>();
+            symptomsSend.add(symptoms.get(1));
+            symptomsSend.add(symptoms.get(2));
+            symptomsSend.add(symptoms.get(3));
+            symptomsSend.add(symptoms.get(4));
             symptoms.add(new Symptom("Loss of balance"));
             symptoms.add(new Symptom("Numbness or abnormal sensation in any area"));
 
             // Crear reporte
-            Report report = new Report(date, patient, bitalinos, symptoms);
+            Report report = new Report(date, patient, bitalinos, symptomsSend);
 
             // Enviar reporte
             send.sendReport(report);
