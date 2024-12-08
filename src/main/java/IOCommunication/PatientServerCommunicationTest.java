@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,17 +41,20 @@ public class PatientServerCommunicationTest {
         com.start();
         send= com.new Send();
         role=new Role();
-        register();
+        //register();
         //register1();
         //register2();
        //register3();
         //register4();
-        login();
+        //login();
         //logout()
         //viewSymptoms();
         //viewPersonalInfo();
         //updateInfo();
-        //sendReport();  
+        //sendReport(); 
+        sendCompleteReport();
+       // sendSensoryReport();
+       // sendCognitiveFatigueReport();
     }
     
    
@@ -69,7 +73,7 @@ public class PatientServerCommunicationTest {
     public static void register1() {
     try {
         java.sql.Date dob = Utilities.convertString2SqlDate("31/10/2003");
-        Patient patient = new Patient("Noelia", "Gomez", "05459423F", dob, Gender.FEMALE, "609526931");
+        Patient patient = new Patient("Noelia", "Gomez", "51258525N", dob, Gender.FEMALE, "609526931");
         User user = new User("noelia.gomez@gmail.com", "Password123", role);
         patient.setUser(user);
         send.register(patient);
@@ -93,8 +97,8 @@ public static void register2() {
 public static void register3() {
     try {
         java.sql.Date dob = Utilities.convertString2SqlDate("20/11/1985");
-        Patient patient = new Patient("Maria", "Fernandez", "87654321A", dob, Gender.FEMALE, "624789012");
-        User user = new User("maria.fernandez@gmail.com", "MyPass789", role);
+        Patient patient = new Patient("Maria", "Fernandez", "51258523X", dob, Gender.FEMALE, "624789012");
+        User user = new User("maria.fernandez@gmail.com", "MyPassword789", role);
         patient.setUser(user);
         send.register(patient);
     } catch (ParseException ex) {
@@ -167,7 +171,7 @@ public static void register4() {
             } catch (ParseException ex) {
                 Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
             }
-            Patient patient=send.login("noelia@gmail.com", "Password456");
+            Patient patient=send.login("noelia.gomez@gmail.com", "Password123");
             
             
             Bitalino bitalinoEMG=new Bitalino(date,SignalType.EMG);
@@ -195,4 +199,140 @@ public static void register4() {
             Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public static void sendCompleteReport() {
+        try {
+            // Fecha actual
+            LocalDate r_date = LocalDate.now();
+            Date date = Utilities.convertString2SqlDate2(r_date.toString());
+
+            // Login del paciente
+            Patient patient = send.login("noelia.gomez@gmail.com", "Password123");
+
+            // Generar señales EMG de manera aleatoria
+            Bitalino bitalinoEMG = new Bitalino(date, SignalType.EMG);
+            List<Frame> emgFrames = generateRandomSignal(SignalType.EMG, 60000); // 60000 muestras para 1 minuto
+            bitalinoEMG.setSignalValues(emgFrames, 0);
+
+            // Generar señales ECG de manera aleatoria
+            Bitalino bitalinoECG = new Bitalino(date, SignalType.ECG);
+            List<Frame> ecgFrames = generateRandomSignal(SignalType.ECG, 60000); // 60000 muestras para 1 minuto
+            bitalinoECG.setSignalValues(ecgFrames, 1);
+
+            // Crear lista de bitalinos
+            List<Bitalino> bitalinos = new ArrayList<>();
+            bitalinos.add(bitalinoEMG);
+            bitalinos.add(bitalinoECG);
+
+            // Crear lista de síntomas
+            List<Symptom> symptoms = new ArrayList<>();
+            symptoms.add(new Symptom("Loss of balance"));
+            symptoms.add(new Symptom("Numbness or abnormal sensation in any area"));
+
+            // Crear reporte
+            Report report = new Report(date, patient, bitalinos, symptoms);
+
+            // Enviar reporte
+            send.sendReport(report);
+            System.out.println("Report sent successfully!");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("Error while sending the report.");
+        } catch (Throwable ex) {
+            Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private static List<Frame> generateRandomSignal(SignalType signalType, int numSamples) {
+        List<Frame> frames = new ArrayList<>();
+        Random random = new Random();
+
+        for (int i = 0; i < numSamples; i++) {
+            Frame frame = new Frame();
+            frame.seq = i % 16; // Secuencia del frame (0-15)
+
+            if (signalType == SignalType.EMG) {
+                // Generar valores simulados de EMG en rango típico (0-1000)
+                frame.analog[0] = random.nextInt(1000);
+            } else if (signalType == SignalType.ECG) {
+                // Generar valores simulados de ECG en rango típico (300-1200)
+                frame.analog[1] = 300 + random.nextInt(900);
+            }
+
+            frames.add(frame);
+        }
+
+        return frames;
+    }
+
+    public static void sendSensoryReport() {
+        try {
+            LocalDate r_date = LocalDate.now();
+            Date date = Utilities.convertString2SqlDate2(r_date.toString());
+            Patient patient = send.login("noelia.gomez@gmail.com", "Password123");
+
+            Bitalino bitalinoEMG = new Bitalino(date, SignalType.EMG);
+            List<Frame> emgFrames = generateRandomSignal(SignalType.EMG, 60000); // 30 segundos de EMG
+            bitalinoEMG.setSignalValues(emgFrames, 0);
+
+            Bitalino bitalinoECG = new Bitalino(date, SignalType.ECG);
+            List<Frame> ecgFrames = generateRandomSignal(SignalType.ECG, 60000); // 30 segundos de ECG
+            bitalinoECG.setSignalValues(ecgFrames, 1);
+
+            List<Bitalino> bitalinos = new ArrayList<>();
+            bitalinos.add(bitalinoEMG);
+            bitalinos.add(bitalinoECG);
+
+            List<Symptom> symptoms = new ArrayList<>();
+            symptoms.add(new Symptom("Loss of balance"));
+            symptoms.add(new Symptom("Muscle spam"));
+
+            Report report = new Report(date, patient, bitalinos, symptoms);
+            send.sendReport(report);
+            System.out.println("Sensory report sent successfully!");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("Error while sending the sensory report.");
+        }
+    }
+    
+    public static void sendCognitiveFatigueReport() {
+        try {
+            LocalDate r_date = LocalDate.now();
+            Date date = Utilities.convertString2SqlDate2(r_date.toString());
+            Patient patient=send.login("noelia.gomez@gmail.com", "Password123");
+           
+
+            Bitalino bitalinoEMG = new Bitalino(date, SignalType.EMG);
+            List<Frame> emgFrames = generateRandomSignal(SignalType.EMG, 60000); // 45 segundos de EMG
+            bitalinoEMG.setSignalValues(emgFrames, 0);
+
+            Bitalino bitalinoECG = new Bitalino(date, SignalType.ECG);
+            List<Frame> ecgFrames = generateRandomSignal(SignalType.ECG, 60000); // 45 segundos de ECG
+            bitalinoECG.setSignalValues(ecgFrames, 1);
+
+            List<Bitalino> bitalinos = new ArrayList<>();
+            bitalinos.add(bitalinoEMG);
+            bitalinos.add(bitalinoECG);
+
+            List<Symptom> symptoms = new ArrayList<>();
+            symptoms.add(new Symptom("Difficulty walking"));
+            symptoms.add(new Symptom("Facial pain"));
+            symptoms.add(new Symptom("Hearing loss"));
+
+            Report report = new Report(date, patient, bitalinos, symptoms);
+            send.sendReport(report);
+            System.out.println("Cognitive and fatigue report sent successfully!");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("Error while sending the cognitive and fatigue report.");
+        }
+    }
+
+
+
+
 }
