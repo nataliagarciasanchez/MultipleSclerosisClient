@@ -34,7 +34,7 @@ public class PatientTempCommuUI {
             });
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error connecting to the server. Please ensure the server is running.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error: Server no disponible", "Error de Conexión", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
