@@ -8,6 +8,7 @@ import BITalino.BITalino;
 import BITalino.Frame;
 import Menu.Utilities.Utilities;
 import POJOs.Bitalino;
+import POJOs.Feedback;
 import POJOs.Gender;
 import POJOs.Patient;
 import POJOs.Report;
@@ -33,6 +34,7 @@ public class PatientServerCommunicationTest {
     
     public static PatientServerCommunication com; 
     public static PatientServerCommunication.Send send;
+    public static PatientServerCommunication.Receive receive;
     public static String macAddress = "98:D3:41:FD:4E:E8";
     public static Role role;
     
@@ -40,11 +42,12 @@ public class PatientServerCommunicationTest {
         com= new PatientServerCommunication("localhost", 9000);
         com.start();
         send= com.new Send();
+        receive=com.new Receive();
         role=new Role();
         //register();
         //register1();
         //register2();
-       //register3();
+        //register3();
         //register4();
         //login();
         //logout()
@@ -70,6 +73,7 @@ public class PatientServerCommunicationTest {
             Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
     public static void register1() {
     try {
         java.sql.Date dob = Utilities.convertString2SqlDate("31/10/2003");
@@ -82,7 +86,7 @@ public class PatientServerCommunicationTest {
     }
 }
 
-public static void register2() {
+    public static void register2() {
     try {
         java.sql.Date dob = Utilities.convertString2SqlDate("15/05/1990");
         Patient patient = new Patient("Carlos", "Lopez", "12345678Z", dob, Gender.MALE, "617234567");
@@ -94,7 +98,7 @@ public static void register2() {
     }
 }
 
-public static void register3() {
+    public static void register3() {
     try {
         java.sql.Date dob = Utilities.convertString2SqlDate("20/11/1985");
         Patient patient = new Patient("Maria", "Fernandez", "51258523X", dob, Gender.FEMALE, "624789012");
@@ -106,7 +110,7 @@ public static void register3() {
     }
 }
 
-public static void register4() {
+    public static void register4() {
     try {
         java.sql.Date dob = Utilities.convertString2SqlDate("01/01/1995");
         Patient patient = new Patient("David", "Martinez", "56789012B", dob, Gender.MALE, "632987654");
@@ -117,7 +121,6 @@ public static void register4() {
         Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
     }
 }
-
     
     public static void login(){
        Patient patient=send.login("probando@gmail.com", "Password123");
@@ -236,8 +239,7 @@ public static void register4() {
             send.sendReport(report);
             System.out.println("Report sent successfully!");
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (ParseException ex) {
             System.out.println("Error while sending the report.");
         } catch (Throwable ex) {
             Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -292,8 +294,7 @@ public static void register4() {
             send.sendReport(report);
             System.out.println("Sensory report sent successfully!");
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (ParseException ex) {
             System.out.println("Error while sending the sensory report.");
         }
     }
@@ -326,13 +327,20 @@ public static void register4() {
             send.sendReport(report);
             System.out.println("Cognitive and fatigue report sent successfully!");
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (ParseException ex) {
             System.out.println("Error while sending the cognitive and fatigue report.");
         }
     }
 
-
+    public static void viewFeedbacks(){
+        Patient patient = send.login("noelia.gomez@gmail.com", "Password123");
+        List<Feedback> feedbacks=receive.viewFeedbacks(patient);
+        ListIterator <Feedback> it=feedbacks.listIterator();
+        //prints list of all feedbacks of that patient (in chronological order)
+        while(it.hasNext()){
+            System.out.println(it.next());
+        }
+    }
 
 
 }

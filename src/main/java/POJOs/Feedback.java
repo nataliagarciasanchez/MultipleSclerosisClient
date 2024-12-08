@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 public class Feedback {
     
-     private static final long serialVersionUID = 1L;
+     private static final long serialVersionUID = 3491289476129837461L;
      private Integer id;
      private String message;
      private Date date;

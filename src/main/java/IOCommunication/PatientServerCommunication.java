@@ -49,7 +49,7 @@ public class PatientServerCommunication {
             System.out.println("Patient connected to server");
             String message = "PatientServerCommunication";
             out.writeObject(message);
-            //new Thread(new Receive(in)).start();
+            
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -207,18 +207,13 @@ public class PatientServerCommunication {
                 // Read the server's response
                 String response = (String) in.readObject();
                 System.out.println("Server response: " + response);
+                System.out.println("Feedback from doctor will be sent shortly in View Feedbacks");
                 
-                //When we send the report we create a thread that listens to the feedback and 
-                //after receiving it closes the connection
-                Thread receiveThread=new Thread(new Receive(in));
-                receiveThread.start();
-                
-            } catch (IOException ex) {
-                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
+            } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
         
         
 
@@ -239,49 +234,28 @@ public class PatientServerCommunication {
         
     }
 
-    class Receive implements Runnable {
+    class Receive {
         
-        private ObjectInputStream in;
-        private boolean running=true;
         
-        public Receive(ObjectInputStream in){
-            this.in=in;
-        }
-        
-        public void stop() {
-        running = false;
-        try{
-            in.close();
-        }catch (IOException ex){
-           Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-         }
-        }
-        
-        @Override
-        public void run() {
-            while (running) {
-                // Continuously listens for incoming messages from the server
-                handleFeedbackFromServer();
-            }
-        }
-
-        private List<Feedback> handleFeedbackFromServer() {
+        /**
+         * Receives feedbacks from server corresponding to that patient
+         * @return 
+         */
+        public List<Feedback> viewFeedbacks(Patient patient){
             List<Feedback> feedbacks = null;
             try {
-                feedbacks= (List<Feedback>) in.readObject();
-                out.writeObject("Feedback received!.");
-                // list of feedbacks is shown in the swing interface
-                this.stop();
+                out.writeObject("receiveFeedbacks");
+                out.flush();
+                out.writeObject(patient.getId());
+                feedbacks=(List<Feedback>) in.readObject();
+                out.writeObject("Feedbacks received.");
                 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             }
             return feedbacks;
-            
         }
-        
-               
-        
+ 
     }
 
 }
