@@ -44,7 +44,7 @@ public class SecondPanel extends JPanel {
     private final PatientServerCommunication.Send send;
     private LocalDate date = LocalDate.now();
     public static String macAddress = "98:D3:41:FD:4E:E8";
-    private java.util.List<Bitalino> bitalinos; // Symptom list
+    private java.util.List<Bitalino> bitalinos = new ArrayList<>(); // Symptom list
     public static Role role;
     private BITalino bitalinoDevice; // Variable global para mantener la conexión
 
