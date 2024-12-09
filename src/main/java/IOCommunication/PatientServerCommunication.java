@@ -54,8 +54,8 @@ public class PatientServerCommunication {
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, 
-            "Se perdió la conexión con el servidor. Por favor, intente más tarde.",
-            "Error de conexión", JOptionPane.ERROR_MESSAGE);
+            "Connection to the server was lost. Please try again later.",
+            "Connection Error", JOptionPane.ERROR_MESSAGE);
         System.exit(0);
         }
     }
