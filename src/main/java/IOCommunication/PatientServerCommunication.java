@@ -250,6 +250,7 @@ public class PatientServerCommunication {
         
         /**
          * Receives feedbacks from server corresponding to that patient
+         * @param patient
          * @return 
          */
         public List<Feedback> viewFeedbacks(Patient patient){
