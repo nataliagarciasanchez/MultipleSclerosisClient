@@ -8,7 +8,12 @@ import javax.swing.*;
 import java.awt.*;
 
 import IOCommunication.PatientServerCommunication;
+import Menu.Utilities.Utilities;
+import POJOs.Gender;
 import POJOs.Patient;
+import POJOs.Role;
+import POJOs.User;
+import java.sql.Date;
 
 
 /**
@@ -177,30 +182,71 @@ public class PanelPrincipal extends JPanel {
     private void showSignUpForm() {
         dynamicPanel.removeAll();
 
-        // Título
         JLabel signUpLabel = new JLabel("Sign Up");
         signUpLabel.setFont(new Font("Segoe UI", Font.BOLD, 36));
         signUpLabel.setForeground(Color.WHITE);
         signUpLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Paneles de fila para cada campo
-        JPanel namePanel = createAlignedRow("Name:", new JTextField());
-        JPanel surnamePanel = createAlignedRow("Surname:", new JTextField());
-        JPanel nifPanel = createAlignedRow("NIF:", new JTextField());
-        JPanel dobPanel = createAlignedRow("Date of Birth:", new JTextField());
-        JPanel phonePanel = createAlignedRow("Phone:", new JTextField());
-        JPanel genderPanel = createAlignedRow("Gender:", new JComboBox<>(new String[]{"MALE", "FEMALE"}));
-        JPanel usernamePanel = createAlignedRow("Username:", new JTextField());
-        JPanel passwordPanel = createAlignedRow("Password:", new JPasswordField());
+        JTextField nameField = new JTextField();
+        nameField.setPreferredSize(new Dimension(350, 30));
+        nameField.setMaximumSize(new Dimension(350, 30));
+        JPanel namePanel = createAlignedRow("Name:", nameField);
 
-        // Botones
+        JTextField surnameField = new JTextField();
+        surnameField.setPreferredSize(new Dimension(350, 30));
+        surnameField.setMaximumSize(new Dimension(350, 30));
+        JPanel surnamePanel = createAlignedRow("Surname:", surnameField);
+
+        JTextField nifField = new JTextField();
+        nifField.setPreferredSize(new Dimension(350, 30));
+        nifField.setMaximumSize(new Dimension(350, 30));
+        JPanel nifPanel = createAlignedRow("NIF:", nifField);
+
+        JTextField dobField = new JTextField();
+        dobField.setPreferredSize(new Dimension(350, 30));
+        dobField.setMaximumSize(new Dimension(350, 30));
+        JPanel dobPanel = createAlignedRow("Date of Birth:", dobField);
+
+        JTextField phoneField = new JTextField();
+        phoneField.setPreferredSize(new Dimension(350, 30));
+        phoneField.setMaximumSize(new Dimension(350, 30));
+        JPanel phonePanel = createAlignedRow("Phone:", phoneField);
+
+        JComboBox<String> genderComboBox = new JComboBox<>(new String[]{"MALE", "FEMALE"});
+        genderComboBox.setPreferredSize(new Dimension(350, 30));
+        genderComboBox.setMaximumSize(new Dimension(350, 30));
+        JPanel genderPanel = createAlignedRow("Gender:", genderComboBox);
+
+        JTextField usernameField = new JTextField();
+        usernameField.setPreferredSize(new Dimension(350, 30));
+        usernameField.setMaximumSize(new Dimension(350, 30));
+        JPanel usernamePanel = createAlignedRow("Username:", usernameField);
+
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setPreferredSize(new Dimension(350, 30));
+        passwordField.setMaximumSize(new Dimension(350, 30));
+        JPanel passwordPanel = createAlignedRow("Password:", passwordField);
+
         JButton cancelButton = new JButton("Cancel");
         JButton okButton = new JButton("OK");
 
         cancelButton.addActionListener(e -> showDefaultContent());
         okButton.addActionListener(e -> {
             try {
-                // Ejemplo para validar datos
+                Date dob = Utilities.convertString2SqlDate(dobField.getText().trim());
+                Gender gender = Gender.valueOf((String) genderComboBox.getSelectedItem());
+                Patient patient = new Patient(
+                    nameField.getText().trim(),
+                    surnameField.getText().trim(),
+                    nifField.getText().trim(),
+                    dob,
+                    gender,
+                    phoneField.getText().trim()
+                );
+                User user = new User(usernameField.getText().trim(), new String(passwordField.getPassword()).trim(), new Role());
+                patient.setUser(user);
+                send.register(patient);
+                
                 JOptionPane.showMessageDialog(this, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 showDefaultContent();
             } catch (Exception ex) {
