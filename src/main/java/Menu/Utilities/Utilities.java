@@ -256,4 +256,48 @@ public class Utilities {
         
     }
     
+    public static void validateUpdatePatient(Patient patient) throws IllegalArgumentException{
+        if(patient.getName().trim().isEmpty()){
+            throw new IllegalArgumentException("The name field cannot be empty.");
+        }
+        if (!isValidOnlyLetters(patient.getName())){
+        throw new IllegalArgumentException("Invalid name. Only letters are accepted.");
+        }
+        if(patient.getSurname().trim().isEmpty()){
+            throw new IllegalArgumentException("The surname field cannot be empty.");
+        }
+        if (!isValidOnlyLetters(patient.getSurname())){
+        throw new IllegalArgumentException("Invalid surname. Only letters are accepted.");
+        }
+        if(patient.getNIF().trim().isEmpty()){
+            throw new IllegalArgumentException("The NIF field cannot be empty.");
+        }
+        if(!validateID(patient.getNIF())){
+            throw new IllegalArgumentException("Invalid NIF.");
+        }
+        if(patient.getPhone().trim().isEmpty()){
+            throw new IllegalArgumentException("The phone field cannot be empty.");
+        }
+        if(!isValidPhone(patient.getPhone())){
+            throw new IllegalArgumentException("Invalid phone.");
+        }
+        if(patient.getDob() == null){
+            throw new IllegalArgumentException("The date of birth field cannot be empty.");
+        }
+        if(!validateDate(patient.getDob().toLocalDate())){
+            throw new IllegalArgumentException("Invalid date of birth.");
+        }
+    }
+    
+    
+    public static void validateUpdatePassword(User user) throws IllegalArgumentException {
+        
+        if (!isValidPassword(user.getPassword())) {
+            throw new IllegalArgumentException("Invalid password.\nIt must be at least 8 characters long, contain at least one uppercase letter, and include at least one number.");
+        }
+        
+    }
+    
+    
+    
 }
