@@ -47,8 +47,13 @@ public class Utilities {
         String regex = "^(\\+34)?[0-9]{9}$";
         return phone_number != null && phone_number.matches(regex);
     }
+    
+    public static boolean isValidOnlyLetters(String input){
+        String regex = "^[a-zA-Z]+$";
+        return input != null && input.matches(regex);
+    }
 
-    public static boolean validMenu(int numOps, int num) {
+    public static boolean validMenu(int numOps, int num) { //TODO delete methods not in use
         boolean ok = true;
         if (num > numOps || num < 0) {
             System.out.println("Incorrect option, please type a number between 0 and " + numOps);
@@ -193,8 +198,14 @@ public class Utilities {
         if(patient.getName().trim().isEmpty()){
             throw new IllegalArgumentException("The name field cannot be empty.");
         }
+        if (!isValidOnlyLetters(patient.getName())){
+        throw new IllegalArgumentException("Invalid name. Only letters are accepted.");
+        }
         if(patient.getSurname().trim().isEmpty()){
             throw new IllegalArgumentException("The surname field cannot be empty.");
+        }
+        if (!isValidOnlyLetters(patient.getSurname())){
+        throw new IllegalArgumentException("Invalid surname. Only letters are accepted.");
         }
         if(patient.getNIF().trim().isEmpty()){
             throw new IllegalArgumentException("The NIF field cannot be empty.");
