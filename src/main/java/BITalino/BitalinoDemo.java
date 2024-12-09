@@ -1,6 +1,6 @@
 package BITalino;
 
-
+//TODO delete files not used from BITalino folder
 import java.util.Vector;
 
 import javax.bluetooth.RemoteDevice;
