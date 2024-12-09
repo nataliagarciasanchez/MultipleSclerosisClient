@@ -24,12 +24,13 @@ public class PatientTempCommuUI {
             PatientServerCommunication patientServerCom = new PatientServerCommunication(serverAddress, port);
             patientServerCom.start(); // was missing, required to start communication
             PatientServerCommunication.Send send = patientServerCom.new Send();
+            PatientServerCommunication.Receive receive = patientServerCom.new Receive();
 
             JOptionPane.showMessageDialog(null, "Connected to the server successfully!", "Connection Status", JOptionPane.INFORMATION_MESSAGE);
 
             // Iniciar la interfaz gráfica
             SwingUtilities.invokeLater(() -> {
-                FramePrincipal mainFrame = new FramePrincipal(send);
+                FramePrincipal mainFrame = new FramePrincipal(send, receive);
                 mainFrame.setVisible(true);
             });
 

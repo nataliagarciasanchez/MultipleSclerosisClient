@@ -8,14 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import IOCommunication.PatientServerCommunication;
-import IOCommunication.PatientServerCommunication.Send;
-import Menu.Utilities.Utilities;
-import static Menu.Utilities.Utilities.convertString2SqlDate;
-import POJOs.Gender;
 import POJOs.Patient;
-import POJOs.Role;
-import POJOs.User;
-import java.sql.Date;
 
 
 /**
@@ -27,9 +20,11 @@ public class PanelPrincipal extends JPanel {
     private JPanel dynamicPanel; // Panel for dynamic content
     private final Image backgroundImage; // Background image
     private final PatientServerCommunication.Send send;
+    public static PatientServerCommunication.Receive receive;
 
-    public PanelPrincipal(PatientServerCommunication.Send send) {
+    public PanelPrincipal(PatientServerCommunication.Send send, PatientServerCommunication.Receive receive) {
         this.send = send;
+        this.receive = receive; 
 
         // Load background image
         backgroundImage = new ImageIcon(getClass().getResource("/images/Fondo.jpg")).getImage();
@@ -125,7 +120,7 @@ public class PanelPrincipal extends JPanel {
                         // Proceed to the next panel with patient details
                         JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                         mainFrame.getContentPane().removeAll();
-                        mainFrame.add(new SecondPanel(patient, send)); // Pass patient details to the next panel
+                        mainFrame.add(new SecondPanel(patient, send, receive)); // Pass patient details to the next panel
                         mainFrame.revalidate();
                         mainFrame.repaint();
                         break;
@@ -136,7 +131,7 @@ public class PanelPrincipal extends JPanel {
                 }
 
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error during login: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error during login", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -209,7 +204,7 @@ public class PanelPrincipal extends JPanel {
                 JOptionPane.showMessageDialog(this, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 showDefaultContent();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error during registration. " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error during registration:" +ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -218,11 +213,10 @@ public class PanelPrincipal extends JPanel {
         buttonPanel.add(cancelButton);
         buttonPanel.add(okButton);
 
-        // Agregar componentes al dynamicPanel
-        dynamicPanel.setLayout(new BoxLayout(dynamicPanel, BoxLayout.Y_AXIS)); // Layout vertical
-        dynamicPanel.add(Box.createVerticalGlue()); // Empujar hacia el centro
+        dynamicPanel.setLayout(new BoxLayout(dynamicPanel, BoxLayout.Y_AXIS)); 
+        dynamicPanel.add(Box.createVerticalGlue());
         dynamicPanel.add(signUpLabel);
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 30))); // Espaciador pequeño entre título y campos
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 30))); 
         dynamicPanel.add(namePanel);
         dynamicPanel.add(surnamePanel);
         dynamicPanel.add(nifPanel);
@@ -231,24 +225,24 @@ public class PanelPrincipal extends JPanel {
         dynamicPanel.add(genderPanel);
         dynamicPanel.add(usernamePanel);
         dynamicPanel.add(passwordPanel);
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Espaciador pequeño antes de los botones
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         dynamicPanel.add(buttonPanel);
-        dynamicPanel.add(Box.createVerticalGlue()); // Empujar hacia el centro
+        dynamicPanel.add(Box.createVerticalGlue()); 
 
         dynamicPanel.revalidate();
         dynamicPanel.repaint();
     }
 
     private JPanel createAlignedRow(String labelText, JComponent field) {
-        JPanel row = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 0)); // FlowLayout para alineación izquierda
-        row.setOpaque(false); // Fondo transparente
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 0)); 
+        row.setOpaque(false); 
 
         JLabel label = new JLabel(labelText);
         label.setFont(new Font("Segoe UI", Font.BOLD, 20));
         label.setForeground(Color.WHITE);
-        label.setPreferredSize(new Dimension(220, 30)); // Espacio para alinear correctamente los campos
+        label.setPreferredSize(new Dimension(220, 30)); 
 
-        field.setPreferredSize(new Dimension(350, 30)); // Tamaño uniforme de los campos de texto
+        field.setPreferredSize(new Dimension(350, 30)); 
         field.setMaximumSize(new Dimension(350, 30));
 
         row.add(label);

@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 public class MainPatientGUI {
     private static PatientServerCommunication patientServerCom;
     private static PatientServerCommunication.Send send;
+    private static PatientServerCommunication.Receive receive;
 
     public static void main(String[] args) {
         // Pedir al usuario el IP del servidor y el puerto
@@ -34,12 +35,13 @@ public class MainPatientGUI {
             // Inicializar la conexión al servidor
             patientServerCom = new PatientServerCommunication(serverAddress, port);
             send = patientServerCom.new Send();
+            receive = patientServerCom.new Receive();
 
             JOptionPane.showMessageDialog(null, "Connected to the server successfully!", "Connection Status", JOptionPane.INFORMATION_MESSAGE);
 
             // Iniciar la interfaz gráfica
             SwingUtilities.invokeLater(() -> {
-                FramePrincipal mainFrame = new FramePrincipal(send);
+                FramePrincipal mainFrame = new FramePrincipal(send, receive);
                 mainFrame.setVisible(true);
             });
 

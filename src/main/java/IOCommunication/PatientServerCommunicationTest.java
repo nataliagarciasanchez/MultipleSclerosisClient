@@ -55,9 +55,10 @@ public class PatientServerCommunicationTest {
         //viewPersonalInfo();
         //updateInfo();
         //sendReport(); 
-        sendCompleteReport();
-       // sendSensoryReport();
-       // sendCognitiveFatigueReport();
+        //sendCompleteReport();
+        //sendSensoryReport();
+        //sendCognitiveFatigueReport();
+        viewFeedbacks();
     }
     
    

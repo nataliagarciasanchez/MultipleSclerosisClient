@@ -18,6 +18,7 @@ import java.net.Socket;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -52,6 +53,10 @@ public class PatientServerCommunication {
             
         } catch (IOException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, 
+            "Se perdió la conexión con el servidor. Por favor, intente más tarde.",
+            "Error de conexión", JOptionPane.ERROR_MESSAGE);
+        System.exit(0);
         }
     }
     
@@ -234,7 +239,7 @@ public class PatientServerCommunication {
         
     }
 
-    class Receive {
+    public class Receive {
         
         
         /**

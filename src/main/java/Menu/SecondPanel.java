@@ -8,7 +8,6 @@ import BITalino.BITalino;
 import BITalino.BITalinoException;
 import BITalino.Frame;
 import IOCommunication.PatientServerCommunication;
-import static IOCommunication.PatientServerCommunicationTest.role;
 import Menu.Utilities.Utilities;
 import POJOs.Bitalino;
 import POJOs.Doctor;
@@ -20,12 +19,10 @@ import POJOs.Role;
 import POJOs.SignalType;
 import POJOs.Symptom;
 import POJOs.User;
-import Security.PasswordEncryption;
 import java.awt.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.IntStream;
 import javax.swing.*;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
@@ -42,6 +39,7 @@ public class SecondPanel extends JPanel {
     private Patient patient;
     private final Image backgroundImage; // Background image
     private final PatientServerCommunication.Send send;
+    private final PatientServerCommunication.Receive receive;
     private LocalDate date = LocalDate.now();
     public static String macAddress = "98:D3:41:FD:4E:E8";
     private java.util.List<Bitalino> bitalinos = new ArrayList<>(); // Symptom list
@@ -51,30 +49,26 @@ public class SecondPanel extends JPanel {
     
     
     
-    public SecondPanel(Patient patient, PatientServerCommunication.Send send) {
+    public SecondPanel(Patient patient, PatientServerCommunication.Send send, PatientServerCommunication.Receive receive) {
         this.send = send;
+        this.receive = receive;
         this.patient = patient;
         this.role=new Role();
-        this.symptomsList = new LinkedList<>(); // Initialize symptoms list
+        this.symptomsList = new LinkedList<>(); 
 
-        // Load the background image
         backgroundImage = new ImageIcon(getClass().getResource("/images/Fondo.jpg")).getImage();
 
-        // Set layout for the main panel
         setLayout(new BorderLayout());
 
-        // Create a split container for left and right sections
         JPanel mainContainer = new JPanel();
         mainContainer.setLayout(new BorderLayout());
         mainContainer.setOpaque(false);
 
-        // Left panel with logo and buttons
         JPanel leftPanel = new JPanel();
-        leftPanel.setOpaque(false); // Transparent to allow background visibility
+        leftPanel.setOpaque(false);
         leftPanel.setLayout(new BorderLayout());
-        leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20)); // Reduce top padding
+        leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20)); 
 
-        // Create a panel for the logo and title alignment
         JPanel logoPanel = new JPanel();
         logoPanel.setOpaque(false);
         logoPanel.setLayout(new BoxLayout(logoPanel, BoxLayout.Y_AXIS));
@@ -88,22 +82,19 @@ public class SecondPanel extends JPanel {
         appLabel.setForeground(Color.WHITE);
         appLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        logoPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spacer to align with title
+        logoPanel.add(Box.createRigidArea(new Dimension(0, 20))); 
         logoPanel.add(logoLabel);
-        logoPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacer between logo and app name
+        logoPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         logoPanel.add(appLabel);
 
-        // Add the logo panel to the left panel
         leftPanel.add(logoPanel, BorderLayout.NORTH);
 
-        // Buttons with pink rectangular background
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setOpaque(false); // Transparent to allow customization
+        buttonPanel.setOpaque(false); 
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 30))); // Espacio entre NeuroTrack y los botones
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 30))); 
 
-        // Create styled buttons
         JButton viewInfoButton = createStyledButton("View My Information");
         JButton viewDoctorButton = createStyledButton("View Doctor Information");
         JButton startMonitoringButton = createStyledButton("Start Monitoring");
@@ -122,7 +113,6 @@ public class SecondPanel extends JPanel {
         });
         viewReportsButton.addActionListener(e -> displayFeedbacks());
 
-        // Add buttons to the button panel with spacing
         buttonPanel.add(viewInfoButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         buttonPanel.add(viewDoctorButton);
@@ -130,103 +120,86 @@ public class SecondPanel extends JPanel {
         buttonPanel.add(startMonitoringButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         buttonPanel.add(viewReportsButton);
-        buttonPanel.add(Box.createVerticalGlue()); // Spacer before settings button
+        buttonPanel.add(Box.createVerticalGlue()); 
         buttonPanel.add(settingsButton);
 
-        // Add the button panel to the left panel
         leftPanel.add(buttonPanel, BorderLayout.CENTER);
 
-        // Add left panel to the split container
         mainContainer.add(leftPanel, BorderLayout.WEST);
 
-        // Right panel for title and white panel
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BorderLayout());
         rightPanel.setOpaque(false);
 
-        // Title label above the white panel
         titleLabel = new JLabel("Welcome to the MultipleSclerosis Patient app!");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 36));
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Create a wrapper panel for the title to adjust spacing and alignment
         JPanel titlePanel = new JPanel(new BorderLayout());
-        titlePanel.setOpaque(false); // Transparent to allow background visibility
-        titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20)); // Adjust spacing (top, left, bottom, right)
+        titlePanel.setOpaque(false); 
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20)); //(top, left, bottom, right)
         titlePanel.add(titleLabel, BorderLayout.WEST);
         
         // Add "Log Out" button at the top-right corner
         JButton logoutButton = createStyledButton("Log Out");
-        logoutButton.setPreferredSize(new Dimension(120, 40)); // Slightly smaller size for top-right placement
+        logoutButton.setPreferredSize(new Dimension(120, 40)); 
         logoutButton.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to log out?", "Log Out", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                System.exit(0); // Close the application
+                System.exit(0); 
             }
         });
         
-        // Panel for positioning the logout button
         JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        logoutPanel.setOpaque(false); // Transparent to blend with the background
+        logoutPanel.setOpaque(false); 
         logoutPanel.add(logoutButton);
 
-        // Add the logout panel to the title panel
         titlePanel.add(logoutPanel, BorderLayout.CENTER);
 
         rightPanel.add(titlePanel, BorderLayout.NORTH);
 
-        // Wrapper panel to provide spacing for the white panel
         JPanel whitePanelWrapper = new JPanel();
         whitePanelWrapper.setLayout(new BorderLayout());
-        whitePanelWrapper.setOpaque(false); // Transparent so the background image is visible
-        whitePanelWrapper.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Add spacing (top, left, bottom, right)
+        whitePanelWrapper.setOpaque(false); 
+        whitePanelWrapper.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // (top, left, bottom, right)
 
-        // White panel for dynamic content
         whitePanel = new JPanel();
         whitePanel.setBackground(Color.WHITE);
         whitePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         whitePanel.setLayout(new BoxLayout(whitePanel, BoxLayout.Y_AXIS));
 
-        // Add the white panel to the wrapper
         whitePanelWrapper.add(whitePanel, BorderLayout.CENTER);
 
-        // Add white panel wrapper to the right panel
         rightPanel.add(whitePanelWrapper, BorderLayout.CENTER);
 
-        // Add right panel to the split container
         mainContainer.add(rightPanel, BorderLayout.CENTER);
 
-        // Add the main container to the main panel
         add(mainContainer, BorderLayout.CENTER);
     }
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
-        button.setOpaque(true); // Asegurarse de que el botón sea opaco
-        button.setBackground(Color.WHITE); // Fondo blanco para el botón
-        button.setForeground(Color.BLACK); // Texto en negro
+        button.setOpaque(true); 
+        button.setBackground(Color.WHITE); 
+        button.setForeground(Color.BLACK); 
         button.setFocusPainted(false);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setMaximumSize(new Dimension(250, 50));
         button.setPreferredSize(new Dimension(250, 50));
         button.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        button.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Borde negro para el botón
+        button.setBorder(BorderFactory.createLineBorder(Color.BLACK)); 
         return button;
     }
 
 
-    // Método para mostrar información del paciente en el panel blanco
     private void displayPatientInfo() {
-        // Limpia el contenido del panel blanco
         whitePanel.removeAll();
 
-        // Panel interno con padding
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(Color.WHITE);
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Espaciado dentro del panel blanco
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); 
 
-        // Añade la información del paciente con comprobación de nulos
         contentPanel.add(createInfoLine("Name: ", patient.getName() != null ? patient.getName() + " " + patient.getSurname() : "N/A"));
         contentPanel.add(Box.createRigidArea(new Dimension(0, 6)));
 
@@ -241,75 +214,63 @@ public class SecondPanel extends JPanel {
 
         contentPanel.add(createInfoLine("Phone: ", patient.getPhone() != null ? patient.getPhone() : "N/A"));
 
-        // Añade el panel interno al panel blanco (alineado a la izquierda)
         contentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         whitePanel.add(contentPanel);
 
-        // Actualiza el contenido del panel blanco
         whitePanel.revalidate();
         whitePanel.repaint();
     }
 
     
-    // Método auxiliar para crear una línea con dos etiquetas
     private JPanel createInfoLine(String labelText, String valueText) {
         JPanel linePanel = new JPanel();
-        linePanel.setLayout(new BoxLayout(linePanel, BoxLayout.X_AXIS)); // Alinea horizontalmente
+        linePanel.setLayout(new BoxLayout(linePanel, BoxLayout.X_AXIS)); 
         linePanel.setBackground(Color.WHITE);
-        linePanel.setAlignmentX(Component.LEFT_ALIGNMENT); // Alinea el panel a la izquierda
+        linePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel label = new JLabel(labelText);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 18)); // Negrita
+        label.setFont(new Font("Segoe UI", Font.BOLD, 18)); 
         linePanel.add(label);
 
         JLabel value = new JLabel(valueText);
-        value.setFont(new Font("Segoe UI", Font.PLAIN, 16)); // Normal
+        value.setFont(new Font("Segoe UI", Font.PLAIN, 16)); 
         linePanel.add(value);
 
         return linePanel;
     }
     
     private void displayDoctorInfo() {
-        // Limpia el contenido del panel blanco
         whitePanel.removeAll();
 
-        // Panel interno con padding
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(Color.WHITE);
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Espaciado dentro del panel blanco
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); 
 
-        // Añade la información del doctor con comprobación de nulos
         contentPanel.add(createInfoLine("Name: ", patient.getDoctor().getName() != null ? patient.getDoctor().getName() + " " + patient.getDoctor().getSurname() : "N/A"));
         contentPanel.add(Box.createRigidArea(new Dimension(0, 6)));
 
         contentPanel.add(createInfoLine("Specialty: ", patient.getDoctor().getSpecialty() != null ? patient.getDoctor().getSpecialty() : "N/A"));
         contentPanel.add(Box.createRigidArea(new Dimension(0, 6)));
 
-        // Añade el panel interno al panel blanco
         contentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         whitePanel.add(contentPanel);
 
-        // Actualiza el contenido del panel blanco
         whitePanel.revalidate();
         whitePanel.repaint();
     }
-
-    
-
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (backgroundImage != null) {
-            // Ensure the background image fills the entire panel dynamically
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         }
     }
 
     private void showMonitoringIntroduction() {
         whitePanel.removeAll();
-        whitePanel.setLayout(new BoxLayout(whitePanel, BoxLayout.Y_AXIS)); // Reset layout to BoxLayout
+        whitePanel.setLayout(new BoxLayout(whitePanel, BoxLayout.Y_AXIS)); 
 
 
         JPanel centerPanel = new JPanel();
@@ -339,47 +300,44 @@ public class SecondPanel extends JPanel {
         whitePanel.add(startButton);
         whitePanel.add(Box.createVerticalGlue());
         
-        whitePanel.add(centerPanel); // Add center panel to white panel
+        whitePanel.add(centerPanel); 
 
         whitePanel.revalidate();
         whitePanel.repaint();
     }
 
     private void showSymptomsPanel() {
-        whitePanel.removeAll(); // Limpiar el contenido del panel blanco
+        whitePanel.removeAll();
         whitePanel.setLayout(new BorderLayout());
 
-        // Texto reducido encima de las columnas
         JLabel instructionLabel = new JLabel("Select all the symptoms you are currently experiencing:");
         instructionLabel.setFont(new Font("Segoe UI", Font.PLAIN, 24));
         instructionLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(instructionLabel, BorderLayout.NORTH);
 
-        // Panel para las casillas de verificación
         JPanel symptomsPanel = new JPanel();
         symptomsPanel.setBackground(Color.WHITE);
-        symptomsPanel.setLayout(new GridLayout(0, 3, 10, 10)); // 3 columnas con espaciado
-        symptomsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Espaciado interno
+        symptomsPanel.setLayout(new GridLayout(0, 3, 10, 10)); 
+        symptomsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); 
 
         java.util.List<Symptom> symptoms = send.getSymptoms(); 
         if (symptoms != null) {
             ListIterator<Symptom> it = symptoms.listIterator();
 
             while (it.hasNext()) {
-                Symptom symptom = it.next(); // Obtener el objeto Symptom actual
+                Symptom symptom = it.next(); 
 
-                JCheckBox symptomCheckBox = new JCheckBox(symptom.getName()); // Usar el nombre del síntoma
-                symptomCheckBox.setFont(new Font("Segoe UI", Font.PLAIN, 14)); // Ajustar fuente
+                JCheckBox symptomCheckBox = new JCheckBox(symptom.getName()); 
+                symptomCheckBox.setFont(new Font("Segoe UI", Font.PLAIN, 14)); 
                 symptomCheckBox.setBackground(Color.WHITE);
 
                 symptomsPanel.add(symptomCheckBox);
 
-                // Agregar funcionalidad para añadir o quitar de la lista seleccionada
                 symptomCheckBox.addActionListener(e -> {
                     if (symptomCheckBox.isSelected()) {
-                        symptomsList.add(symptom); // Agregar el objeto Symptom completo
+                        symptomsList.add(symptom); 
                     } else {
-                        symptomsList.remove(symptom); // Eliminar el objeto Symptom completo
+                        symptomsList.remove(symptom); 
                     }
                 });
             }
@@ -390,7 +348,6 @@ public class SecondPanel extends JPanel {
 
         whitePanel.add(symptomsPanel, BorderLayout.CENTER);
 
-        // Panel con botones Cancel y OK
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -401,7 +358,7 @@ public class SecondPanel extends JPanel {
         backButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         backButton.setBackground(Color.WHITE);
         backButton.setForeground(Color.BLACK);
-        backButton.addActionListener(e -> showMonitoringIntroduction()); // Go back to Intro
+        backButton.addActionListener(e -> showMonitoringIntroduction()); 
 
         nextButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         nextButton.setBackground(Color.WHITE);
@@ -431,12 +388,10 @@ public class SecondPanel extends JPanel {
         ecgLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(ecgLabel, BorderLayout.CENTER);
 
-        // Crear un único panel para los botones
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
-        // Play Button
         JButton playButton = new JButton("Play");
         playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         playButton.setBackground(Color.WHITE); 
@@ -445,7 +400,6 @@ public class SecondPanel extends JPanel {
         playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         playButton.addActionListener(e -> {
-            // Crear un cuadro de diálogo no bloqueante para mostrar el progreso
             JDialog progressDialog = new JDialog((Window) null, "Recording", Dialog.ModalityType.APPLICATION_MODAL);
             progressDialog.setLayout(new BorderLayout());
             progressDialog.setSize(300, 100);
@@ -454,24 +408,22 @@ public class SecondPanel extends JPanel {
             progressLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
             progressDialog.add(progressLabel, BorderLayout.CENTER);
 
-            // Ejecutar la captura de datos en un SwingWorker para evitar bloquear el hilo principal
             SwingWorker<Void, Void> worker = new SwingWorker<>() {
                 private boolean success = true; 
                 @Override
                 protected Void doInBackground() {
                     try {
-                        // Inicializar BITalino y empezar a grabar
                         bitalinoDevice = new BITalino();
                         bitalinoDevice.open(macAddress);
 
-                        bitalinoDevice.start(new int[]{1}); // Canal ECG
+                        bitalinoDevice.start(new int[]{1});
                         Bitalino bitalinoECG = new Bitalino(java.sql.Date.valueOf(date), SignalType.ECG);
                         java.util.List<Frame> ecgFrames = bitalinoECG.storeRecordedSignals(bitalinoDevice, SignalType.ECG);
                         bitalinoECG.setSignalValues(ecgFrames, 1);
                         bitalinos.add(bitalinoECG);
                     } catch (Exception ex) {
                         success = false;
-                        JOptionPane.showMessageDialog(null, "Error while recording ECG data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error while recording ECG data ", "Error", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                     } catch (Throwable ex) {
                         success = false;
@@ -492,24 +444,19 @@ public class SecondPanel extends JPanel {
                 @Override
                 protected void done() {
                     progressDialog.dispose();
-                    // Cerrar el cuadro de diálogo de progreso y mostrar un mensaje de éxito
                     if (success) {
-                        // Mostrar el mensaje de éxito solo si no hubo errores
                         JOptionPane.showMessageDialog(null, "Successfully recorded data!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             };
 
-            // Mostrar el cuadro de diálogo de progreso y ejecutar la tarea en segundo plano
             worker.execute();
             progressDialog.setVisible(true);
         });
 
-        // Añadir el botón "Play" al panel de botones
         buttonPanel.add(playButton);
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciado
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); 
 
-        // Panel de navegación (Back y Finish Monitoring)
         JPanel navigationPanel = new JPanel();
         navigationPanel.setBackground(Color.WHITE);
         navigationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -520,12 +467,12 @@ public class SecondPanel extends JPanel {
         backButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         backButton.setBackground(Color.WHITE);
         backButton.setForeground(Color.BLACK);
-        backButton.addActionListener(e -> showEMGPhase()); // Go back to Symptoms
+        backButton.addActionListener(e -> showEMGPhase()); 
 
         finishButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         finishButton.setBackground(Color.WHITE);
         finishButton.setForeground(Color.BLACK);
-        finishButton.addActionListener(e -> showCompletionPhase()); // Move to EMG Phase
+        finishButton.addActionListener(e -> showCompletionPhase()); 
 
         navigationPanel.add(backButton);
         navigationPanel.add(finishButton);
@@ -553,11 +500,10 @@ public class SecondPanel extends JPanel {
         emgLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(emgLabel, BorderLayout.CENTER);
         
-        // Crear un único panel para los botones
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        // Play Button
+       
         JButton playButton = new JButton("Play");
         playButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         playButton.setBackground(Color.WHITE); 
@@ -566,7 +512,6 @@ public class SecondPanel extends JPanel {
         playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         playButton.addActionListener(e -> {
-            // Crear un cuadro de diálogo no bloqueante para mostrar el progreso
             JDialog progressDialog = new JDialog((Window) null, "Recording", Dialog.ModalityType.APPLICATION_MODAL);
             progressDialog.setLayout(new BorderLayout());
             progressDialog.setSize(300, 100);
@@ -575,13 +520,11 @@ public class SecondPanel extends JPanel {
             progressLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
             progressDialog.add(progressLabel, BorderLayout.CENTER);
 
-            // Crear un SwingWorker para manejar la tarea en segundo plano
             SwingWorker<Void, Void> worker = new SwingWorker<>() {
                 private boolean success = true; 
                 @Override
                 protected Void doInBackground() {
                     try {
-                        // Inicializar BITalino y empezar a grabar
                         bitalinoDevice = new BITalino();
                         bitalinoDevice.open(macAddress);
 
@@ -592,7 +535,7 @@ public class SecondPanel extends JPanel {
                         bitalinos.add(bitalinoEMG);
                     } catch (Exception ex) {
                         success = false; 
-                        JOptionPane.showMessageDialog(null, "Error while recording EMG data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error while recording EMG data ", "Error", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                     } catch (Throwable ex) {
                         success = false;
@@ -614,23 +557,18 @@ public class SecondPanel extends JPanel {
                 protected void done() {
                     progressDialog.dispose();
                     if (success) {
-                        // Mostrar el mensaje de éxito solo si no hubo errores
                         JOptionPane.showMessageDialog(null, "Successfully recorded data!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             };
 
-            // Ejecutar la tarea en segundo plano
             worker.execute();
             progressDialog.setVisible(true);
         });
 
-
-        // Añadir el botón "Play" al panel de botones
         buttonPanel.add(playButton);
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Espaciado
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); 
 
-        // Panel de navegación (Back y Finish Monitoring)
         JPanel navigationPanel = new JPanel();
         navigationPanel.setBackground(Color.WHITE);
         navigationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -672,7 +610,6 @@ public class SecondPanel extends JPanel {
         completionLabel.setHorizontalAlignment(SwingConstants.CENTER);
         whitePanel.add(completionLabel, BorderLayout.CENTER);
 
-        // Navigation buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -681,7 +618,7 @@ public class SecondPanel extends JPanel {
         doneButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         doneButton.setBackground(Color.WHITE);
         doneButton.setForeground(Color.BLACK);
-        doneButton.addActionListener(e -> showMonitoringIntroduction()); // Return to Introduction
+        doneButton.addActionListener(e -> showMonitoringIntroduction()); 
 
         doneButton.addActionListener(e -> {
             Report report = new Report( java.sql.Date.valueOf(date), patient, bitalinos, symptomsList);
@@ -698,20 +635,17 @@ public class SecondPanel extends JPanel {
     }
     
     private void displayFeedbacks() {
-    whitePanel.removeAll(); // Clear the white panel content
+    whitePanel.removeAll(); 
     whitePanel.setLayout(new BorderLayout());
 
-    // Title at the top
     JLabel titleLabel = new JLabel("View Feedbacks");
     titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
     titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
     whitePanel.add(titleLabel, BorderLayout.NORTH);
 
-    // Container for the search bar and feedback list
     JPanel feedbackContainer = new JPanel(new BorderLayout());
     feedbackContainer.setBackground(Color.WHITE);
 
-    // Search panel for feedbacks
     JPanel searchPanel = new JPanel(new BorderLayout());
     searchPanel.setBackground(Color.WHITE);
     searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
@@ -727,12 +661,10 @@ public class SecondPanel extends JPanel {
 
     feedbackContainer.add(searchPanel, BorderLayout.NORTH);
 
-    // Panel for the list of feedbacks
     JPanel feedbackPanel = new JPanel();
     feedbackPanel.setLayout(new BoxLayout(feedbackPanel, BoxLayout.Y_AXIS));
     feedbackPanel.setBackground(Color.WHITE);
 
-    // Scrollable panel for feedbacks
     JScrollPane scrollPane = new JScrollPane(feedbackPanel);
     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -742,10 +674,9 @@ public class SecondPanel extends JPanel {
     feedbackContainer.add(scrollPane, BorderLayout.CENTER);
     whitePanel.add(feedbackContainer, BorderLayout.CENTER);
 
-    // Retrieve feedbacks for the current patient
-    java.util.List<Feedback> feedbacks = getMockFeedbacks(); // Replace with handleFeedbackFromServer() when ready
+    java.util.List<Feedback> feedbacks = receive.viewFeedbacks(patient); // Replace with handleFeedbackFromServer() when ready
     if (feedbacks != null && !feedbacks.isEmpty()) {
-        updateFeedbackList(feedbacks, feedbackPanel); // Display all feedbacks initially
+        updateFeedbackList(feedbacks, feedbackPanel); 
     } else {
         System.out.println("No feedbacks available for this patient.");
     }
@@ -856,7 +787,7 @@ public class SecondPanel extends JPanel {
     }
 
 
-
+/*
     // Método de prueba para obtener feedbacks ficticios
     private java.util.List<Feedback> getMockFeedbacks() {
         java.util.List<Feedback> mockFeedbacks = new ArrayList<>();
@@ -877,16 +808,14 @@ public class SecondPanel extends JPanel {
         mockFeedbacks.add(new Feedback(5,"I noticed some irregularities. Please visit.", java.sql.Date.valueOf("2023-10-10"), doctor5, mockPatient));
 
         return mockFeedbacks;
-    }
+    }*/
 
 
     
     private void auxiliar() {
-        // Clear the whitePanel
         whitePanel.removeAll();
         whitePanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        // Panel with black border
         JPanel borderedPanel = new JPanel();
         borderedPanel.setLayout(new GridBagLayout());
         borderedPanel.setBackground(Color.WHITE);
@@ -896,14 +825,12 @@ public class SecondPanel extends JPanel {
             javax.swing.border.TitledBorder.CENTER,
             javax.swing.border.TitledBorder.TOP,
             new Font("Segoe UI", Font.PLAIN, 16)
-        )); // Add black border with title
+        )); 
 
-        // Button panel
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
-        // Buttons
         JButton changeInfoButton = new JButton("Change my personal information");
         changeInfoButton.setBackground(Color.WHITE);
         changeInfoButton.setForeground(Color.BLACK);
@@ -916,27 +843,21 @@ public class SecondPanel extends JPanel {
         changePasswordButton.setFocusPainted(false);
         changePasswordButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
-        // Button actions
         changeInfoButton.addActionListener(e -> displayPatientInfoUpdate());
         changePasswordButton.addActionListener(e -> displayPatientPasswordUpdate());
 
-        // Add buttons to the button panel
         buttonPanel.add(changeInfoButton);
         buttonPanel.add(changePasswordButton);
 
-        // Add the button panel to the bordered panel
         borderedPanel.add(buttonPanel);
 
-        // Constraints for the borderedPanel
         GridBagConstraints borderedGbc = new GridBagConstraints();
         borderedGbc.gridx = 0;
         borderedGbc.gridy = 0;
         borderedPanel.add(buttonPanel, borderedGbc);
 
-        // Add borderedPanel to the whitePanel
         whitePanel.add(borderedPanel,  BorderLayout.CENTER);
 
-        // Refresh the whitePanel
         whitePanel.revalidate();
         whitePanel.repaint();
     }
@@ -946,7 +867,6 @@ public class SecondPanel extends JPanel {
         whitePanel.setLayout(new BorderLayout());
         whitePanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 0, 20)); 
 
-        // Main content panel with a titled border
         JPanel contentPanel = new JPanel(new GridBagLayout());
         contentPanel.setBackground(Color.WHITE);
         contentPanel.setBorder(BorderFactory.createTitledBorder(
@@ -957,16 +877,13 @@ public class SecondPanel extends JPanel {
             new Font("Segoe UI", Font.PLAIN, 16)
         )); 
 
-        // Layout constraints for fields and labels
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.LINE_END;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Consistent field size
         Dimension fieldSize = new Dimension(200, 30);
 
-        // Add labels and text fields
         JLabel nameLabel = new JLabel("Name:");
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         gbc.gridx = 0;
@@ -1022,10 +939,8 @@ public class SecondPanel extends JPanel {
         gbc.gridx = 1;
         contentPanel.add(phoneField, gbc);
 
-        // Add the content panel to the white panel
         whitePanel.add(contentPanel, BorderLayout.CENTER);
 
-        // Button panel for Save and Cancel buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.setBackground(Color.WHITE);
 
@@ -1069,7 +984,7 @@ public class SecondPanel extends JPanel {
             patient.setDob(java.sql.Date.valueOf(dobField.getText()));
             User user = patient.getUser();
             user.setRole(role);
-            send.updateInformation(user, patient); // pasamos el user y patient con la info modificada
+            send.updateInformation(user, patient); 
 
             JOptionPane.showMessageDialog(this, "Patient information updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         });
@@ -1081,7 +996,6 @@ public class SecondPanel extends JPanel {
 
         whitePanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Refresh the whitePanel
         whitePanel.revalidate();
         whitePanel.repaint();
     }
@@ -1105,16 +1019,10 @@ public class SecondPanel extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // Etiquetas y campos
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.LINE_END;
 
-        /*JLabel currentPasswordLabel = new JLabel("Current Password:");
-        currentPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        passwordPanel.add(currentPasswordLabel, gbc);*/
-
-        //gbc.gridy++;
         JLabel newPasswordLabel = new JLabel("New Password:");
         newPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         passwordPanel.add(newPasswordLabel, gbc);
@@ -1124,15 +1032,10 @@ public class SecondPanel extends JPanel {
         confirmPasswordLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         passwordPanel.add(confirmPasswordLabel, gbc);
 
-        // Campos para las contraseñas
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.LINE_START;
 
-        /*JPasswordField currentPasswordField = new JPasswordField(20);
-        passwordPanel.add(currentPasswordField, gbc);*/
-
-        //gbc.gridy++;
         JPasswordField newPasswordField = new JPasswordField(20);
         passwordPanel.add(newPasswordField, gbc);
 
@@ -1140,7 +1043,6 @@ public class SecondPanel extends JPanel {
         JPasswordField confirmPasswordField = new JPasswordField(20);
         passwordPanel.add(confirmPasswordField, gbc);
 
-        // Botón para guardar cambios
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.setBackground(Color.WHITE);
 
@@ -1158,16 +1060,9 @@ public class SecondPanel extends JPanel {
 
         savePasswordButton.addActionListener(e -> {
             
-            //String currentPassword = new String(currentPasswordField.getPassword());
             String newPassword = new String(newPasswordField.getPassword());
             String confirmPassword = new String(confirmPasswordField.getPassword());
             try{
-                //String hashedCurrentPassword = PasswordEncryption.hashPassword(currentPassword);
-
-                /*if (!hashedCurrentPassword.equals(patient.getUser().getPassword())) {
-                    JOptionPane.showMessageDialog(whitePanel, "Current password is incorrect.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }*/
 
                 if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
                     JOptionPane.showMessageDialog(whitePanel, "Password fields cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1184,16 +1079,15 @@ public class SecondPanel extends JPanel {
                     return;
                 }
 
-                //patient.getUser().setPassword(newPassword);
                 User user = patient.getUser();
-                user.setPassword(newPassword); // plana, se encripta en updateInformation
+                user.setPassword(newPassword); 
                 user.setRole(role);
-                send.updateInformation(user, patient); // pasamos user y patient con la informacion modificada
+                send.updateInformation(user, patient); 
 
                 JOptionPane.showMessageDialog(whitePanel, "Password successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 auxiliar(); 
             }catch(Exception ex){
-                JOptionPane.showMessageDialog(whitePanel, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(whitePanel, "An error occurred:" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         
