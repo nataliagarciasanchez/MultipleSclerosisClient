@@ -1085,7 +1085,6 @@ public class SecondPanel extends JPanel {
                 user.setPassword(newPassword);
                 user.setRole(role);
                 
-                System.out.println("We have changed the password from " + patient.getUser().getPassword() + " to  " + user.getPassword());
                 send.updateInformation(user, patient); 
                 
                 JOptionPane.showMessageDialog(whitePanel, "Password successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
