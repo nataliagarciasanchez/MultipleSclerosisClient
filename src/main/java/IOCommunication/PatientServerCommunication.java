@@ -161,6 +161,9 @@ public class PatientServerCommunication {
         public void updateInformation(User user, Patient patient) {
 
             try {
+                
+                Utilities.validateUpdatePatient(patient);
+                //Utilities.validateUpdatePassword(user);
                 out.writeObject("updateInformation");
                 System.out.println("Sending update request to the server...");
                 
@@ -170,6 +173,7 @@ public class PatientServerCommunication {
 
                 // Actualizar la contraseña si es necesario
                 if (!existingHashedPassword.equals(newHashedPassword) && !user.getPassword().equals(existingHashedPassword)) {
+                    Utilities.validateUpdatePassword(user);
                     System.out.println("Updating password...");
                     user.setPassword(newHashedPassword);
                     out.writeObject(user);
