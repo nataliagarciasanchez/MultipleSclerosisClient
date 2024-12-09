@@ -958,36 +958,23 @@ public class SecondPanel extends JPanel {
 
         saveButton.addActionListener(e -> {
             try {
-                if (nameField.getText().trim().isEmpty() || surnameField.getText().trim().isEmpty() ||
-                    nifField.getText().trim().isEmpty() || dobField.getText().trim().isEmpty() ||
-                    phoneField.getText().trim().isEmpty()) {
-                    throw new IllegalArgumentException("All fields must be filled.");
-                }
-                if (!Utilities.validateID(nifField.getText().trim())) {
-                    throw new IllegalArgumentException("Invalid NIF.");
-                }
-                if (!Utilities.isValidPhone(phoneField.getText().trim())) {
-                    throw new IllegalArgumentException("Invalid phone number.");
-                }
-                if (!Utilities.validateDate(LocalDate.parse(dobField.getText()))) {
-                    throw new IllegalArgumentException("Invalid Date.");
-                }
+               patient.setName(nameField.getText());
+                patient.setSurname(surnameField.getText());
+                patient.setNIF(nifField.getText());
+                patient.setPhone(phoneField.getText());
+                patient.setDob(java.sql.Date.valueOf(dobField.getText()));
+                User user = patient.getUser();
+                user.setRole(role);
+                send.updateInformation(user, patient); 
+
+            JOptionPane.showMessageDialog(this, "Patient information updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+         
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            patient.setName(nameField.getText());
-            patient.setSurname(surnameField.getText());
-            patient.setNIF(nifField.getText());
-            patient.setPhone(phoneField.getText());
-            patient.setDob(java.sql.Date.valueOf(dobField.getText()));
-            User user = patient.getUser();
-            user.setRole(role);
-            send.updateInformation(user, patient); 
-
-            JOptionPane.showMessageDialog(this, "Patient information updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        });
+            });
 
         cancelButton.addActionListener(e -> auxiliar());
 
@@ -1074,10 +1061,7 @@ public class SecondPanel extends JPanel {
                     return;
                 }
 
-                if (!Utilities.isValidPassword(newPassword)) {
-                    JOptionPane.showMessageDialog(whitePanel, "Password must be at least 8 characters long.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+                
 
                 User user = new User();
                 user.setId(patient.getUser().getId());
