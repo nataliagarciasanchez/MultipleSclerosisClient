@@ -162,21 +162,27 @@ public class PatientServerCommunication {
 
             try {
                 out.writeObject("updateInformation");
-                System.out.println("Updating info");
-                System.out.println("user.getPassword(): " + user.getPassword()); //deberia ser nueva contraseña plana
-                System.out.println("patient.getUser().getPassword(): " + patient.getUser().getPassword()); //contraseña antigua encriptada
-                String hashedPassword = PasswordEncryption.hashPassword(user.getPassword());
+                System.out.println("Sending update request to the server...");
+                
+                // Gestionar el hash de la contraseña en el servidor
+                String newHashedPassword = PasswordEncryption.hashPassword(user.getPassword());
+                String existingHashedPassword = patient.getUser().getPassword();
+
+                // Actualizar la contraseña si es necesario
+                if (!existingHashedPassword.equals(newHashedPassword) && !user.getPassword().equals(existingHashedPassword)) {
+                    System.out.println("Updating password...");
+                    user.setPassword(newHashedPassword);
+                    out.writeObject(user);
+                }else{
+                    System.out.println("Patient.getUser(): " + patient.getUser().getPassword());
+                    out.writeObject(patient.getUser());}
                 
                 
-                if (!patient.getUser().getPassword().equals(hashedPassword)){ // comprobamos encriptadas para ver si la contraseña ha cambiado
-                    patient.getUser().setPassword(hashedPassword); 
-                    System.out.println("Hashed patient.getUser().getPassword(): " + patient.getUser().getPassword());// para comprobar si el hash se hace bien
-                
-                }
-                
-                out.writeObject(user);
                 out.writeObject(patient);
-                System.out.println(in.readObject());
+                
+                String response = (String) in.readObject();
+                System.out.println("Server response: " + response);
+                //System.out.println(in.readObject());
                 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
