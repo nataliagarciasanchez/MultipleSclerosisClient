@@ -1062,7 +1062,11 @@ public class SecondPanel extends JPanel {
                 send.updateInformation(user, patient, confirmPassword); 
                 
                 JOptionPane.showMessageDialog(whitePanel, "Password successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                auxiliar(); 
+                auxiliar();
+            
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }catch(Exception ex){
                 JOptionPane.showMessageDialog(whitePanel, "An error occurred:" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
