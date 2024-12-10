@@ -5,6 +5,7 @@
 package Menu;
 
 import IOCommunication.PatientServerCommunication;
+import java.awt.GridLayout;
 import javax.swing.*;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -22,15 +23,33 @@ public class MainPatientGUI {
     public static void main(String[] args) {
         // Pedir al usuario el IP del servidor y el puerto
         try {
-            String serverAddress = JOptionPane.showInputDialog(null, "Enter the Server IP Address:", "Server Connection", JOptionPane.QUESTION_MESSAGE);
-            String portInput = JOptionPane.showInputDialog(null, "Enter the Server Port:", "Server Connection", JOptionPane.QUESTION_MESSAGE);
-
-            if (serverAddress == null || portInput == null || serverAddress.isEmpty() || portInput.isEmpty()) {
+            JPanel connectionPanel = new JPanel(new GridLayout(2,2,10,10));
+            JTextField serverAddressField = new JTextField();
+            JTextField portField = new JTextField();
+            
+            connectionPanel.add(new JLabel("Server IP Address: "));
+            connectionPanel.add(serverAddressField);
+            connectionPanel.add(new JLabel("Server Port: "));
+            connectionPanel.add(portField);
+            
+            int result = JOptionPane.showConfirmDialog(null, connectionPanel, "Server connection", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            
+            if(result != JOptionPane.OK_OPTION){
+                JOptionPane.showMessageDialog(null, "Connection canceled. Exiting application.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            String serverAddress = serverAddressField.getText().trim();
+            String portInput = portField.getText().trim();
+            
+            if (serverAddress.isEmpty() || portInput.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Server IP and Port are required. Exiting the application.", "Error", JOptionPane.ERROR_MESSAGE);
                 return; // Salir si no se proporciona la información del servidor
             }
 
             int port = Integer.parseInt(portInput);
+            
+                 
 
             // Inicializar la conexión al servidor
             patientServerCom = new PatientServerCommunication(serverAddress, port);
