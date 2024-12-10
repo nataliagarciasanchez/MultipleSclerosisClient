@@ -319,7 +319,7 @@ public class SecondPanel extends JPanel {
         symptomsPanel.setLayout(new GridLayout(0, 3, 10, 10)); 
         symptomsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); 
 
-        java.util.List<Symptom> symptoms = send.getSymptoms(); 
+        java.util.List<Symptom> symptoms = receive.getSymptoms(); 
         if (symptoms != null) {
             ListIterator<Symptom> it = symptoms.listIterator();
 

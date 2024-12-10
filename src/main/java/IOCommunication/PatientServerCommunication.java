@@ -187,20 +187,7 @@ public class PatientServerCommunication {
 
         }
         
-        /**
-         * Retrieves all the possible symptoms from the database that a patient with multiple sclerosis may have
-         * @return list of symptoms
-         */
-        public List<Symptom> getSymptoms(){
-            List <Symptom> symptoms = null;
-            try {
-                out.writeObject("viewSymptoms");
-                symptoms=(List <Symptom>) in.readObject();
-            } catch (IOException | ClassNotFoundException ex) {
-                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return symptoms;
-        }
+        
 
         /**
          * Sends the report to the server with all the info 
@@ -244,6 +231,20 @@ public class PatientServerCommunication {
 
     public class Receive {
         
+        /**
+         * Retrieves all the possible symptoms from the database that a patient with multiple sclerosis may have
+         * @return list of symptoms
+         */
+        public List<Symptom> getSymptoms(){
+            List <Symptom> symptoms = null;
+            try {
+                out.writeObject("viewSymptoms");
+                symptoms=(List <Symptom>) in.readObject();
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return symptoms;
+        }
         
         /**
          * Receives feedbacks from server corresponding to that patient

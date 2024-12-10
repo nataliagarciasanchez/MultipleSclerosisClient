@@ -156,7 +156,7 @@ public class PatientServerCommunicationTest {
     
     public static void viewSymptoms(){
         Patient patient = send.login("noelia@gmail.com", "Password123");
-        List<Symptom> symptoms=send.getSymptoms();
+        List<Symptom> symptoms=receive.getSymptoms();
         ListIterator it=symptoms.listIterator();
         while(it.hasNext()){
             System.out.println(it.next());
@@ -229,7 +229,7 @@ public class PatientServerCommunicationTest {
             bitalinos.add(bitalinoECG);
 
             // Crear lista de síntomas
-            List<Symptom> symptoms = send.getSymptoms();
+            List<Symptom> symptoms = receive.getSymptoms();
             
             List <Symptom> symptomsSend = new ArrayList<>();
             symptomsSend.add(symptoms.get(1));
