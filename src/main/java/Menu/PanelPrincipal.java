@@ -22,8 +22,8 @@ import java.sql.Date;
  */
 
 public class PanelPrincipal extends JPanel {
-    private JPanel dynamicPanel; // Panel for dynamic content
-    private final Image backgroundImage; // Background image
+    private JPanel dynamicPanel; 
+    private final Image backgroundImage; 
     private final PatientServerCommunication.Send send;
     public static PatientServerCommunication.Receive receive;
 
@@ -31,16 +31,14 @@ public class PanelPrincipal extends JPanel {
         this.send = send;
         this.receive = receive; 
 
-        // Load background image
         backgroundImage = new ImageIcon(getClass().getResource("/images/Fondo.jpg")).getImage();
 
         setLayout(new BorderLayout());
 
-        // Title Panel
         JPanel titlePanel = new JPanel();
-        titlePanel.setOpaque(false); // Transparent background
+        titlePanel.setOpaque(false);
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
-        titlePanel.add(Box.createRigidArea(new Dimension(0, 100))); // Spacer from the top
+        titlePanel.add(Box.createRigidArea(new Dimension(0, 100))); 
 
         JLabel titleLabel = new JLabel("Multiple Sclerosis Monitoring");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 52));
@@ -48,21 +46,20 @@ public class PanelPrincipal extends JPanel {
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         titlePanel.add(titleLabel);
-        titlePanel.add(Box.createRigidArea(new Dimension(0, 40))); // Spacer below the title
+        titlePanel.add(Box.createRigidArea(new Dimension(0, 40))); 
 
-        // Dynamic Panel for question and buttons
         dynamicPanel = new JPanel();
-        dynamicPanel.setOpaque(false); // Transparent background
+        dynamicPanel.setOpaque(false); 
         dynamicPanel.setLayout(new BoxLayout(dynamicPanel, BoxLayout.Y_AXIS));
 
         showDefaultContent();
 
-        add(titlePanel, BorderLayout.NORTH); // Add title panel
-        add(dynamicPanel, BorderLayout.CENTER); // Add dynamic panel
+        add(titlePanel, BorderLayout.NORTH); 
+        add(dynamicPanel, BorderLayout.CENTER); 
     }
 
     private void showDefaultContent() {
-        dynamicPanel.removeAll(); // Clear existing content
+        dynamicPanel.removeAll(); 
 
         JLabel questionLabel = new JLabel("What do you want to do?");
         questionLabel.setFont(new Font("Segoe UI", Font.BOLD, 36));
@@ -82,9 +79,9 @@ public class PanelPrincipal extends JPanel {
         buttonPanel.add(logInButton);
 
         // Add components to the dynamic panel
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 150))); // Spacer to lower everything
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 150))); 
         dynamicPanel.add(questionLabel);
-        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 40))); // Spacer
+        dynamicPanel.add(Box.createRigidArea(new Dimension(0, 40))); 
         dynamicPanel.add(buttonPanel);
 
         dynamicPanel.revalidate();
@@ -118,14 +115,13 @@ public class PanelPrincipal extends JPanel {
 
                 Patient patient = null;
                 while (patient == null) {
-                    patient = send.login(username, password); // Communicate with server  
+                    patient = send.login(username, password); 
                     if (patient != null) {
                         JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
 
-                        // Proceed to the next panel with patient details
                         JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                         mainFrame.getContentPane().removeAll();
-                        mainFrame.add(new SecondPanel(patient, send, receive)); // Pass patient details to the next panel
+                        mainFrame.add(new SecondPanel(patient, send, receive)); 
                         mainFrame.revalidate();
                         mainFrame.repaint();
                         break;
@@ -167,7 +163,7 @@ public class PanelPrincipal extends JPanel {
         label.setFont(new Font("Segoe UI", Font.BOLD, 24));
         label.setForeground(Color.WHITE);
         label.setPreferredSize(new Dimension(220, 40));
-        label.setHorizontalAlignment(SwingConstants.LEFT); // Alineación a la izquierda
+        label.setHorizontalAlignment(SwingConstants.LEFT); 
 
         field.setPreferredSize(new Dimension(350, 40));
         field.setMaximumSize(new Dimension(350, 40));
@@ -191,26 +187,31 @@ public class PanelPrincipal extends JPanel {
         nameField.setPreferredSize(new Dimension(350, 30));
         nameField.setMaximumSize(new Dimension(350, 30));
         JPanel namePanel = createAlignedRow("Name:", nameField);
+        nameField.setToolTipText("Enter your full first name. Example: John");
 
         JTextField surnameField = new JTextField();
         surnameField.setPreferredSize(new Dimension(350, 30));
         surnameField.setMaximumSize(new Dimension(350, 30));
         JPanel surnamePanel = createAlignedRow("Surname:", surnameField);
+        surnameField.setToolTipText("Enter your last name. Example: Doe");
 
         JTextField nifField = new JTextField();
         nifField.setPreferredSize(new Dimension(350, 30));
         nifField.setMaximumSize(new Dimension(350, 30));
         JPanel nifPanel = createAlignedRow("NIF:", nifField);
+        nifField.setToolTipText("Enter a valid NIF including the letter. Example: 12345678A");
 
         JTextField dobField = new JTextField();
         dobField.setPreferredSize(new Dimension(350, 30));
         dobField.setMaximumSize(new Dimension(350, 30));
         JPanel dobPanel = createAlignedRow("Date of Birth:", dobField);
+        dobField.setToolTipText("Enter your birth date in dd/MM/yyyy format. Example: 10/10/2003");
 
         JTextField phoneField = new JTextField();
         phoneField.setPreferredSize(new Dimension(350, 30));
         phoneField.setMaximumSize(new Dimension(350, 30));
         JPanel phonePanel = createAlignedRow("Phone:", phoneField);
+        phoneField.setToolTipText("Enter your phone number. With or without country code. Example: +34123456789");
 
         JComboBox<String> genderComboBox = new JComboBox<>(new String[]{"MALE", "FEMALE"});
         genderComboBox.setPreferredSize(new Dimension(350, 30));
@@ -221,11 +222,13 @@ public class PanelPrincipal extends JPanel {
         usernameField.setPreferredSize(new Dimension(350, 30));
         usernameField.setMaximumSize(new Dimension(350, 30));
         JPanel usernamePanel = createAlignedRow("Username:", usernameField);
+        usernameField.setToolTipText("Enter a unique username. Example: johndoe@gmail.com");
 
         JPasswordField passwordField = new JPasswordField();
         passwordField.setPreferredSize(new Dimension(350, 30));
         passwordField.setMaximumSize(new Dimension(350, 30));
         JPanel passwordPanel = createAlignedRow("Password:", passwordField);
+        passwordField.setToolTipText("Enter a strong password with at least 8 characters, including uppercase, lowercase, and a number.");
 
         JButton cancelButton = new JButton("Cancel");
         JButton okButton = new JButton("OK");
