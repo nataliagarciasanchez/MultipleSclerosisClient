@@ -1,4 +1,4 @@
-# Documentation for the proyect
+# Documentation for the Project
 
 This repository contains the documentation for using the system.
 
