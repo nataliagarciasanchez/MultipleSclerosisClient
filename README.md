@@ -1,7 +1,7 @@
-# Documentación del Proyecto
+# Proyect Documentation
 
-Este repositorio contiene la documentación para el uso del sistema.
+This repository contains the documentation for using the system.
 
-## Descargas
+## Downloads
 
-- [Manual de Usuario - Paciente](https://raw.githubusercontent.com/nataliagarciasanchez/MultipleSclerosisPatient/master/User%20Manual%20-%20Patient.pdf)
+- [User Manual - Patient](https://raw.githubusercontent.com/nataliagarciasanchez/MultipleSclerosisPatient/master/User%20Manual%20-%20Patient.pdf)
