@@ -965,7 +965,8 @@ public class SecondPanel extends JPanel {
                 patient.setDob(java.sql.Date.valueOf(dobField.getText()));
                 User user = patient.getUser();
                 user.setRole(role);
-                send.updateInformation(user, patient); 
+                String samePassword = user.getPassword();
+                send.updateInformation(user, patient, samePassword); 
 
             JOptionPane.showMessageDialog(this, "Patient information updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
          
@@ -1051,25 +1052,14 @@ public class SecondPanel extends JPanel {
             String confirmPassword = new String(confirmPasswordField.getPassword());
             try{
 
-                if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
-                    JOptionPane.showMessageDialog(whitePanel, "Password fields cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                if (!newPassword.equals(confirmPassword)) {
-                    JOptionPane.showMessageDialog(whitePanel, "New password and confirm password do not match.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
                 
-
                 User user = new User();
                 user.setId(patient.getUser().getId());
                 user.setEmail(patient.getUser().getEmail());
                 user.setPassword(newPassword);
                 user.setRole(role);
                 
-                send.updateInformation(user, patient); 
+                send.updateInformation(user, patient, confirmPassword); 
                 
                 JOptionPane.showMessageDialog(whitePanel, "Password successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 auxiliar(); 

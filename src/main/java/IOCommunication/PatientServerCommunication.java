@@ -157,36 +157,42 @@ public class PatientServerCommunication {
          *
          * @param user
          * @param patient
+         * @param confirmPassword
          */
-        public void updateInformation(User user, Patient patient) {
+        public void updateInformation(User user, Patient patient, String confirmPassword) {
 
             try {
                 
                 Utilities.validateUpdatePatient(patient);
-                //Utilities.validateUpdatePassword(user);
+                
                 out.writeObject("updateInformation");
                 System.out.println("Sending update request to the server...");
                 
-                // Gestionar el hash de la contraseña en el servidor
-                String newHashedPassword = PasswordEncryption.hashPassword(user.getPassword());
-                String existingHashedPassword = patient.getUser().getPassword();
+                // Obtain hash
+                String newHashedPassword = PasswordEncryption.hashPassword(user.getPassword()); // new password
+                String existingHashedPassword = patient.getUser().getPassword(); // current password
 
-                // Actualizar la contraseña si es necesario
-                if (!existingHashedPassword.equals(newHashedPassword) && !user.getPassword().equals(existingHashedPassword)) {
-                    Utilities.validateUpdatePassword(user);
+                // update password if it has been changed
+                System.out.println("existingHashedPassword: " + existingHashedPassword);
+                System.out.println("newHashedPassword: " + newHashedPassword);
+                System.out.println("user.getPassword(): " + user.getPassword());
+                if (!existingHashedPassword.equals(newHashedPassword) && !user.getPassword().equals(existingHashedPassword)) { 
+                    Utilities.validateUpdatePassword(user.getPassword(), confirmPassword);
                     System.out.println("Updating password...");
                     user.setPassword(newHashedPassword);
                     out.writeObject(user);
                 }else{
                     System.out.println("Patient.getUser(): " + patient.getUser().getPassword());
-                    out.writeObject(patient.getUser());}
+                    System.out.println("Password remains the same.");
+                    out.writeObject(patient.getUser());
+                }
                 
                 
                 out.writeObject(patient);
                 
                 String response = (String) in.readObject();
                 System.out.println("Server response: " + response);
-                //System.out.println(in.readObject());
+                
                 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);

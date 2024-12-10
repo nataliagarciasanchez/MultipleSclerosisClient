@@ -410,7 +410,7 @@ public class PatientMenu {
                             }
                         }
                         
-                        send.updateInformation(user, patient);
+                        send.updateInformation(user, patient, "");
                         break;
                     }
                         

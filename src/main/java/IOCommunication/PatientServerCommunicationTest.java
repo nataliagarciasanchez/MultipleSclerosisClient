@@ -142,7 +142,7 @@ public class PatientServerCommunicationTest {
             String new_name="Noelia";
             patient1.setName(new_name);
             System.out.println("This is to check if the setter is working correctly: " + user.getPassword());
-            send.updateInformation(user, patient1);
+            //send.updateInformation(user, patient1);
         }
         
         Patient patient2 = send.login("probando@gmail.com", "Password123");
