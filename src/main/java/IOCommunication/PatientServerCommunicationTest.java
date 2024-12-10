@@ -37,6 +37,14 @@ public class PatientServerCommunicationTest {
     public static PatientServerCommunication.Receive receive;
     public static String macAddress = "98:D3:41:FD:4E:E8";
     public static Role role;
+    private static final float EMG_MIN = 0.1f;
+    private static final float EMG_MAX = 5.0f;
+         // Valores normales para ECG según género
+    private static final float ECG_MIN_MALE = 0.6f;
+    private static final float ECG_MAX_MALE = 3.5f;
+
+    private static final float ECG_MIN_FEMALE = 0.4f;
+    private static final float ECG_MAX_FEMALE = 2.8f;
     
     public static void main(String[] args) {
         com= new PatientServerCommunication("localhost", 9000);
@@ -44,21 +52,21 @@ public class PatientServerCommunicationTest {
         send= com.new Send();
         receive=com.new Receive();
         role=new Role();
-        //register();
+        register();
         //register1();
         //register2();
         //register3();
         //register4();
-        //login();
-        //logout()
-        //viewSymptoms();
+        login();
+        //logout();
+        viewSymptoms();
         //viewPersonalInfo();
         //updateInfo();
         //sendReport(); 
-        //sendCompleteReport();
+        sendCompleteReport();
         //sendSensoryReport();
         //sendCognitiveFatigueReport();
-        viewFeedbacks();
+        //viewFeedbacks();
     }
     
    
@@ -66,7 +74,7 @@ public class PatientServerCommunicationTest {
         try {
             java.sql.Date dob = Utilities.convertString2SqlDate("31/10/2003");
             Patient maite = new Patient("noelia", "gomez", "53993542F", dob, Gender.FEMALE, "609526931");
-            User user=new User("probando@gmail.com", "Password123", role);
+            User user=new User("laur@gmail.com", "Password123", role);
             maite.setUser(user);
             
             send.register(maite);
@@ -75,7 +83,7 @@ public class PatientServerCommunicationTest {
         }
     }
     
-    public static void register1() {
+    /*public static void register1() {
     try {
         java.sql.Date dob = Utilities.convertString2SqlDate("31/10/2003");
         Patient patient = new Patient("Noelia", "Gomez", "51258525N", dob, Gender.FEMALE, "609526931");
@@ -122,12 +130,12 @@ public class PatientServerCommunicationTest {
         Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
     }
 }
-    
+    */
     public static void login(){
-       Patient patient=send.login("probando@gmail.com", "Password123");
+       Patient patient=send.login("laur@gmail.com", "Password123");
        patient.getUser().setRole(role);
        System.out.println(patient);
-       send.logout();
+       //send.logout();
     }
     
     public static void updateInfo() {
@@ -203,7 +211,83 @@ public class PatientServerCommunicationTest {
             Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+public static void sendCompleteReport() {
     
+    try {
+    
+    
+        // Fecha actual
+        LocalDate r_date = LocalDate.now();
+        Date date = Utilities.convertString2SqlDate2(r_date.toString());
+
+        // Login del paciente
+        Patient patient = send.login("noelia.gomez@gmail.com", "Password123");
+
+        // Generar señales EMG dentro de los valores correctos
+        Bitalino bitalinoEMG = new Bitalino(date, SignalType.EMG);
+        List<Frame> emgFrames = generateSignalWithinRange(SignalType.EMG, EMG_MIN, EMG_MAX, 60000); // 60000 muestras para 1 minuto
+        bitalinoEMG.setSignalValues(emgFrames, 0);
+
+        // Determinar rangos de ECG según el género
+        float ecgMin = patient.getGender() == Gender.MALE ? ECG_MIN_MALE : ECG_MIN_FEMALE;
+        float ecgMax = patient.getGender() == Gender.MALE ? ECG_MAX_MALE : ECG_MAX_FEMALE;
+
+        // Generar señales ECG dentro de los valores correctos
+        Bitalino bitalinoECG = new Bitalino(date, SignalType.ECG);
+        List<Frame> ecgFrames = generateSignalWithinRange(SignalType.ECG, ecgMin, ecgMax, 60000); // 60000 muestras para 1 minuto
+        bitalinoECG.setSignalValues(ecgFrames, 1);
+
+        // Crear lista de bitalinos
+        List<Bitalino> bitalinos = new ArrayList<>();
+        bitalinos.add(bitalinoEMG);
+        bitalinos.add(bitalinoECG);
+
+        // Crear lista de síntomas
+        List<Symptom> symptoms = receive.getSymptoms();
+        List<Symptom> symptomsSend = new ArrayList<>();
+        symptomsSend.add(symptoms.get(1));
+        symptomsSend.add(symptoms.get(2));
+        symptomsSend.add(symptoms.get(3));
+        symptomsSend.add(symptoms.get(4));
+        symptoms.add(new Symptom("Loss of balance"));
+        symptoms.add(new Symptom("Numbness or abnormal sensation in any area"));
+
+        // Crear reporte
+        Report report = new Report(date, patient, bitalinos, symptomsSend);
+
+        // Enviar reporte
+        send.sendReport(report);
+        System.out.println("Report sent successfully!");
+
+    } catch (ParseException ex) {
+        System.out.println("Error while sending the report.");
+    } catch (Throwable ex) {
+        Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}
+
+// Método auxiliar para generar señales dentro de un rango específico
+private static List<Frame> generateSignalWithinRange(SignalType signalType, float min, float max, int numSamples) {
+    List<Frame> frames = new ArrayList<>();
+    Random random = new Random();
+
+    for (int i = 0; i < numSamples; i++) {
+        Frame frame = new Frame(); // Crear un nuevo frame
+        int[] channels = new int[6]; // Suponiendo que el frame tiene 6 canales
+
+        // Generar un valor dentro del rango
+        float value = min + random.nextFloat() * (max - min);
+        channels[0] = (int) (value * 1000); // Asignar el valor al primer canal (en mV)
+
+        // Asignar canales al frame
+        frame.analog = channels;
+        frames.add(frame);
+    }
+
+    return frames;
+}
+
+/*
     public static void sendCompleteReport() {
         try {
             // Fecha actual
@@ -251,7 +335,7 @@ public class PatientServerCommunicationTest {
         } catch (Throwable ex) {
             Logger.getLogger(PatientServerCommunicationTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
     
     private static List<Frame> generateRandomSignal(SignalType signalType, int numSamples) {
         List<Frame> frames = new ArrayList<>();
