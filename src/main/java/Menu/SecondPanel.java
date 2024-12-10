@@ -33,18 +33,18 @@ import javax.swing.event.DocumentListener;
  * @author nataliagarciasanchez
  */
 public class SecondPanel extends JPanel {
-    private JPanel whitePanel; // Dynamic white panel
-    private JLabel titleLabel; // Main title
-    private java.util.List<Symptom> symptomsList; // Symptom list
+    private JPanel whitePanel; 
+    private JLabel titleLabel;
+    private java.util.List<Symptom> symptomsList; 
     private Patient patient;
-    private final Image backgroundImage; // Background image
+    private final Image backgroundImage; 
     private final PatientServerCommunication.Send send;
     private final PatientServerCommunication.Receive receive;
     private LocalDate date = LocalDate.now();
     public static String macAddress = "98:D3:41:FD:4E:E8";
-    private java.util.List<Bitalino> bitalinos = new ArrayList<>(); // Symptom list
+    private java.util.List<Bitalino> bitalinos = new ArrayList<>(); 
     public static Role role;
-    private BITalino bitalinoDevice; // Variable global para mantener la conexión
+    private BITalino bitalinoDevice; 
 
     
     
@@ -99,7 +99,7 @@ public class SecondPanel extends JPanel {
         JButton viewDoctorButton = createStyledButton("View Doctor Information");
         JButton startMonitoringButton = createStyledButton("Start Monitoring");
         JButton settingsButton = createStyledButton("Settings");
-        JButton viewReportsButton = createStyledButton("View My Reports");
+        JButton viewReportsButton = createStyledButton("View Dr. Feedbacks");
         
         settingsButton.addActionListener(e -> auxiliar());
         startMonitoringButton.addActionListener(e -> showMonitoringIntroduction());
@@ -141,7 +141,6 @@ public class SecondPanel extends JPanel {
         titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20)); //(top, left, bottom, right)
         titlePanel.add(titleLabel, BorderLayout.WEST);
         
-        // Add "Log Out" button at the top-right corner
         JButton logoutButton = createStyledButton("Log Out");
         logoutButton.setPreferredSize(new Dimension(120, 40)); 
         logoutButton.addActionListener(e -> {
@@ -203,7 +202,7 @@ public class SecondPanel extends JPanel {
         contentPanel.add(createInfoLine("Name: ", patient.getName() != null ? patient.getName() + " " + patient.getSurname() : "N/A"));
         contentPanel.add(Box.createRigidArea(new Dimension(0, 6)));
 
-        contentPanel.add(createInfoLine("DNI: ", patient.getNIF() != null ? patient.getNIF() : "N/A"));
+        contentPanel.add(createInfoLine("NIF: ", patient.getNIF() != null ? patient.getNIF() : "N/A"));
         contentPanel.add(Box.createRigidArea(new Dimension(0, 6)));
 
         contentPanel.add(createInfoLine("Birth Date: ", patient.getDob() != null ? patient.getDob().toString() : "N/A"));
@@ -635,96 +634,105 @@ public class SecondPanel extends JPanel {
     }
     
     private void displayFeedbacks() {
-    whitePanel.removeAll(); 
-    whitePanel.setLayout(new BorderLayout());
+        whitePanel.removeAll(); 
+        whitePanel.setLayout(new BorderLayout());
 
-    JLabel titleLabel = new JLabel("View Feedbacks");
-    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-    titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    whitePanel.add(titleLabel, BorderLayout.NORTH);
+        JLabel titleLabel = new JLabel("View Feedbacks");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        whitePanel.add(titleLabel, BorderLayout.NORTH);
 
-    JPanel feedbackContainer = new JPanel(new BorderLayout());
-    feedbackContainer.setBackground(Color.WHITE);
+        JPanel feedbackContainer = new JPanel(new BorderLayout());
+        feedbackContainer.setBackground(Color.WHITE);
 
-    JPanel searchPanel = new JPanel(new BorderLayout());
-    searchPanel.setBackground(Color.WHITE);
-    searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.setBackground(Color.WHITE);
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-    JLabel searchLabel = new JLabel("Search Feedbacks by Date (YYYY-MM-DD):");
-    searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        JLabel searchLabel = new JLabel("Search Feedbacks by Date (YYYY-MM-DD):");
+        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
 
-    JTextField searchField = new JTextField();
-    searchField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        JTextField searchField = new JTextField();
+        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
-    searchPanel.add(searchLabel, BorderLayout.WEST);
-    searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(searchLabel, BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
 
-    feedbackContainer.add(searchPanel, BorderLayout.NORTH);
+        feedbackContainer.add(searchPanel, BorderLayout.NORTH);
 
-    JPanel feedbackPanel = new JPanel();
-    feedbackPanel.setLayout(new BoxLayout(feedbackPanel, BoxLayout.Y_AXIS));
-    feedbackPanel.setBackground(Color.WHITE);
+        JPanel feedbackPanel = new JPanel();
+        feedbackPanel.setLayout(new BoxLayout(feedbackPanel, BoxLayout.Y_AXIS));
+        feedbackPanel.setBackground(Color.WHITE);
 
-    JScrollPane scrollPane = new JScrollPane(feedbackPanel);
-    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-    scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        JScrollPane scrollPane = new JScrollPane(feedbackPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-    feedbackContainer.add(scrollPane, BorderLayout.CENTER);
-    whitePanel.add(feedbackContainer, BorderLayout.CENTER);
+        feedbackContainer.add(scrollPane, BorderLayout.CENTER);
+        whitePanel.add(feedbackContainer, BorderLayout.CENTER);
 
-    java.util.List<Feedback> feedbacks = receive.viewFeedbacks(patient); // Replace with handleFeedbackFromServer() when ready
-    if (feedbacks != null && !feedbacks.isEmpty()) {
-        updateFeedbackList(feedbacks, feedbackPanel); 
-    } else {
-        System.out.println("No feedbacks available for this patient.");
+        java.util.List<Feedback> feedbacks = receive.viewFeedbacks(patient); 
+        if (feedbacks != null && !feedbacks.isEmpty()) {
+            updateFeedbackList(feedbacks, feedbackPanel); 
+        } else {
+            feedbackPanel.setLayout(new BoxLayout(feedbackPanel, BoxLayout.Y_AXIS));
+
+            JLabel noFeedbacksLabel = new JLabel("No feedbacks available for this patient.");
+            noFeedbacksLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            noFeedbacksLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            noFeedbacksLabel.setForeground(Color.GRAY);
+
+            feedbackPanel.add(Box.createVerticalGlue()); 
+            feedbackPanel.add(noFeedbacksLabel); 
+            feedbackPanel.add(Box.createVerticalGlue()); 
+
+            feedbackPanel.revalidate();
+            feedbackPanel.repaint();
+        }
+
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterFeedbacks();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterFeedbacks();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterFeedbacks();
+            }
+
+            private void filterFeedbacks() {
+                String searchText = searchField.getText().toLowerCase();
+                if (feedbacks != null) {
+                    java.util.List<Feedback> filteredFeedbacks = feedbacks.stream()
+                            .filter(feedback -> feedback.getDate().toString().contains(searchText)) // Filter by date
+                            .collect(Collectors.toList());
+                    updateFeedbackList(filteredFeedbacks, feedbackPanel);
+                }
+            }
+        });
+
+        whitePanel.revalidate();
+        whitePanel.repaint();
     }
 
-    // Add search functionality to filter feedbacks
-    searchField.getDocument().addDocumentListener(new DocumentListener() {
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            filterFeedbacks();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            filterFeedbacks();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            filterFeedbacks();
-        }
-
-        private void filterFeedbacks() {
-            String searchText = searchField.getText().toLowerCase();
-            if (feedbacks != null) {
-                java.util.List<Feedback> filteredFeedbacks = feedbacks.stream()
-                        .filter(feedback -> feedback.getDate().toString().contains(searchText)) // Filter by date
-                        .collect(Collectors.toList());
-                updateFeedbackList(filteredFeedbacks, feedbackPanel);
-            }
-        }
-    });
-
-    whitePanel.revalidate();
-    whitePanel.repaint();
-}
-
-
-    // Método para actualizar la lista de feedbacks
     private void updateFeedbackList(java.util.List<Feedback> feedbacks, JPanel feedbackPanel) {
-        feedbackPanel.removeAll(); // Clear the previous content
+        feedbackPanel.removeAll(); 
 
-        Dimension fixedSize = new Dimension(1000, 50); // Fixed size for each feedback panel
+        Dimension fixedSize = new Dimension(1000, 50); 
 
         for (Feedback feedback : feedbacks) {
             JPanel feedbackItemPanel = new JPanel(new BorderLayout());
             feedbackItemPanel.setBackground(Color.LIGHT_GRAY);
             feedbackItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            feedbackItemPanel.setPreferredSize(fixedSize); // Apply fixed size
+            feedbackItemPanel.setPreferredSize(fixedSize); 
             feedbackItemPanel.setMaximumSize(fixedSize);
             feedbackItemPanel.setMinimumSize(fixedSize);
 
@@ -736,14 +744,13 @@ public class SecondPanel extends JPanel {
             viewButton.setBackground(Color.WHITE);
             viewButton.setForeground(Color.BLACK);
 
-            // Use displayFeedbacksInUI for a detailed view
             viewButton.addActionListener(e -> displayFeedbacksInUI(feedback));
 
             feedbackItemPanel.add(feedbackLabel, BorderLayout.CENTER);
             feedbackItemPanel.add(viewButton, BorderLayout.EAST);
 
             feedbackPanel.add(feedbackItemPanel);
-            feedbackPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Space between feedbacks
+            feedbackPanel.add(Box.createRigidArea(new Dimension(0, 10))); 
         }
 
         feedbackPanel.revalidate();
@@ -751,16 +758,15 @@ public class SecondPanel extends JPanel {
     }
 
     private void displayFeedbacksInUI(Feedback feedback) {
-        whitePanel.removeAll(); // Clear the white panel content
+        whitePanel.removeAll(); 
         whitePanel.setLayout(new BorderLayout());
 
-        // Panel for feedback details
+        
         JPanel feedbackDetailsPanel = new JPanel();
         feedbackDetailsPanel.setBackground(Color.WHITE);
         feedbackDetailsPanel.setLayout(new BoxLayout(feedbackDetailsPanel, BoxLayout.Y_AXIS));
         feedbackDetailsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Add feedback details
         feedbackDetailsPanel.add(createInfoLine("Doctor: ", feedback.getDoctor().getName()));
         feedbackDetailsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         feedbackDetailsPanel.add(createInfoLine("Date: ", feedback.getDate().toString()));
@@ -769,7 +775,6 @@ public class SecondPanel extends JPanel {
 
         whitePanel.add(feedbackDetailsPanel, BorderLayout.CENTER);
 
-        // Add a "Back" button to return to feedback list
         JButton backButton = new JButton("Back");
         backButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         backButton.setBackground(Color.WHITE);
@@ -785,33 +790,7 @@ public class SecondPanel extends JPanel {
         whitePanel.revalidate();
         whitePanel.repaint();
     }
-
-
-/*
-    // Método de prueba para obtener feedbacks ficticios
-    private java.util.List<Feedback> getMockFeedbacks() {
-        java.util.List<Feedback> mockFeedbacks = new ArrayList<>();
-        Patient mockPatient = new Patient("John", "Doe", "12345678A", java.sql.Date.valueOf("1990-01-01"), Gender.MALE, "123456789");
-
-        // Crear doctores con el constructor correcto
-        Doctor doctor1 = new Doctor(1, "Dr. Garcia", "Neurologist");
-        Doctor doctor2 = new Doctor(2, "Dr. Lopez", "General Practitioner");
-        Doctor doctor3 = new Doctor(3, "Dr. Martinez", "Physiotherapist");
-        Doctor doctor4 = new Doctor(4, "Dr. Smith", "Rehabilitation Specialist");
-        Doctor doctor5 = new Doctor(5, "Dr. Taylor", "Consultant");
-
-        // Añadir feedbacks ficticios
-        mockFeedbacks.add(new Feedback(1,"Great improvement!", java.sql.Date.valueOf("2023-12-01"), doctor1, mockPatient));
-        mockFeedbacks.add(new Feedback(2,"Please schedule a follow-up.", java.sql.Date.valueOf("2023-11-15"), doctor2, mockPatient));
-        mockFeedbacks.add(new Feedback(3,"Your condition is stable.", java.sql.Date.valueOf("2023-11-10"), doctor3, mockPatient));
-        mockFeedbacks.add(new Feedback(4,"Keep up the good work with therapy.", java.sql.Date.valueOf("2023-10-25"), doctor4, mockPatient));
-        mockFeedbacks.add(new Feedback(5,"I noticed some irregularities. Please visit.", java.sql.Date.valueOf("2023-10-10"), doctor5, mockPatient));
-
-        return mockFeedbacks;
-    }*/
-
-
-    
+ 
     private void auxiliar() {
         whitePanel.removeAll();
         whitePanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
@@ -892,6 +871,7 @@ public class SecondPanel extends JPanel {
 
         JTextField nameField = new JTextField(patient.getName() != null ? patient.getName() : "");
         nameField.setPreferredSize(fieldSize);
+        nameField.setToolTipText("Enter your full first name. Example: John");
         gbc.gridx = 1;
         contentPanel.add(nameField, gbc);
 
@@ -903,6 +883,7 @@ public class SecondPanel extends JPanel {
 
         JTextField surnameField = new JTextField(patient.getSurname() != null ? patient.getSurname() : "");
         surnameField.setPreferredSize(fieldSize);
+        surnameField.setToolTipText("Enter your last name. Example: Doe");
         gbc.gridx = 1;
         contentPanel.add(surnameField, gbc);
 
@@ -914,10 +895,11 @@ public class SecondPanel extends JPanel {
 
         JTextField nifField = new JTextField(patient.getNIF() != null ? patient.getNIF() : "");
         nifField.setPreferredSize(fieldSize);
+        nifField.setToolTipText("Enter a valid NIF including the letter. Example: 12345678A");
         gbc.gridx = 1;
         contentPanel.add(nifField, gbc);
 
-        JLabel dobLabel = new JLabel("Birth Date (YYYY-MM-DD):");
+        JLabel dobLabel = new JLabel("Birth Date:");
         dobLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         gbc.gridx = 0;
         gbc.gridy++;
@@ -925,6 +907,7 @@ public class SecondPanel extends JPanel {
 
         JTextField dobField = new JTextField(patient.getDob() != null ? patient.getDob().toString() : "");
         dobField.setPreferredSize(fieldSize);
+        dobField.setToolTipText("Enter your birth date in YYYY-MM-DD format. Example: 2003-10-10");
         gbc.gridx = 1;
         contentPanel.add(dobField, gbc);
 
@@ -936,6 +919,7 @@ public class SecondPanel extends JPanel {
 
         JTextField phoneField = new JTextField(patient.getPhone() != null ? patient.getPhone() : "");
         phoneField.setPreferredSize(fieldSize);
+        phoneField.setToolTipText("Enter your phone number. With or without country code. Example: +34123456789");
         gbc.gridx = 1;
         contentPanel.add(phoneField, gbc);
 
@@ -1025,10 +1009,12 @@ public class SecondPanel extends JPanel {
         gbc.anchor = GridBagConstraints.LINE_START;
 
         JPasswordField newPasswordField = new JPasswordField(20);
+        newPasswordField.setToolTipText("Enter a strong password with at least 8 characters, including uppercase, lowercase, and a number.");
         passwordPanel.add(newPasswordField, gbc);
 
         gbc.gridy++;
         JPasswordField confirmPasswordField = new JPasswordField(20);
+        confirmPasswordField.setToolTipText("Enter a strong password with at least 8 characters, including uppercase, lowercase, and a number.");
         passwordPanel.add(confirmPasswordField, gbc);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
