@@ -89,6 +89,9 @@ public class PatientServerCommunication {
                 out.flush();
                 
                 System.out.println("Registering.....");
+                String hashedPassword = PasswordEncryption.hashPassword(patient.getUser().getPassword()); 
+                patient.getUser().setPassword(hashedPassword); // para comprobar si el hash se hace bien
+                
                 String confirmation=(String) in.readObject();
                 if (confirmation.contains("Username already in use") ){
                    System.out.println("Error: " + confirmation); 
