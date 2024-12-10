@@ -50,12 +50,11 @@ public class MainPatientGUI {
             int port = Integer.parseInt(portInput);
             
                  
-            System.out.println("Initializing connection to server");
+            System.out.println("Initializing connection to server...");
             // Inicializar la conexión al servidor
             patientServerCom = new PatientServerCommunication(serverAddress, port);
             Boolean connection = patientServerCom.start();
-            //no llega
-            System.out.println("boolean: " + connection);
+            
             if(!connection){
                 JOptionPane.showMessageDialog(null, 
                 "You are NOT authorized to connect to this server. Connection will be closed.",

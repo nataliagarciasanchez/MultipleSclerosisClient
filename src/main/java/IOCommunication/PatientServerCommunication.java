@@ -54,6 +54,7 @@ public class PatientServerCommunication {
             if (!serverResponse) {
                 connection = false;
                 releaseResources(in, out, socket);
+                //System.exit(0);
                 
             }else{
             connection = true;
