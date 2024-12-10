@@ -9,13 +9,9 @@ import POJOs.User;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +21,7 @@ import java.util.regex.Pattern;
  */
 public class Utilities {
 
-    private static BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
 
     public static boolean validateDate(LocalDate doaLocalDate) {
         boolean ok = true;
@@ -53,7 +49,7 @@ public class Utilities {
         return input != null && input.matches(regex);
     }
 
-    public static boolean validMenu(int numOps, int num) { //TODO delete methods not in use
+    public static boolean validMenu(int numOps, int num) { 
         boolean ok = true;
         if (num > numOps || num < 0) {
             System.out.println("Incorrect option, please type a number between 0 and " + numOps);

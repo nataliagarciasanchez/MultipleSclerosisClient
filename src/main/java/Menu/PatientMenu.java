@@ -45,7 +45,7 @@ public class PatientMenu {
     
     public static void main(String[] args) {
         
-        //TODO deberá preguntar por el IP address del paciente
+        
         int choice = 0;
         do {
             try {
@@ -149,7 +149,7 @@ public class PatientMenu {
             
         } while (!Utilities.isValidPhone(phone_number));
         
-        Doctor doctor=new Doctor();//TODO crear un método que asigne al patient un doctor aleatoriamente 
+        Doctor doctor=new Doctor(); 
         
         return new Patient(name,surname,NIF,sqlDob,gender,phone_number, doctor,user);
     }
@@ -370,7 +370,7 @@ public class PatientMenu {
     
     public static void diagnosisFromDoctor(Report report){
         send.sendReport(report);
-       /*TODO el feedback del doctor se va a mostrar automáticamente cuando el server 
+       /*el feedback del doctor se va a mostrar automáticamente cuando el server 
        se ponga en contacto con este, una vez las señales del patient han sido mandadas con el hilo de la 
         clase Receive de la communication. */
     }

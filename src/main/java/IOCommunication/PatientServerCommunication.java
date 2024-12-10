@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package IOCommunication;
 
 import Menu.Utilities.Utilities;
@@ -26,8 +23,8 @@ import javax.swing.JOptionPane;
  */
 public class PatientServerCommunication {
     
-    private String serverAddress;
-    private int serverPort; 
+    private final String serverAddress;
+    private final int serverPort; 
     private Socket socket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
@@ -73,14 +70,7 @@ public class PatientServerCommunication {
                 Utilities.validateRegisterPatient(patient);
                 
                 out.writeObject("register"); // Acción de registro
-                out.flush();
-                
-                //TODO quitar souts
-                System.out.println("Plain: " + patient.getUser().getPassword()); // para comprobar si el hash se hace bien
-                String hashedPassword = PasswordEncryption.hashPassword(patient.getUser().getPassword()); 
-                patient.getUser().setPassword(hashedPassword); // para comprobar si el hash se hace bien
-                System.out.println("Hashed: " + patient.getUser().getPassword());
-                
+                out.flush();              
                 out.writeObject(patient.getUser());//envía los datos de registro al server
                 out.writeObject(patient);
                 out.flush();
@@ -121,11 +111,11 @@ public class PatientServerCommunication {
                 
                 System.out.println("Logging in.....");
                 Object response=in.readObject();
-                if(response instanceof Patient){//si es de tipo patient es que las credenciales son correctas
-                   patient= (Patient) response;
+                if(response instanceof Patient patient1){//si es de tipo patient es que las credenciales son correctas
+                   patient= patient1;
                    System.out.println("Successfull log in!");
-                }else if (response instanceof String){
-                   String errorMessage = (String) response; // Mensaje de error
+                }else if (response instanceof String errorMessage){ // Mensaje de error
+                    // Mensaje de error
                    System.out.println("Error: " + errorMessage); 
                 }
                 
