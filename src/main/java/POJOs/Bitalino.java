@@ -153,7 +153,7 @@ public class Bitalino implements Serializable{
         while (it.hasNext()) {
             Frame frame = it.next();
             sb.append(frame.analog[0]);//para que coja la primera columna
-            sb.append("\n");
+            sb.append("    ");
         }
         this.signalValues = sb.toString();
     }
