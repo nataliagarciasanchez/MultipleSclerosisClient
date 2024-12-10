@@ -50,20 +50,37 @@ public class MainPatientGUI {
             int port = Integer.parseInt(portInput);
             
                  
-
+            System.out.println("Initializing connection to server");
             // Inicializar la conexión al servidor
             patientServerCom = new PatientServerCommunication(serverAddress, port);
-            patientServerCom.start();
-            send = patientServerCom.new Send();
-            receive = patientServerCom.new Receive();
+            Boolean connection = patientServerCom.start();
+            //no llega
+            System.out.println("boolean: " + connection);
+            if(!connection){
+                JOptionPane.showMessageDialog(null, 
+                "You are NOT authorized to connect to this server. Connection will be closed.",
+                "Access Denied", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            }
+            System.out.println("before send and receive");
+                send = patientServerCom.new Send();
+                receive = patientServerCom.new Receive();
+                if (send == null || receive == null) {
+                    JOptionPane.showMessageDialog(null, "Error initializing communication channels. Please restart the application.", "Error", JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
+                }else{
 
+            
+                    System.out.println("reached here");
             JOptionPane.showMessageDialog(null, "Connected to the server successfully!", "Connection Status", JOptionPane.INFORMATION_MESSAGE);
 
             // Iniciar la interfaz gráfica
             SwingUtilities.invokeLater(() -> {
+                System.out.println("swing initializes");
                 FramePrincipal mainFrame = new FramePrincipal(send, receive);
                 mainFrame.setVisible(true);
             });
+            }
 
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Invalid port number. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);

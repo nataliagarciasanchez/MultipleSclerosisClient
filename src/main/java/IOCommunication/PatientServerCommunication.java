@@ -38,23 +38,36 @@ public class PatientServerCommunication {
         
     }
     
-    public void start(){
+    public boolean start(){
+        boolean connection = false;
         try {
             this.socket=new Socket(serverAddress, serverPort);
             this.out=new ObjectOutputStream(socket.getOutputStream());
             out.flush();
             this.in=new ObjectInputStream(socket.getInputStream());
-            System.out.println("Patient connected to server");
+            
             String message = "PatientServerCommunication";
             out.writeObject(message);
+            out.flush();
             
-        } catch (IOException ex) {
+            Boolean serverResponse = (Boolean) in.readObject();
+            if (!serverResponse) {
+                connection = false;
+                releaseResources(in, out, socket);
+                
+            }else{
+            connection = true;
+            }
+            
+          
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(PatientServerCommunication.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, 
             "Connection to the server was lost. Please try again later.",
             "Connection Error", JOptionPane.ERROR_MESSAGE);
         System.exit(0);
         }
+        return connection;
     }
     
     public class Send{
@@ -217,15 +230,7 @@ public class PatientServerCommunication {
         }
         
         
-        private static void releaseResources(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
-            try {
-                in.close();
-                out.close();
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+      
         
     }
 
@@ -267,5 +272,16 @@ public class PatientServerCommunication {
         }
  
     }
+    
+    
+    private static void releaseResources(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
+            try {
+                in.close();
+                out.close();
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
 }
