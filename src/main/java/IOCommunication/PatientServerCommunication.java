@@ -183,13 +183,10 @@ public class PatientServerCommunication {
 
                 // update password if it has been changed
                 if (!existingHashedPassword.equals(newHashedPassword) && !user.getPassword().equals(existingHashedPassword)) { 
-                    Utilities.validateUpdatePassword(user.getPassword(), confirmPassword);
                     System.out.println("Updating password...");
                     user.setPassword(newHashedPassword);
                     out.writeObject(user);
                 }else{
-                    System.out.println("Patient.getUser(): " + patient.getUser().getPassword());
-                    System.out.println("Password remains the same.");
                     out.writeObject(patient.getUser());
                 }
                 
