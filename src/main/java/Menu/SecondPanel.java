@@ -42,7 +42,7 @@ public class SecondPanel extends JPanel {
     private final PatientServerCommunication.Send send;
     private final PatientServerCommunication.Receive receive;
     private LocalDate date = LocalDate.now();
-    public static String macAddress = "98:D3:41:FD:4E:E8";
+    public static String macAddress = "98:D3:91:FD:69:4F";
     private java.util.List<Bitalino> bitalinos = new ArrayList<>(); 
     public static Role role;
     private BITalino bitalinoDevice; 
