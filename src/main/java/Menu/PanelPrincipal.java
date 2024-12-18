@@ -22,10 +22,10 @@ import java.sql.Date;
  */
 
 public class PanelPrincipal extends JPanel {
-    private JPanel dynamicPanel; 
+    private final JPanel dynamicPanel; 
     private final Image backgroundImage; 
     private final PatientServerCommunication.Send send;
-    public static PatientServerCommunication.Receive receive;
+    public final PatientServerCommunication.Receive receive;
 
     public PanelPrincipal(PatientServerCommunication.Send send, PatientServerCommunication.Receive receive) {
         this.send = send;

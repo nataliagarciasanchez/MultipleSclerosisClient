@@ -52,7 +52,7 @@ public class PatientServerCommunicationTest {
         send= com.new Send();
         receive=com.new Receive();
         role=new Role();
-        register();
+        //register();
         //register1();
         //register2();
         //register3();
@@ -73,8 +73,8 @@ public class PatientServerCommunicationTest {
     public static void register() {
         try {
             java.sql.Date dob = Utilities.convertString2SqlDate("31/10/2003");
-            Patient maite = new Patient("noelia", "gomez", "53993542F", dob, Gender.FEMALE, "609526931");
-            User user=new User("laur@gmail.com", "Password123", role);
+            Patient maite = new Patient("maite", "gomez", "53993542F", dob, Gender.FEMALE, "609526931");
+            User user=new User("maite@gmail.com", "Password123", role);
             maite.setUser(user);
             
             send.register(maite);
@@ -132,7 +132,7 @@ public class PatientServerCommunicationTest {
     }
     
     public static void login(){
-       Patient patient=send.login("laur@gmail.com", "Password123");
+       Patient patient=send.login("maite@gmail.com", "Password123");
        patient.getUser().setRole(role);
        System.out.println(patient);
        //send.logout();

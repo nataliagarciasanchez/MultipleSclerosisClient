@@ -70,7 +70,7 @@ public class MainPatientGUI {
                 }else{
 
             
-                    System.out.println("reached here");
+                    //System.out.println("reached here");
             JOptionPane.showMessageDialog(null, "Connected to the server successfully!", "Connection Status", JOptionPane.INFORMATION_MESSAGE);
 
             // Iniciar la interfaz gráfica

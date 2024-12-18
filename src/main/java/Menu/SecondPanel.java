@@ -8,12 +8,9 @@ import BITalino.BITalino;
 import BITalino.BITalinoException;
 import BITalino.Frame;
 import IOCommunication.PatientServerCommunication;
-import Menu.Utilities.Utilities;
 import static Menu.Utilities.Utilities.isValidPassword;
 import POJOs.Bitalino;
-import POJOs.Doctor;
 import POJOs.Feedback;
-import POJOs.Gender;
 import POJOs.Patient;
 import POJOs.Report;
 import POJOs.Role;
@@ -34,16 +31,16 @@ import javax.swing.event.DocumentListener;
  * @author nataliagarciasanchez
  */
 public class SecondPanel extends JPanel {
-    private JPanel whitePanel; 
-    private JLabel titleLabel;
-    private java.util.List<Symptom> symptomsList; 
-    private Patient patient;
+    private final JPanel whitePanel; 
+    private final JLabel titleLabel;
+    private final java.util.List<Symptom> symptomsList; 
+    private final Patient patient;
     private final Image backgroundImage; 
     private final PatientServerCommunication.Send send;
     private final PatientServerCommunication.Receive receive;
-    private LocalDate date = LocalDate.now();
-    public static String macAddress = "98:D3:41:FD:4E:E8";
-    private java.util.List<Bitalino> bitalinos = new ArrayList<>(); 
+    private final LocalDate date = LocalDate.now();
+    public static String macAddress = "98:D3:91:FD:69:4F";
+    private final java.util.List<Bitalino> bitalinos;
     public static Role role;
     private BITalino bitalinoDevice; 
 
@@ -56,7 +53,7 @@ public class SecondPanel extends JPanel {
         this.patient = patient;
         this.role=new Role();
         this.symptomsList = new LinkedList<>(); 
-
+        this.bitalinos=new ArrayList<>();
         backgroundImage = new ImageIcon(getClass().getResource("/images/Fondo.jpg")).getImage();
 
         setLayout(new BorderLayout());
